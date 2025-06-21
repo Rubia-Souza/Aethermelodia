@@ -61,6 +61,12 @@ add_executable(${PROJECT_NAME}
         Source/SpatialHashing.h
         Source/Actors/Collectable.cpp
         Source/Actors/Collectable.h
+        Source/FileReaderUtil.cpp
+        Source/FileReaderUtil.h
+        Source/GameTimer.cpp
+        Source/GameTimer.h
+        Source/Actors/Target.cpp
+        Source/Actors/Target.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf SDL2_mixer::SDL2_mixer)

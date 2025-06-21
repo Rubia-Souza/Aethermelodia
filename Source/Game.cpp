@@ -24,11 +24,14 @@
 #include "Actors/Block.h"
 #include "Actors/Collectable.h"
 #include "Actors/Spawner.h"
+#include "Actors/Target.h"
 #include "UIElements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/DrawComponents/DrawSpriteComponent.h"
 #include "Components/DrawComponents/DrawPolygonComponent.h"
 #include "Components/ColliderComponents/AABBColliderComponent.h"
+#include "GameTimer.h"
+#include "FileReaderUtil.h"
 
 Game::Game(int windowWidth, int windowHeight)
         :mWindow(nullptr)
@@ -207,13 +210,19 @@ void Game::ChangeScene()
         // --------------
 
         // TODO 1. Toque a música de fundo "MusicMain.ogg" em loop e armaze o SoundHandle retornado em mMusicHandle.
-        mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
+        // mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
+
+        mMusicHandle = mAudio->PlaySound("song.ogg", true);
+        gameTimer.start();
+
+        chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/notes.chart");
+        SDL_Log("[INFO] Loading chart ");
 
         // Set background color
         mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
 
         // Set background color
-        SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(TILE_SIZE,0), Vector2(6784,448));
+        // SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(TILE_SIZE,0), Vector2(6784,448));
 
         // Draw Flag
         auto flag = new Actor(this);
@@ -225,8 +234,19 @@ void Game::ChangeScene()
         // Add a flag pole taking the entire height
         new AABBColliderComponent(flag, 30, 0, 4, TILE_SIZE * LEVEL_HEIGHT, ColliderLayer::Pole, true);
 
+        Target* redTarget = new Target(this, Vector2(mWindowWidth/3, mWindowHeight/3), SDL_Color{255, 0, 0, 255});
+        Target* redTarget2 = new Target(this, Vector2(mWindowWidth/1.5, mWindowHeight/3), SDL_Color{255, 0, 0, 255});
+        // Target* redTarget3 = new Target(this, Vector2(mWindowWidth/2.0f - 150.0f, 250.0f), SDL_Color{255, 0, 0, 255});
+        // Target* yellowTarget = new Target(this, Vector2(250.0f, 500.0f), SDL_Color{255, 255, 0, 255});
+        // // Adicione quantos quiser
+
+        redTarget->Draw(mRenderer);
+        // redTarget2->Draw(mRenderer);
+        // redTarget3->Draw(mRenderer);
+        // yellowTarget->Draw(mRenderer);
+
         // Initialize actors
-        LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+        // LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     }
     else if (mNextScene == GameScene::Level2)
     {
@@ -588,6 +608,19 @@ void Game::UpdateGame()
     //  GamePlayState::Playing. Se sim, chame UpdateLevelTime passando o deltaTime.
     if (GameScene::MainMenu != mGameScene && mGamePlayState == GamePlayState::Playing) {
         UpdateLevelTime(deltaTime);
+    }
+
+    if (chart.size() > 0)
+    {
+        double currentTime = gameTimer.getSeconds();
+
+        SDL_Log("Chart timeInSeconds: %s", std::to_string(chart[currentNoteIndex].timeInSeconds).c_str());
+        SDL_Log("Chart lane: %s", std::to_string(chart[currentNoteIndex].lane).c_str());
+        SDL_Log("currentTime: %s ", std::to_string(currentTime).c_str());
+
+        while (currentNoteIndex < chart.size() && chart[currentNoteIndex].timeInSeconds <= currentTime) {
+            currentNoteIndex++;
+        }
     }
 }
 

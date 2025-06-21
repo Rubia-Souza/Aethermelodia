@@ -12,7 +12,10 @@
 #include <vector>
 #include <unordered_map>
 #include "AudioSystem.h"
+#include "FileReaderUtil.h"
 #include "Math.h"
+#include "GameTimer.h"
+#include "FileReaderUtil.h"
 
 class Game
 {
@@ -183,4 +186,8 @@ private:
 
     int playerScore;
     int amountCoinsCollected;
+
+    GameTimer gameTimer;
+    std::vector<Note> chart;
+    int currentNoteIndex = 0;
 };
