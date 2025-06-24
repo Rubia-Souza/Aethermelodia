@@ -67,6 +67,10 @@ add_executable(${PROJECT_NAME}
         Source/GameTimer.h
         Source/Actors/Target.cpp
         Source/Actors/Target.h
+        Source/Actors/Particle.cpp
+        Source/Actors/Particle.h
+        Source/Actors/ParticleEmitter.cpp
+        Source/Actors/ParticleEmitter.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf SDL2_mixer::SDL2_mixer)

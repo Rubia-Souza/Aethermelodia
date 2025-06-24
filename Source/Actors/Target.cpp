@@ -2,7 +2,7 @@
 #include <cmath>
 #include "../Game.h"
 
-Target::Target(Game* game, const Vector2& pos, SDL_Color color, int mSize)
+Target::Target(Game* game, SDL_Renderer* renderer, const Vector2& pos, SDL_Color color, int mSize)
     : Actor(game),
       mColor(color),
       mSize(mSize),
@@ -27,6 +27,12 @@ Target::Target(Game* game, const Vector2& pos, SDL_Color color, int mSize)
 
     // Cria DrawPolygonComponent com os vértices gerados
     mDrawComponent = new DrawPolygonComponent(this, circleVerts, 100);
+
+    Vector3 modColor = mIsActive
+    ? Vector3(1.0f, 1.0f, 1.0f)
+    : Vector3(mColor.r / 255.0f, mColor.g / 255.0f, mColor.b / 255.0f);
+
+    mDrawComponent->Draw(renderer, modColor);
 }
 
 void Target::OnUpdate(float deltaTime)

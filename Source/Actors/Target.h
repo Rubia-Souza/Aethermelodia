@@ -10,7 +10,7 @@
 class Target : public Actor
 {
 public:
-    Target(class Game* game, const Vector2& pos, SDL_Color color, int mSize = 35);
+    Target(class Game* game, SDL_Renderer* renderer, const Vector2& pos, SDL_Color color, int mSize = 35);
 
     // Desenha o círculo fixo na tela
     void Draw(SDL_Renderer* renderer) const;

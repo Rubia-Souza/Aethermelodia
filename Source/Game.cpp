@@ -234,16 +234,10 @@ void Game::ChangeScene()
         // Add a flag pole taking the entire height
         new AABBColliderComponent(flag, 30, 0, 4, TILE_SIZE * LEVEL_HEIGHT, ColliderLayer::Pole, true);
 
-        Target* redTarget = new Target(this, Vector2(mWindowWidth/3, mWindowHeight/3), SDL_Color{255, 0, 0, 255});
-        Target* redTarget2 = new Target(this, Vector2(mWindowWidth/1.5, mWindowHeight/3), SDL_Color{255, 0, 0, 255});
-        // Target* redTarget3 = new Target(this, Vector2(mWindowWidth/2.0f - 150.0f, 250.0f), SDL_Color{255, 0, 0, 255});
-        // Target* yellowTarget = new Target(this, Vector2(250.0f, 500.0f), SDL_Color{255, 255, 0, 255});
-        // // Adicione quantos quiser
-
-        redTarget->Draw(mRenderer);
-        // redTarget2->Draw(mRenderer);
-        // redTarget3->Draw(mRenderer);
-        // yellowTarget->Draw(mRenderer);
+        new Target(this, mRenderer, Vector2(mWindowWidth/3, mWindowHeight/3), SDL_Color{255, 0, 0, 255});
+        new Target(this, mRenderer, Vector2(mWindowWidth/1.5, mWindowHeight/3), SDL_Color{255, 0, 0, 255});
+        new Target(this, mRenderer, Vector2(mWindowWidth/3, mWindowHeight/1.5), SDL_Color{255, 0, 0, 255});
+        new Target(this, mRenderer, Vector2(mWindowWidth/1.5, mWindowHeight/1.5), SDL_Color{255, 255, 0, 255});
 
         // Initialize actors
         // LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
@@ -618,7 +612,7 @@ void Game::UpdateGame()
         SDL_Log("Chart lane: %s", std::to_string(chart[currentNoteIndex].lane).c_str());
         SDL_Log("currentTime: %s ", std::to_string(currentTime).c_str());
 
-        while (currentNoteIndex < chart.size() && chart[currentNoteIndex].timeInSeconds <= currentTime) {
+        while (currentNoteIndex < chart.size() && chart[currentNoteIndex].timeInSeconds <= currentTime + (mWindowWidth / 3)) {
             currentNoteIndex++;
         }
     }
