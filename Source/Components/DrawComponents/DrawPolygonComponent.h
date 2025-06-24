@@ -13,7 +13,11 @@ public:
 
     void Draw(SDL_Renderer* renderer, const Vector3 &modColor = Color::White) override;
     std::vector<Vector2>& GetVertices() { return mVertices; }
+
+    void SetColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255);
 protected:
     int mDrawOrder;
     std::vector<Vector2> mVertices;
+
+    SDL_Color mColor;
 };

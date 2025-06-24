@@ -25,6 +25,7 @@
 #include "Actors/Collectable.h"
 #include "Actors/Spawner.h"
 #include "Actors/Target.h"
+#include "Actors/Asteroid.h"
 #include "UIElements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/DrawComponents/DrawSpriteComponent.h"
@@ -212,7 +213,7 @@ void Game::ChangeScene()
         // TODO 1. Toque a música de fundo "MusicMain.ogg" em loop e armaze o SoundHandle retornado em mMusicHandle.
         // mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
-        mMusicHandle = mAudio->PlaySound("song.ogg", true);
+        // mMusicHandle = mAudio->PlaySound("song.ogg", true);
         gameTimer.start();
 
         chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/notes.chart");
@@ -234,10 +235,15 @@ void Game::ChangeScene()
         // Add a flag pole taking the entire height
         new AABBColliderComponent(flag, 30, 0, 4, TILE_SIZE * LEVEL_HEIGHT, ColliderLayer::Pole, true);
 
-        new Target(this, mRenderer, Vector2(mWindowWidth/3, mWindowHeight/3), SDL_Color{255, 0, 0, 255});
-        new Target(this, mRenderer, Vector2(mWindowWidth/1.5, mWindowHeight/3), SDL_Color{255, 0, 0, 255});
-        new Target(this, mRenderer, Vector2(mWindowWidth/3, mWindowHeight/1.5), SDL_Color{255, 0, 0, 255});
-        new Target(this, mRenderer, Vector2(mWindowWidth/1.5, mWindowHeight/1.5), SDL_Color{255, 255, 0, 255});
+        Target* target0 = new Target(this, Vector2(mWindowWidth/3.0f, mWindowHeight/3.0f), SDL_Color{0, 255, 0, 255}, 0);
+        Target* target1 = new Target(this, Vector2(mWindowWidth/1.5f, mWindowHeight/3.0f), SDL_Color{255, 0, 0, 255}, 1);
+        Target* target2 = new Target(this, Vector2(mWindowWidth/3.0f, mWindowHeight/1.5f), SDL_Color{0, 0, 255, 255}, 2);
+        Target* target3 = new Target(this, Vector2(mWindowWidth/1.5f, mWindowHeight/1.5f), SDL_Color{255, 255, 0, 255}, 3);
+
+        mTargets.emplace_back(target0);
+        mTargets.emplace_back(target1);
+        mTargets.emplace_back(target2);
+        mTargets.emplace_back(target3);
 
         // Initialize actors
         // LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
@@ -485,6 +491,36 @@ void Game::ProcessInputActors()
 
 void Game::HandleKeyPressActors(const int key, const bool isPressed)
 {
+    if(mGamePlayState == GamePlayState::Playing && isPressed)
+    {
+        switch(key)
+        {
+            // Pista Superior Esquerda
+        case SDLK_q:
+        case SDLK_LEFT: // Seta para esquerda
+            HitLane(0);
+            break;
+
+            // Pista Superior Direita
+        case SDLK_e:
+        case SDLK_UP: // Seta para cima
+            HitLane(1);
+            break;
+
+            // Pista Inferior Esquerda
+        case SDLK_a:
+        case SDLK_DOWN: // Seta para baixo
+            HitLane(2);
+            break;
+
+            // Pista Inferior Direita
+        case SDLK_d:
+        case SDLK_RIGHT: // Seta para direita
+            HitLane(3);
+            break;
+        }
+    }
+
     if(mGamePlayState == GamePlayState::Playing)
     {
         // Get actors on camera
@@ -604,17 +640,93 @@ void Game::UpdateGame()
         UpdateLevelTime(deltaTime);
     }
 
-    if (chart.size() > 0)
+    if (mGameScene == GameScene::Level1 && !chart.empty())
     {
         double currentTime = gameTimer.getSeconds();
 
-        SDL_Log("Chart timeInSeconds: %s", std::to_string(chart[currentNoteIndex].timeInSeconds).c_str());
-        SDL_Log("Chart lane: %s", std::to_string(chart[currentNoteIndex].lane).c_str());
-        SDL_Log("currentTime: %s ", std::to_string(currentTime).c_str());
+        // SDL_Log("Chart timeInSeconds: %s", std::to_string(chart[currentNoteIndex].timeInSeconds).c_str());
+        // SDL_Log("Chart lane: %s", std::to_string(chart[currentNoteIndex].lane).c_str());
+        // SDL_Log("currentTime: %s ", std::to_string(currentTime).c_str());
 
-        while (currentNoteIndex < chart.size() && chart[currentNoteIndex].timeInSeconds <= currentTime + (mWindowWidth / 3)) {
+        // Define as posições dos 4 alvos (baseado no seu código em ChangeScene)
+        std::vector<Vector2> targets;
+        targets.emplace_back(mWindowWidth/3.0f, mWindowHeight/3.0f);     // Alvo 0 (Superior Esquerdo)
+        targets.emplace_back(mWindowWidth/1.5f, mWindowHeight/3.0f);     // Alvo 1 (Superior Direito)
+        targets.emplace_back(mWindowWidth/3.0f, mWindowHeight/1.5f);     // Alvo 2 (Inferior Esquerdo)
+        targets.emplace_back(mWindowWidth/1.5f, mWindowHeight/1.5f);     // Alvo 3 (Inferior Direito)
+
+        // Este loop verifica quais notas do chart devem se tornar visíveis
+        while (currentNoteIndex < chart.size() && chart[currentNoteIndex].timeInSeconds <= currentTime + NOTE_VISIBILITY_WINDOW)
+        {
+            const auto& note = chart[currentNoteIndex];
+            int lane = note.lane;
+
+            // Se a pista for maior que 3 (0, 1, 2, 3), ignora esta nota
+            if (lane >= 4) {
+                currentNoteIndex++;
+                continue;
+            }
+
+            Vector2 spawnPos;
+            Vector2 targetPos = targets[lane];
+
+            // Define a posição de spawn baseada na pista (lane)
+            // Pistas 0 e 2 (esquerda) vêm da borda esquerda
+            // Pistas 1 e 3 (direita) vêm da borda direita
+            if (lane == 0 || lane == 2) {
+                spawnPos.x = -50.0f; // Fora da tela, à esquerda
+                spawnPos.y = targetPos.y;
+            } else { // lane == 1 || lane == 3
+                spawnPos.x = mWindowWidth + 50.0f; // Fora da tela, à direita
+                spawnPos.y = targetPos.y;
+            }
+
+            new Asteroid(this, spawnPos, targetPos, lane);
+
+            // Avança para a próxima nota no chart
             currentNoteIndex++;
         }
+    }
+
+}
+
+void Game::HitLane(int lane)
+{
+    const float HIT_WINDOW_RADIUS = 75.0f;
+    Target* hitTarget = nullptr;
+
+    for (auto target : mTargets) {
+        if (target->GetLane() == lane) {
+            hitTarget = target;
+            break;
+        }
+    }
+
+    if (!hitTarget) return;
+
+    hitTarget->Flash();
+
+    Asteroid* hittableNote = nullptr;
+    float minDistance = 10000.0f;
+    Vector2 targetPos = hitTarget->GetPosition();
+
+    for (auto ast : mAsteroids) {
+        if (ast->GetLane() == lane) {
+            float dist = (ast->GetPosition() - targetPos).Length();
+            if (dist < minDistance) {
+                minDistance = dist;
+                hittableNote = ast;
+            }
+        }
+    }
+
+    if (hittableNote && minDistance <= HIT_WINDOW_RADIUS) {
+        SDL_Log("HIT! Na pista %d", lane);
+        hittableNote->SetState(ActorState::Destroy);
+        addScore(100);
+        // mAudio->PlaySound("hit.wav");
+    } else {
+        SDL_Log("MISS! Na pista %d", lane);
     }
 }
 
@@ -708,6 +820,27 @@ void Game::UpdateCamera()
 
 void Game::UpdateActors(float deltaTime)
 {
+
+    for (size_t i = 0; i < mAsteroids.size(); ++i)
+    {
+        mAsteroids[i]->Update(deltaTime);
+    }
+
+    // Limpa os asteroides marcados para destruição
+    auto iter = mAsteroids.begin();
+    while (iter != mAsteroids.end())
+    {
+        if ((*iter)->GetState() == ActorState::Destroy)
+        {
+            delete *iter;
+            iter = mAsteroids.erase(iter);
+        }
+        else
+        {
+            ++iter;
+        }
+    }
+
     // Get actors on camera
     std::vector<Actor*> actorsOnCamera =
             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
@@ -752,6 +885,18 @@ void Game::RemoveActor(Actor* actor)
 void Game::Reinsert(Actor* actor)
 {
     mSpatialHashing->Reinsert(actor);
+}
+
+void Game::AddAsteroid(Asteroid* ast)
+{
+    mAsteroids.emplace_back(ast);
+}
+
+void Game::RemoveAsteroid(Asteroid* ast)
+{
+    if (const auto iter = std::find(mAsteroids.begin(), mAsteroids.end(), ast); iter != mAsteroids.end()) {
+        mAsteroids.erase(iter);
+    }
 }
 
 std::vector<Actor *> Game::GetNearbyActors(const Vector2& position, const int range)
@@ -932,7 +1077,7 @@ void Game::UnloadScene()
         delete ui;
     }
     mUIStack.clear();
-
+    mTargets.clear();
     // Delete background texture
     if (mBackgroundTexture) {
         SDL_DestroyTexture(mBackgroundTexture);

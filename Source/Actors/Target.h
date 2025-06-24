@@ -10,30 +10,25 @@
 class Target : public Actor
 {
 public:
-    Target(class Game* game, SDL_Renderer* renderer, const Vector2& pos, SDL_Color color, int mSize = 35);
+    // Construtor principal
+    Target(class Game* game, const Vector2& pos, SDL_Color color, int lane, int size = 50);
 
-    // Desenha o círculo fixo na tela
-    void Draw(SDL_Renderer* renderer) const;
+    // Atualiza o estado do flash a cada frame
+    void OnUpdate(float deltaTime) override;
 
-    // Define se está ativo (pressionado pelo jogador)
-    void SetActive(bool active);
-    bool IsActive() const;
+    // Aciona o efeito de flash
+    void Flash();
 
-    // Propriedades de aparência
-    void SetColor(SDL_Color color) { mColor = color; }
-    SDL_Color GetColor() const { return mColor; }
-
-    void SetRadius(float r) { mRadius = r; }
-    float GetRadius() const { return mRadius; }
-
-protected:
-    virtual void OnUpdate(float deltaTime) override;
+    // Retorna a qual pista (lane) este alvo pertence
+    int GetLane() const { return mLane; }
 
 private:
-    SDL_Color mColor;
-    float mRadius;
-    bool mIsActive;
+    // Ponteiro para o componente que nos desenha (para podermos mudar a cor)
+    class DrawPolygonComponent* mDrawComponent;
 
-    int mSize;
-    DrawComponent* mDrawComponent;
+    // Propriedades do alvo
+    SDL_Color mOriginalColor;
+    int mLane;
+    bool mIsFlashing;
+    float mFlashTimer;
 };

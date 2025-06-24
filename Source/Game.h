@@ -16,6 +16,11 @@
 #include "Math.h"
 #include "GameTimer.h"
 #include "FileReaderUtil.h"
+#include "Actors/Target.h"
+
+// Constantes para a jogabilidade do ritmo
+const float NOTE_VISIBILITY_WINDOW = 3.0f; // Notas aparecerão 3 segundos antes do tempo de acerto
+const float NOTE_TARGET_Y_POS = 650.0f;    // Posição Y onde as notas devem ser acertadas
 
 class Game
 {
@@ -117,6 +122,12 @@ public:
     void addScore(int points);
 
     void IncrementAmountOfCoins();
+\
+    void AddAsteroid(class Asteroid* ast);
+    void RemoveAsteroid(class Asteroid* ast);
+    std::vector<class Asteroid*>& GetAsteroids() { return mAsteroids; }
+
+    void HitLane(int lane);
 
 private:
     void ProcessInput();
@@ -190,4 +201,7 @@ private:
     GameTimer gameTimer;
     std::vector<Note> chart;
     int currentNoteIndex = 0;
+
+    std::vector<class Asteroid*> mAsteroids;
+    std::vector<Target*> mTargets;
 };

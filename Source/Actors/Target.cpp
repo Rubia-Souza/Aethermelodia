@@ -2,60 +2,58 @@
 #include <cmath>
 #include "../Game.h"
 
-Target::Target(Game* game, SDL_Renderer* renderer, const Vector2& pos, SDL_Color color, int mSize)
-    : Actor(game),
-      mColor(color),
-      mSize(mSize),
-      mIsActive(false),
-      mRadius(static_cast<float>(mSize))
+Target::Target(Game* game, const Vector2& pos, SDL_Color color, int lane, int size)
+    : Actor(game)
+    , mOriginalColor(color)
+    , mLane(lane)
+    , mIsFlashing(false)
+    , mFlashTimer(0.0f)
 {
     SetPosition(pos);
-    SetScale(1.0f);
 
-    // Gera vértices de um círculo
+    // Gera os vértices de um círculo
     const int segments = 32;
+    float radius = static_cast<float>(size);
     const float angleStep = 2.0f * static_cast<float>(M_PI) / segments;
     std::vector<Vector2> circleVerts;
-
     for (int i = 0; i < segments; ++i)
     {
         float angle = i * angleStep;
-        float x = cosf(angle) * mRadius;
-        float y = sinf(angle) * mRadius;
-        circleVerts.emplace_back(x, y);
+        circleVerts.emplace_back(radius * cosf(angle), radius * sinf(angle));
     }
 
-    // Cria DrawPolygonComponent com os vértices gerados
-    mDrawComponent = new DrawPolygonComponent(this, circleVerts, 100);
-
-    Vector3 modColor = mIsActive
-    ? Vector3(1.0f, 1.0f, 1.0f)
-    : Vector3(mColor.r / 255.0f, mColor.g / 255.0f, mColor.b / 255.0f);
-
-    mDrawComponent->Draw(renderer, modColor);
+    // Cria o componente de desenho e guarda o ponteiro
+    mDrawComponent = new DrawPolygonComponent(this, circleVerts);
+    // Define a cor inicial do componente
+    mDrawComponent->SetColor(mOriginalColor.r, mOriginalColor.g, mOriginalColor.b);
 }
 
 void Target::OnUpdate(float deltaTime)
 {
-    // Nada necessário por enquanto
+    Actor::OnUpdate(deltaTime); // Chama o update da classe base
+
+    // Se o alvo está no meio de um "flash"
+    if (mIsFlashing)
+    {
+        mFlashTimer -= deltaTime;
+        if (mFlashTimer <= 0.0f)
+        {
+            mIsFlashing = false;
+            mFlashTimer = 0.0f;
+            // O flash acabou, volta para a cor original
+            mDrawComponent->SetColor(mOriginalColor.r, mOriginalColor.g, mOriginalColor.b);
+        }
+    }
 }
 
-void Target::Draw(SDL_Renderer* renderer) const
+void Target::Flash()
 {
-    // Deixe o componente desenhar — cor pode ser passada como modColor
-    Vector3 modColor = mIsActive
-        ? Vector3(1.0f, 1.0f, 1.0f) // branco quando pressionado
-        : Vector3(mColor.r / 255.0f, mColor.g / 255.0f, mColor.b / 255.0f);
-
-    mDrawComponent->Draw(renderer, modColor);
-}
-
-void Target::SetActive(bool active)
-{
-    mIsActive = active;
-}
-
-bool Target::IsActive() const
-{
-    return mIsActive;
+    // Só inicia um novo flash se não estiver piscando no momento
+    if (!mIsFlashing)
+    {
+        mIsFlashing = true;
+        mFlashTimer = 0.15f; // Duração do flash em segundos
+        // Define a cor do componente para branco
+        mDrawComponent->SetColor(255, 255, 255);
+    }
 }
