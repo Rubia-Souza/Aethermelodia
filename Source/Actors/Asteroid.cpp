@@ -61,11 +61,15 @@ void Asteroid::Update(float deltaTime)
     Vector2 currentPos = GetPosition();
     Vector2 velocity = mRigidBodyComponent->GetVelocity();
 
+    // O raio do nosso alvo, que usaremos como margem.
+    // O construtor do Target usa 50 como tamanho padrão.
+    const float targetRadius = 50.0f;
+
     // Caso 1: O asteroide está se movendo para a DIREITA
     if (velocity.x > 0.0f)
     {
-        // Usa >= para cobrir o caso de aterrissar exatamente no alvo.
-        if (currentPos.x >= mTargetPos.x)
+        // destrói se a posição X passar do centro do alvo + seu raio (a borda direita)
+        if (currentPos.x >= (mTargetPos.x + targetRadius))
         {
             SetState(ActorState::Destroy);
         }
@@ -73,8 +77,8 @@ void Asteroid::Update(float deltaTime)
     // Caso 2: O asteroide está se movendo para a ESQUERDA
     else if (velocity.x < 0.0f)
     {
-        // Usa <= para cobrir o caso de aterrissar exatamente no alvo.
-        if (currentPos.x <= mTargetPos.x)
+        // destrói se passar do centro do alvo - seu raio (a borda esquerda)
+        if (currentPos.x <= (mTargetPos.x - targetRadius))
         {
             SetState(ActorState::Destroy);
         }

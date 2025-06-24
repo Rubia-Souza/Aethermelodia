@@ -826,21 +826,6 @@ void Game::UpdateActors(float deltaTime)
         mAsteroids[i]->Update(deltaTime);
     }
 
-    // Limpa os asteroides marcados para destruição
-    auto iter = mAsteroids.begin();
-    while (iter != mAsteroids.end())
-    {
-        if ((*iter)->GetState() == ActorState::Destroy)
-        {
-            delete *iter;
-            iter = mAsteroids.erase(iter);
-        }
-        else
-        {
-            ++iter;
-        }
-    }
-
     // Get actors on camera
     std::vector<Actor*> actorsOnCamera =
             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);

@@ -11,7 +11,6 @@ Target::Target(Game* game, const Vector2& pos, SDL_Color color, int lane, int si
 {
     SetPosition(pos);
 
-    // Gera os vértices de um círculo
     const int segments = 32;
     float radius = static_cast<float>(size);
     const float angleStep = 2.0f * static_cast<float>(M_PI) / segments;
@@ -22,15 +21,13 @@ Target::Target(Game* game, const Vector2& pos, SDL_Color color, int lane, int si
         circleVerts.emplace_back(radius * cosf(angle), radius * sinf(angle));
     }
 
-    // Cria o componente de desenho e guarda o ponteiro
     mDrawComponent = new DrawPolygonComponent(this, circleVerts);
-    // Define a cor inicial do componente
     mDrawComponent->SetColor(mOriginalColor.r, mOriginalColor.g, mOriginalColor.b);
 }
 
 void Target::OnUpdate(float deltaTime)
 {
-    Actor::OnUpdate(deltaTime); // Chama o update da classe base
+    Actor::OnUpdate(deltaTime);
 
     // Se o alvo está no meio de um "flash"
     if (mIsFlashing)
