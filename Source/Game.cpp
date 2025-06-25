@@ -59,6 +59,7 @@ Game::Game(int windowWidth, int windowHeight)
         ,playerScore(0)
         ,mFadeState(FadeState::None)
         ,amountCoinsCollected(0)
+        , mMusicStartOffset(2.5f)
 {
 
 }
@@ -213,10 +214,10 @@ void Game::ChangeScene()
         // TODO 1. Toque a música de fundo "MusicMain.ogg" em loop e armaze o SoundHandle retornado em mMusicHandle.
         // mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
-        // mMusicHandle = mAudio->PlaySound("song.ogg", true);
+        mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
 
-        chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/notes.chart");
+        chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/easy-notes.chart");
         SDL_Log("[INFO] Loading chart ");
 
         // Set background color
@@ -642,7 +643,7 @@ void Game::UpdateGame()
 
     if (mGameScene == GameScene::Level1 && !chart.empty())
     {
-        double currentTime = gameTimer.getSeconds();
+        double currentTime = gameTimer.getSeconds() - mMusicStartOffset;
 
         // SDL_Log("Chart timeInSeconds: %s", std::to_string(chart[currentNoteIndex].timeInSeconds).c_str());
         // SDL_Log("Chart lane: %s", std::to_string(chart[currentNoteIndex].lane).c_str());

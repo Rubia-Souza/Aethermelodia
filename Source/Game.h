@@ -204,4 +204,5 @@ private:
 
     std::vector<class Asteroid*> mAsteroids;
     std::vector<Target*> mTargets;
+    float mMusicStartOffset;
 };
