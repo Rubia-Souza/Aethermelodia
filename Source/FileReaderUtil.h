@@ -10,17 +10,21 @@
 #include <iostream>
 #include <sstream>
 
-// Estrutura para uma nota no jogo
 struct Note {
     double timeInSeconds; // O tempo da nota em segundos desde o início da música
     int lane;             // Trilha/Cor da nota (0-4)
     double durationInSeconds; // Duração em segundos (para notas longas)
 };
 
-// Estrutura para um evento de mudança de BPM
 struct BpmChangeEvent {
     int tick;
     double bpm;
+};
+
+struct RawNoteData {
+    int tick;
+    int lane;
+    int durationTicks;
 };
 
 class FileReaderUtil
