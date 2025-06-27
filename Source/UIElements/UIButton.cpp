@@ -3,6 +3,7 @@
 //
 
 #include "UIButton.h"
+#include "UIScreen.h"
 
 UIButton::UIButton(const std::string& text, class UIFont* font, std::function<void()> onClick,
                     const Vector2& pos, const Vector2& size, const Vector3& color,
@@ -42,8 +43,16 @@ void UIButton::Draw(SDL_Renderer *renderer, const Vector2 &screenPos)
     //  retângulo como laranja (200, 100, 0, 255) usando SDL_SetRenderDrawColor. Em seguida,
     //  desenhe o retângulo usando SDL_RenderFillRect com o renderer passado como parâmetro.
     if (mHighlighted) {
-        SDL_SetRenderDrawColor(renderer, 200, 100, 0, 255);
+        SDL_SetRenderDrawColor(renderer, 0, 153, 153, 255);
         SDL_RenderFillRect(renderer, &titleQuad);
+
+        Vector2 mushroomIcon;
+        mushroomIcon.x = titleQuad.x + 12;
+        mushroomIcon.y = static_cast<float>(titleQuad.y) + (static_cast<float>(titleQuad.h) - 22) * 0.5f;
+        Vector2 mushroomSize = Vector2(22.0f, 22.0f);
+
+        UIImage tempCoinImage(renderer, "../Assets/Sprites/Lute/Lute.png", mushroomIcon, mushroomSize);
+        tempCoinImage.Draw(renderer, Vector2::Zero);
     }
 
     // TODO 3.: Desenhe o texto do botão usando o método Draw da classe UIText. Use posição relativa ao botão, ou seja,

@@ -214,8 +214,8 @@ void Game::ChangeScene()
         // TODO 1. Toque a música de fundo "MusicMain.ogg" em loop e armaze o SoundHandle retornado em mMusicHandle.
         // mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
-        mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
-        gameTimer.start();
+        // mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
+        // gameTimer.start();
 
         chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/easy-notes.chart");
         SDL_Log("[INFO] Loading chart ");
@@ -290,18 +290,14 @@ void Game::ChangeScene()
 
 void Game::LoadMainMenu()
 {
-    // --------------
-    // TODO - PARTE 1
-    // --------------
-
-    // Esse método será usado para criar uma tela de UI e adicionar os elementos do menu principal.
     auto mainMenu = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
-    auto menuBackground = mainMenu->AddImage("../Assets/Sprites/Menu_Background.png", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
-    auto menuLogo = mainMenu->AddImage("../Assets/Sprites/Logo.png", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176), Color::White);
-    auto button1 = mainMenu->AddButton("1 Player Game", Vector2(mWindowWidth/2.0f - 150.0f, 250.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(200, 15));
-    auto button2 = mainMenu->AddButton("2 Player Game", Vector2(mWindowWidth/2.0f - 150.0f, 300.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level2); }, Vector2(200, 15));
-    auto text1 = mainMenu->AddText("TOP - 000000", Vector2(mWindowWidth/2.0f - 100.0f, 370.0f), Vector2(200.0f, 20.0f));
-    auto text2 = mainMenu->AddText("1985 Nintendo", Vector2(270, 215), Vector2(200.0f, 10.0f));
+
+    auto menuBackground = mainMenu->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
+    auto title = mainMenu->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
+
+    auto button1 = mainMenu->AddButton("Play Game", Vector2(mWindowWidth/2.0f - 150.0f, 400.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(180, 15));
+    auto button2 = mainMenu->AddButton("How to Play", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level2); }, Vector2(160, 15));
+    auto button3 = mainMenu->AddButton("Credits", Vector2(mWindowWidth/2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level2); }, Vector2(120, 15));
 }
 
 void Game::LoadLevel(const std::string& levelName, const int levelWidth, const int levelHeight)
