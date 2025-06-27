@@ -194,6 +194,7 @@ void Game::ChangeScene()
     }
     else if (mNextScene == GameScene::Level1)
     {
+        mAudio->StopAllSounds(); // Para a musica do menu
         // --------------
         // TODO - PARTE 3
         // --------------
@@ -214,8 +215,8 @@ void Game::ChangeScene()
         // TODO 1. Toque a música de fundo "MusicMain.ogg" em loop e armaze o SoundHandle retornado em mMusicHandle.
         // mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
 
-        // mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
-        // gameTimer.start();
+        mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
+        gameTimer.start();
 
         chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/easy-notes.chart");
         SDL_Log("[INFO] Loading chart ");
@@ -291,6 +292,7 @@ void Game::ChangeScene()
 void Game::LoadMainMenu()
 {
     auto mainMenu = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+    mAudio->PlaySound("Escape-of-Tower-Ending-Theme-1.ogg", true);
 
     auto menuBackground = mainMenu->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
     auto title = mainMenu->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
