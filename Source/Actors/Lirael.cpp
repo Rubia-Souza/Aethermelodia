@@ -39,26 +39,26 @@ Lirael::Lirael(Game* game, const float forwardSpeed, const float jumpSpeed)
 
 void Lirael::OnProcessInput(const uint8_t* state)
 {
-    if(mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
-
-    if (state[SDL_SCANCODE_D])
-    {
-        mRigidBodyComponent->ApplyForce(Vector2::UnitX * mForwardSpeed);
-        mRotation = 0.0f;
-        mIsRunning = true;
-    }
-
-    if (state[SDL_SCANCODE_A])
-    {
-        mRigidBodyComponent->ApplyForce(Vector2::UnitX * -mForwardSpeed);
-        mRotation = Math::Pi;
-        mIsRunning = true;
-    }
-
-    if (!state[SDL_SCANCODE_D] && !state[SDL_SCANCODE_A])
-    {
-        mIsRunning = false;
-    }
+    // if(mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
+    //
+    // if (state[SDL_SCANCODE_D])
+    // {
+    //     mRigidBodyComponent->ApplyForce(Vector2::UnitX * mForwardSpeed);
+    //     mRotation = 0.0f;
+    //     mIsRunning = true;
+    // }
+    //
+    // if (state[SDL_SCANCODE_A])
+    // {
+    //     mRigidBodyComponent->ApplyForce(Vector2::UnitX * -mForwardSpeed);
+    //     mRotation = Math::Pi;
+    //     mIsRunning = true;
+    // }
+    //
+    // if (!state[SDL_SCANCODE_D] && !state[SDL_SCANCODE_A])
+    // {
+    //     mIsRunning = false;
+    // }
 }
 
 void Lirael::OnHandleKeyPress(const int key, const bool isPressed)

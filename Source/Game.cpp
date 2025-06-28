@@ -224,7 +224,7 @@ void Game::ChangeScene()
         mTargets.emplace_back(target3);
 
         mLirael = new Lirael(this);
-        mLirael->SetPosition(Vector2(0, 0));
+        mLirael->SetPosition(Vector2(mWindowWidth * 0.47, 0)); // 0.47 para começar entre os targets
     }
     else if (mNextScene == GameScene::Level2)
     {
@@ -466,24 +466,25 @@ void Game::ProcessInputActors()
 
 void Game::HandleKeyPressActors(const int key, const bool isPressed)
 {
+
     if(mGamePlayState == GamePlayState::Playing && isPressed)
     {
         switch(key)
         {
             // Pista Superior Esquerda
-        case SDLK_q:
+        case SDLK_a:
         case SDLK_LEFT: // Seta para esquerda
             HitLane(0);
             break;
 
             // Pista Superior Direita
-        case SDLK_e:
+        case SDLK_f:
         case SDLK_UP: // Seta para cima
             HitLane(1);
             break;
 
             // Pista Inferior Esquerda
-        case SDLK_a:
+        case SDLK_s:
         case SDLK_DOWN: // Seta para baixo
             HitLane(2);
             break;
@@ -496,28 +497,28 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
         }
     }
 
-    if(mGamePlayState == GamePlayState::Playing)
-    {
-        // Get actors on camera
-        std::vector<Actor*> actorsOnCamera =
-                mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
-
-        // Handle key press for actors
-        bool isLiraelOnCamera = false;
-        for (auto actor: actorsOnCamera) {
-            actor->HandleKeyPress(key, isPressed);
-
-            if (actor == mLirael) {
-                isLiraelOnCamera = true;
-            }
-        }
-
-        // If Mario is not on camera, handle key press for him
-        if (!isLiraelOnCamera && mLirael)
-        {
-            mLirael->HandleKeyPress(key, isPressed);
-        }
-    }
+    // if(mGamePlayState == GamePlayState::Playing)
+    // {
+    //     // Get actors on camera
+    //     std::vector<Actor*> actorsOnCamera =
+    //             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
+    //
+    //     // Handle key press for actors
+    //     bool isLiraelOnCamera = false;
+    //     for (auto actor: actorsOnCamera) {
+    //         actor->HandleKeyPress(key, isPressed);
+    //
+    //         if (actor == mLirael) {
+    //             isLiraelOnCamera = true;
+    //         }
+    //     }
+    //
+    //     // If Mario is not on camera, handle key press for him
+    //     if (!isLiraelOnCamera && mLirael)
+    //     {
+    //         mLirael->HandleKeyPress(key, isPressed);
+    //     }
+    // }
 
 }
 
@@ -707,10 +708,6 @@ void Game::HitLane(int lane)
 
 void Game::UpdateSceneManager(float deltaTime)
 {
-    // --------------
-    // TODO - PARTE 2
-    // --------------
-
     if (mFadeState == FadeState::FadeOut)
     {
         mFadeTime += deltaTime;
@@ -729,9 +726,6 @@ void Game::UpdateSceneManager(float deltaTime)
         }
     }
 
-    // TODO 1.: Verifique se o estado do SceneManager é SceneManagerState::Entering. Se sim, decremente o mSceneManagerTimer
-    //  usando o deltaTime. Em seguida, verifique se o mSceneManagerTimer é menor ou igual a 0. Se for, reinicie o
-    //  mSceneManagerTimer para TRANSITION_TIME e mude o estado do SceneManager para SceneManagerState::Active.
     if (mSceneManagerState == SceneManagerState::Entering) {
         mSceneManagerTimer -= deltaTime;
         if (mSceneManagerTimer <= 0) {
@@ -741,9 +735,6 @@ void Game::UpdateSceneManager(float deltaTime)
         }
     }
 
-    // TODO 2.: Verifique se o estado do SceneManager é SceneManagerState::Active. Se sim, decremente o mSceneManagerTimer
-    //  usando o deltaTime. Em seguida, verifique se o mSceneManagerTimer é menor ou igual a 0. Se for, chame ChangeScene()
-    //  e mude o estado do SceneManager para SceneManagerState::None.
     if (mSceneManagerState == SceneManagerState::Active) {
         mSceneManagerTimer -= deltaTime;
         if (mSceneManagerTimer <= 0) {
@@ -751,20 +742,10 @@ void Game::UpdateSceneManager(float deltaTime)
             mSceneManagerState = SceneManagerState::None;
         }
     }
-
-    // TODO 3.: Remova a chamada da função ChangeScene() do método Initialize(), pois ela será chamada automaticamente
-    //  durante o UpdateSceneManager() quando o estado do SceneManager for SceneManagerState::Active.
 }
 
 void Game::UpdateLevelTime(float deltaTime)
 {
-    // --------------
-    // TODO - PARTE 3
-    // --------------
-
-    // TODO 1.: Incremente o mGameTimer com o deltaTime. Se o mGameTimer for maior ou igual a 1.0 segundos,
-    //  reinicie o mGameTimer para 0.0f e decremente o mGameTimeLimit de um e atualize o HUD com o novo tempo.
-    //  Se o mGameTimeLimit for menor ou igual a 0, mate o Mario chamando mMario->Kill().
     mGameTimer += deltaTime;
     if (mGameTimer >= 1.0) {
         mGameTimer = 0.0f;
