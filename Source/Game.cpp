@@ -28,11 +28,11 @@
 #include "Actors/Asteroid.h"
 #include "UIElements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
-#include "Components/DrawComponents/DrawSpriteComponent.h"
-#include "Components/DrawComponents/DrawPolygonComponent.h"
 #include "Components/ColliderComponents/AABBColliderComponent.h"
 #include "GameTimer.h"
 #include "FileReaderUtil.h"
+#include "Actors/Lirael.h"
+#include "Actors/Ground.h"
 
 Game::Game(int windowWidth, int windowHeight)
         :mWindow(nullptr)
@@ -42,6 +42,7 @@ Game::Game(int windowWidth, int windowHeight)
         ,mWindowWidth(windowWidth)
         ,mWindowHeight(windowHeight)
         ,mMario(nullptr)
+        ,mLirael(nullptr)
         ,mHUD(nullptr)
         ,mBackgroundColor(0, 0, 0)
         ,mModColor(255, 255, 255)
@@ -210,6 +211,7 @@ void Game::ChangeScene()
         chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/easy-notes.chart");
 
         SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(0,0), Vector2(mWindowWidth,mWindowHeight));
+        for (int i = 0; i < (mWindowWidth / Game::TILE_SIZE + 1); i++) new Ground(this, Vector2(i * Game::TILE_SIZE,  PLAYABLE_AREA_HEIGHT - 10)); // Chao em blocos por conta do mSpatialHashing
 
         auto target0 = new Target(this, Vector2(mXPosLeft, mYPosBottom), SDL_Color{0, 255, 0, 255}, 0, 30);
         auto target1 = new Target(this, Vector2(mXPosRight, mYPosBottom), SDL_Color{255, 0, 0, 255}, 1, 30);
@@ -220,6 +222,9 @@ void Game::ChangeScene()
         mTargets.emplace_back(target1);
         mTargets.emplace_back(target2);
         mTargets.emplace_back(target3);
+
+        mLirael = new Lirael(this);
+        mLirael->SetPosition(Vector2(0, 0));
     }
     else if (mNextScene == GameScene::Level2)
     {
@@ -442,19 +447,19 @@ void Game::ProcessInputActors()
 
         const Uint8* state = SDL_GetKeyboardState(nullptr);
 
-        bool isMarioOnCamera = false;
+        bool isLiraelOnCamera = false;
         for (auto actor: actorsOnCamera)
         {
             actor->ProcessInput(state);
 
-            if (actor == mMario) {
-                isMarioOnCamera = true;
+            if (actor == mLirael) {
+                isLiraelOnCamera = true;
             }
         }
 
-        // If Mario is not on camera, process input for him
-        if (!isMarioOnCamera && mMario) {
-            mMario->ProcessInput(state);
+        // If Lirael is not on camera, process input for him
+        if (!isLiraelOnCamera && mLirael) {
+            mLirael->ProcessInput(state);
         }
     }
 }
@@ -498,19 +503,19 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
                 mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
 
         // Handle key press for actors
-        bool isMarioOnCamera = false;
+        bool isLiraelOnCamera = false;
         for (auto actor: actorsOnCamera) {
             actor->HandleKeyPress(key, isPressed);
 
-            if (actor == mMario) {
-                isMarioOnCamera = true;
+            if (actor == mLirael) {
+                isLiraelOnCamera = true;
             }
         }
 
         // If Mario is not on camera, handle key press for him
-        if (!isMarioOnCamera && mMario)
+        if (!isLiraelOnCamera && mLirael)
         {
-            mMario->HandleKeyPress(key, isPressed);
+            mLirael->HandleKeyPress(key, isPressed);
         }
     }
 
@@ -591,7 +596,7 @@ void Game::UpdateGame()
     // ---------------------
     // Game Specific Updates
     // ---------------------
-    UpdateCamera();
+    // UpdateCamera();
 
     // --------------
     // TODO - PARTE 2
@@ -767,16 +772,16 @@ void Game::UpdateLevelTime(float deltaTime)
         mHUD->SetTime(mGameTimeLimit);
 
         if (mGameTimeLimit <= 0) {
-            mMario->Kill();
+            mLirael->Kill();
         }
     }
 }
 
 void Game::UpdateCamera()
 {
-    if (!mMario) return;
+    if (!mLirael) return;
 
-    float horizontalCameraPos = mMario->GetPosition().x - (mWindowWidth / 2.0f);
+    float horizontalCameraPos = mLirael->GetPosition().x - (mWindowWidth / 2.0f);
 
     if (horizontalCameraPos > mCameraPos.x)
     {
@@ -804,16 +809,16 @@ void Game::UpdateActors(float deltaTime)
     for (auto actor : actorsOnCamera)
     {
         actor->Update(deltaTime);
-        if (actor == mMario)
+        if (actor == mLirael)
         {
             isMarioOnCamera = true;
         }
     }
 
     // If Mario is not on camera, reset camera position
-    if (!isMarioOnCamera && mMario)
+    if (!isMarioOnCamera && mLirael)
     {
-        mMario->Update(deltaTime);
+        mLirael->Update(deltaTime);
     }
 
     for (auto actor : actorsOnCamera)
@@ -821,8 +826,8 @@ void Game::UpdateActors(float deltaTime)
         if (actor->GetState() == ActorState::Destroy)
         {
             delete actor;
-            if (actor == mMario) {
-                mMario = nullptr;
+            if (actor == mLirael) {
+                mLirael = nullptr;
             }
         }
     }

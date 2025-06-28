@@ -15,7 +15,6 @@
 #include "FileReaderUtil.h"
 #include "Math.h"
 #include "GameTimer.h"
-#include "Actors/Target.h"
 
 class Game
 {
@@ -28,7 +27,7 @@ public:
     static const int FADE_TIME = 3;
 
     static const int CELL_SIZE = 128; // grades de 128x128, os objetos serao de 64x64 - esse valor pode mudar
-    static const int PLAYABLE_AREA_HEIGHT = 530; // Altura em pixels onde o chão termina.
+    static const int PLAYABLE_AREA_HEIGHT = 650; // Altura em pixels onde o chão termina (grama escura).
 
     // Constantes para a jogabilidade do ritmo
     const float NOTE_VISIBILITY_WINDOW = 3.0f; // Notas aparecerão 3 segundos antes do tempo de acerto
@@ -206,11 +205,13 @@ private:
     float mXPosLeft;
     float mXPosRight;
 
+    class Lirael *mLirael;
+
     GameTimer gameTimer;
     std::vector<Note> chart;
     int currentNoteIndex = 0;
 
     std::vector<class Asteroid*> mAsteroids;
-    std::vector<Target*> mTargets;
+    std::vector<class Target*> mTargets;
     float mMusicStartOffset;
 };
