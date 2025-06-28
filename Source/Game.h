@@ -15,12 +15,7 @@
 #include "FileReaderUtil.h"
 #include "Math.h"
 #include "GameTimer.h"
-#include "FileReaderUtil.h"
 #include "Actors/Target.h"
-
-// Constantes para a jogabilidade do ritmo
-const float NOTE_VISIBILITY_WINDOW = 3.0f; // Notas aparecerão 3 segundos antes do tempo de acerto
-const float NOTE_TARGET_Y_POS = 650.0f;    // Posição Y onde as notas devem ser acertadas
 
 class Game
 {
@@ -31,6 +26,13 @@ public:
     static const int SPAWN_DISTANCE = 700;
     static const int TRANSITION_TIME = 1;
     static const int FADE_TIME = 3;
+
+    static const int CELL_SIZE = 128; // grades de 128x128, os objetos serao de 64x64 - esse valor pode mudar
+    static const int PLAYABLE_AREA_HEIGHT = 530; // Altura em pixels onde o chão termina.
+
+    // Constantes para a jogabilidade do ritmo
+    const float NOTE_VISIBILITY_WINDOW = 3.0f; // Notas aparecerão 3 segundos antes do tempo de acerto
+    const float NOTE_TARGET_Y_POS = 650.0f;    // Posição Y onde as notas devem ser acertadas
 
     enum class GameScene
     {
@@ -197,6 +199,12 @@ private:
 
     int playerScore;
     int amountCoinsCollected;
+
+    // Definicao de targets e direcao de inimigos
+    float mYPosTop;
+    float mYPosBottom;
+    float mXPosLeft;
+    float mXPosRight;
 
     GameTimer gameTimer;
     std::vector<Note> chart;

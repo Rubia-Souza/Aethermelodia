@@ -63,7 +63,6 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Collectable.h
         Source/FileReaderUtil.cpp
         Source/FileReaderUtil.h
-        Source/GameTimer.cpp
         Source/GameTimer.h
         Source/Actors/Target.cpp
         Source/Actors/Target.h

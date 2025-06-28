@@ -59,7 +59,11 @@ Game::Game(int windowWidth, int windowHeight)
         ,playerScore(0)
         ,mFadeState(FadeState::None)
         ,amountCoinsCollected(0)
-        , mMusicStartOffset(2.5f)
+        ,mMusicStartOffset(2.5f)
+        ,mYPosTop(windowHeight * 0.70f)
+        ,mYPosBottom(windowHeight * 0.85f)
+        ,mXPosLeft(windowWidth * 0.42f)
+        ,mXPosRight(windowWidth * 0.58f)
 {
 
 }
@@ -178,7 +182,7 @@ void Game::ChangeScene()
     mGamePlayState = GamePlayState::Playing;
 
     // Reset scene manager state
-    mSpatialHashing = new SpatialHashing(TILE_SIZE * 4.0f, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE);
+    mSpatialHashing = new SpatialHashing(CELL_SIZE, mWindowWidth, PLAYABLE_AREA_HEIGHT);
 
     playerScore = 0;
     amountCoinsCollected = 0;
@@ -194,61 +198,28 @@ void Game::ChangeScene()
     }
     else if (mNextScene == GameScene::Level1)
     {
-        mAudio->StopAllSounds(); // Para a musica do menu
-        // --------------
-        // TODO - PARTE 3
-        // --------------
-
-        // TODO 1.: Crie um novo objeto HUD, passando o ponteiro do Game e o caminho para a fonte SMB.ttf.
+        mAudio->StopAllSounds();
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
 
-        // TODO 2.: Altere o atributo mGameTimeLimit para 400 (400 segundos) e ajuste o HUD com esse tempo inicial.
-        //  Em seguida, altere o nome do nível para "1-1" no HUD.
         mGameTimeLimit = 400;
         mHUD->SetTime(mGameTimeLimit);
         mHUD->SetLevelName("1-1");
 
-        // --------------
-        // TODO - PARTE 4
-        // --------------
-
-        // TODO 1. Toque a música de fundo "MusicMain.ogg" em loop e armaze o SoundHandle retornado em mMusicHandle.
-        // mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
-
-        mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
+        // mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
-
         chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/easy-notes.chart");
-        SDL_Log("[INFO] Loading chart ");
 
-        // Set background color
-        mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
+        SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(0,0), Vector2(mWindowWidth,mWindowHeight));
 
-        // Set background color
-        // SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(TILE_SIZE,0), Vector2(6784,448));
-
-        // Draw Flag
-        auto flag = new Actor(this);
-        flag->SetPosition(Vector2(LEVEL_WIDTH * TILE_SIZE - (16 * TILE_SIZE) - 16, 3 * TILE_SIZE));
-
-        // Add a flag sprite
-        new DrawSpriteComponent(flag, "../Assets/Sprites/Background_Flag.png", 32.0f, 32.0f, 1);
-
-        // Add a flag pole taking the entire height
-        new AABBColliderComponent(flag, 30, 0, 4, TILE_SIZE * LEVEL_HEIGHT, ColliderLayer::Pole, true);
-
-        Target* target0 = new Target(this, Vector2(mWindowWidth/3.0f, mWindowHeight/3.0f), SDL_Color{0, 255, 0, 255}, 0);
-        Target* target1 = new Target(this, Vector2(mWindowWidth/1.5f, mWindowHeight/3.0f), SDL_Color{255, 0, 0, 255}, 1);
-        Target* target2 = new Target(this, Vector2(mWindowWidth/3.0f, mWindowHeight/1.5f), SDL_Color{0, 0, 255, 255}, 2);
-        Target* target3 = new Target(this, Vector2(mWindowWidth/1.5f, mWindowHeight/1.5f), SDL_Color{255, 255, 0, 255}, 3);
+        auto target0 = new Target(this, Vector2(mXPosLeft, mYPosBottom), SDL_Color{0, 255, 0, 255}, 0, 30);
+        auto target1 = new Target(this, Vector2(mXPosRight, mYPosBottom), SDL_Color{255, 0, 0, 255}, 1, 30);
+        auto target2 = new Target(this, Vector2(mXPosLeft, mYPosTop), SDL_Color{0, 0, 255, 255}, 2, 30);
+        auto target3 = new Target(this, Vector2(mXPosRight, mYPosTop), SDL_Color{255, 255, 0, 255}, 3, 30);
 
         mTargets.emplace_back(target0);
         mTargets.emplace_back(target1);
         mTargets.emplace_back(target2);
         mTargets.emplace_back(target3);
-
-        // Initialize actors
-        // LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
     }
     else if (mNextScene == GameScene::Level2)
     {
@@ -292,7 +263,7 @@ void Game::ChangeScene()
 void Game::LoadMainMenu()
 {
     auto mainMenu = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
-    mAudio->PlaySound("Escape-of-Tower-Ending-Theme-1.ogg", true);
+    // mAudio->PlaySound("Escape-of-Tower-Ending-Theme-1.ogg", true);
 
     auto menuBackground = mainMenu->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
     auto title = mainMenu->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
@@ -649,10 +620,10 @@ void Game::UpdateGame()
 
         // Define as posições dos 4 alvos (baseado no seu código em ChangeScene)
         std::vector<Vector2> targets;
-        targets.emplace_back(mWindowWidth/3.0f, mWindowHeight/3.0f);     // Alvo 0 (Superior Esquerdo)
-        targets.emplace_back(mWindowWidth/1.5f, mWindowHeight/3.0f);     // Alvo 1 (Superior Direito)
-        targets.emplace_back(mWindowWidth/3.0f, mWindowHeight/1.5f);     // Alvo 2 (Inferior Esquerdo)
-        targets.emplace_back(mWindowWidth/1.5f, mWindowHeight/1.5f);     // Alvo 3 (Inferior Direito)
+        targets.emplace_back(mXPosLeft, mYPosTop);     // Alvo 0 (Superior Esquerdo)
+        targets.emplace_back(mXPosRight, mYPosTop);     // Alvo 1 (Superior Direito)
+        targets.emplace_back(mXPosLeft, mYPosBottom);     // Alvo 2 (Inferior Esquerdo)
+        targets.emplace_back(mXPosRight, mYPosBottom);     // Alvo 3 (Inferior Direito)
 
         // Este loop verifica quais notas do chart devem se tornar visíveis
         while (currentNoteIndex < chart.size() && chart[currentNoteIndex].timeInSeconds <= currentTime + NOTE_VISIBILITY_WINDOW)
