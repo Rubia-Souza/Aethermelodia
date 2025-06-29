@@ -60,6 +60,7 @@ Game::Game(int windowWidth, int windowHeight)
         ,playerScore(0)
         ,mFadeState(FadeState::None)
         ,amountCoinsCollected(0)
+        ,mCurrentLives(kMaxLives)
         ,mMusicStartOffset(2.5f)
         ,mYPosTop(windowHeight * 0.70f)
         ,mYPosBottom(windowHeight * 0.85f)
@@ -686,8 +687,10 @@ void Game::UpdateGame()
 
             // Avança para a próxima nota no chart
             currentNoteIndex++;
+
         }
     }
+
 
 }
 
@@ -724,10 +727,12 @@ void Game::HitLane(int lane)
     if (hittableNote && minDistance <= HIT_WINDOW_RADIUS) {
         SDL_Log("HIT! Na pista %d", lane);
         hittableNote->SetState(ActorState::Destroy);
-        addScore(100);
+        //addScore(100);
         // mAudio->PlaySound("hit.wav");
     } else {
-        SDL_Log("MISS! Na pista %d", lane);
+        mCurrentLives--;
+        mHUD->SetLives(mCurrentLives);
+        SDL_Log("MISS! Vidas restantes: %d", mCurrentLives);
     }
 }
 

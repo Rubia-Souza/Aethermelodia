@@ -132,6 +132,9 @@ public:
 
     void HitLane(int lane);
 
+    // Getter para expor kMaxLives
+    static int GetMaxLives() { return kMaxLives; }
+
 private:
     void ProcessInput();
     void UpdateGame();
@@ -201,6 +204,10 @@ private:
     int playerScore;
     int amountCoinsCollected;
 
+    // número máximo de corações
+    static constexpr int kMaxLives = 5;
+    int mCurrentLives;
+
     // Definicao de targets e direcao de inimigos
     float mYPosTop;
     float mYPosBottom;
@@ -218,4 +225,6 @@ private:
     float mMusicStartOffset;
 
     SoundHandle mMainMenuSoundHandle;
+
+
 };

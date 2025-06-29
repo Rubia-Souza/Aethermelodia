@@ -67,3 +67,12 @@ void UIImage::Draw(SDL_Renderer* renderer, const Vector2 &screenPos)
     // TODO 3.: Desenhe a textura mTexture no renderer usando SDL_RenderCopy.
     SDL_RenderCopyEx(renderer, mTexture, nullptr, &position, 0.0, nullptr, SDL_FLIP_NONE);
 }
+
+void UIImage::SetTexture(SDL_Texture* newTex)
+{
+    // destrói textura antiga (se quiser)
+    if (mTexture && mTexture != newTex) {
+        SDL_DestroyTexture(mTexture);
+    }
+    mTexture = newTex;
+}

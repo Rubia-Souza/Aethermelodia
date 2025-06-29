@@ -5,7 +5,8 @@
 #pragma once
 
 #include <string>
-
+#include <vector>
+#include "UIElements/UIImage.h"
 #include "UIElements/UIScreen.h"
 
 class HUD : public UIScreen
@@ -29,6 +30,8 @@ public:
 
     void SetAmountOfCoins(int amountOfCoins);
 
+    void SetLives(int lives);
+
 private:
     // HUD elements
     UIText* mScoreCounter;
@@ -37,4 +40,13 @@ private:
     UIText* mTimeText;
     UIText* mScoreText;
     UIText* mCoinsCounter;
+    // ícones de coração
+    int mLives;
+    std::vector<UIImage*> mHeartIcons;
+    SDL_Texture* mHeartFullTex;
+    SDL_Texture* mHeartEmptyTex;
+    const float startX     = 30.0f;          // x
+    const float startY     = 40.0f;          // y
+    const float heartSize  = 32.0f;          // tamanho do sprite
+    const float spacing    = heartSize + 8;  // espaço entre corações
 };
