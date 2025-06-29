@@ -59,7 +59,7 @@ Game::Game(int windowWidth, int windowHeight)
         ,playerScore(0)
         ,mFadeState(FadeState::None)
         ,amountCoinsCollected(0)
-        , mMusicStartOffset(2.5f)
+        ,mMusicStartOffset(2.5f)
 {
 
 }
@@ -141,7 +141,7 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
     //  Se a cena for inválida, registre um erro no log e retorne.
     //  Se o estado do SceneManager não for SceneManagerState::None, registre um erro no log e retorne.
     if (mSceneManagerState == SceneManagerState::None) {
-        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Level2) {
+        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::CREDITS || scene == GameScene::HOW_TO_PLAY) {
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -282,6 +282,28 @@ void Game::ChangeScene()
 
         // Initialize actors
         LoadLevel("../Assets/Levels/level1-2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+    } else if (mNextScene == GameScene::HOW_TO_PLAY) {
+        auto howToPlay = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+
+        auto menuBackground = howToPlay->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
+        auto title = howToPlay->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
+
+        auto text1 = howToPlay->AddText("Q: Hit top left note", Vector2(mWindowWidth/2.0f - 250.0f, 380.0f), Vector2(500.0f, 30.0f));
+        auto text2 = howToPlay->AddText("A: Hit bottom left note", Vector2(mWindowWidth/2.0f - 250.0f, 435.0f), Vector2(500.0f, 30.0f));
+        auto text3 = howToPlay->AddText("E: Hit top right note", Vector2(mWindowWidth/2.0f - 250.0f, 490.0f), Vector2(500.0f, 30.0f));
+        auto text4 = howToPlay->AddText("D: Hit bottom right note", Vector2(mWindowWidth/2.0f - 250.0f, 545.0f), Vector2(500.0f, 30.0f));
+        auto returnButton = howToPlay->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
+    } else if (mNextScene == GameScene::CREDITS) {
+        auto credits = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+
+        auto menuBackground = credits->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
+        auto title = credits->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
+
+        auto text1 = credits->AddText("Aline Cristina", Vector2(mWindowWidth/2.0f - 175.0f, 380.0f), Vector2(350.0f, 20.0f));
+        auto text2 = credits->AddText("Gabriel Henrique", Vector2(mWindowWidth/2.0f - 175.0f, 435.0f), Vector2(350.0f, 20.0f));
+        auto text3 = credits->AddText("Rubia Alice", Vector2(mWindowWidth/2.0f - 140.0f, 490.0f), Vector2(280.0f, 20.0f));
+        auto text4 = credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth/2.0f - 175.0f, 545.0f), Vector2(350.0f, 20.0f));
+        auto returnButton = credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
     }
 
     // Set new scene
@@ -292,14 +314,17 @@ void Game::ChangeScene()
 void Game::LoadMainMenu()
 {
     auto mainMenu = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
-    mAudio->PlaySound("Escape-of-Tower-Ending-Theme-1.ogg", true);
+    SoundState state = mAudio->GetSoundState(mMainMenuSoundHandle);
+    if (state == SoundState::Stopped || state == SoundState::Paused) {
+        mMainMenuSoundHandle = mAudio->PlaySound("Escape-of-Tower-Ending-Theme-1.ogg", true);
+    }
 
     auto menuBackground = mainMenu->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
     auto title = mainMenu->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
 
     auto button1 = mainMenu->AddButton("Play Game", Vector2(mWindowWidth/2.0f - 150.0f, 400.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(180, 15));
-    auto button2 = mainMenu->AddButton("How to Play", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level2); }, Vector2(160, 15));
-    auto button3 = mainMenu->AddButton("Credits", Vector2(mWindowWidth/2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level2); }, Vector2(120, 15));
+    auto button2 = mainMenu->AddButton("How to Play", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::HOW_TO_PLAY); }, Vector2(160, 15));
+    auto button3 = mainMenu->AddButton("Credits", Vector2(mWindowWidth/2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::CREDITS); }, Vector2(120, 15));
 }
 
 void Game::LoadLevel(const std::string& levelName, const int levelWidth, const int levelHeight)
@@ -548,7 +573,7 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
 void Game::TogglePause()
 {
 
-    if (mGameScene != GameScene::MainMenu)
+    if (mGameScene != GameScene::MainMenu && mGameScene != GameScene::CREDITS && mGameScene != GameScene::HOW_TO_PLAY)
     {
         if (mGamePlayState == GamePlayState::Playing)
         {
@@ -635,7 +660,7 @@ void Game::UpdateGame()
 
     // TODO 1.: Verifique se a cena atual é diferente de GameScene::MainMenu e se o estado do jogo é
     //  GamePlayState::Playing. Se sim, chame UpdateLevelTime passando o deltaTime.
-    if (GameScene::MainMenu != mGameScene && mGamePlayState == GamePlayState::Playing) {
+    if (GameScene::MainMenu != mGameScene && GameScene::CREDITS != mGameScene && GameScene::HOW_TO_PLAY != mGameScene && mGamePlayState == GamePlayState::Playing) {
         UpdateLevelTime(deltaTime);
     }
 

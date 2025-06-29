@@ -127,7 +127,7 @@ void Mario::OnUpdate(float deltaTime)
     {
         // Stop Mario and set the game scene to Level 2
         mState = ActorState::Destroy;
-        mGame->SetGameScene(Game::GameScene::Level2, 3.5f);
+        // mGame->SetGameScene(Game::GameScene::Level2, 3.5f);
 
         return;
     }
