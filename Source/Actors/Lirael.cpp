@@ -39,8 +39,8 @@ Lirael::Lirael(Game* game, const float forwardSpeed, const float jumpSpeed)
 
 void Lirael::OnProcessInput(const uint8_t* state)
 {
-    // if(mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
-    //
+    if(mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
+
     // if (state[SDL_SCANCODE_D])
     // {
     //     mRigidBodyComponent->ApplyForce(Vector2::UnitX * mForwardSpeed);

@@ -206,7 +206,7 @@ void Game::ChangeScene()
         mHUD->SetTime(mGameTimeLimit);
         mHUD->SetLevelName("1-1");
 
-        // mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
+        mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
         chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/easy-notes.chart");
 
