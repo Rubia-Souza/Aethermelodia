@@ -37,7 +37,9 @@ public:
     {
         MainMenu,
         Level1,
-        Level2
+        Level2,
+        HOW_TO_PLAY,
+        CREDITS,
     };
 
     enum class SceneManagerState
@@ -214,4 +216,6 @@ private:
     std::vector<class Asteroid*> mAsteroids;
     std::vector<class Target*> mTargets;
     float mMusicStartOffset;
+
+    SoundHandle mMainMenuSoundHandle;
 };
