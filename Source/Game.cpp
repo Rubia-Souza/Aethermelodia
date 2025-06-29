@@ -264,10 +264,10 @@ void Game::ChangeScene()
         auto menuBackground = howToPlay->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
         auto title = howToPlay->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
 
-        auto text1 = howToPlay->AddText("Q: Hit top left note", Vector2(mWindowWidth/2.0f - 250.0f, 380.0f), Vector2(500.0f, 30.0f));
-        auto text2 = howToPlay->AddText("A: Hit bottom left note", Vector2(mWindowWidth/2.0f - 250.0f, 435.0f), Vector2(500.0f, 30.0f));
-        auto text3 = howToPlay->AddText("E: Hit top right note", Vector2(mWindowWidth/2.0f - 250.0f, 490.0f), Vector2(500.0f, 30.0f));
-        auto text4 = howToPlay->AddText("D: Hit bottom right note", Vector2(mWindowWidth/2.0f - 250.0f, 545.0f), Vector2(500.0f, 30.0f));
+        auto text1 = howToPlay->AddText("A: Hit top left note", Vector2(mWindowWidth/2.0f - 250.0f, 380.0f), Vector2(500.0f, 30.0f));
+        auto text2 = howToPlay->AddText("S: Hit bottom left note", Vector2(mWindowWidth/2.0f - 250.0f, 435.0f), Vector2(500.0f, 30.0f));
+        auto text3 = howToPlay->AddText("D: Hit top right note", Vector2(mWindowWidth/2.0f - 250.0f, 490.0f), Vector2(500.0f, 30.0f));
+        auto text4 = howToPlay->AddText("F: Hit bottom right note", Vector2(mWindowWidth/2.0f - 250.0f, 545.0f), Vector2(500.0f, 30.0f));
         auto returnButton = howToPlay->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
     } else if (mNextScene == GameScene::CREDITS) {
         auto credits = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
