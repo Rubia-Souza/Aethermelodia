@@ -128,7 +128,8 @@ bool Game::Initialize()
     mTicksCount = SDL_GetTicks();
 
     // Init all game actors
-    SetGameScene(GameScene::MainMenu);
+    // SetGameScene(GameScene::MainMenu);
+    SetGameScene(GameScene::Level1);
 
     return true;
 }
@@ -206,7 +207,7 @@ void Game::ChangeScene()
         mHUD->SetTime(mGameTimeLimit);
         mHUD->SetLevelName("1-1");
 
-        mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
+        // mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
         chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/easy-notes.chart");
 
@@ -224,7 +225,7 @@ void Game::ChangeScene()
         mTargets.emplace_back(target3);
 
         mLirael = new Lirael(this);
-        mLirael->SetPosition(Vector2(mWindowWidth * 0.47, 0)); // 0.47 para começar entre os targets
+        mLirael->SetPosition(Vector2(mWindowWidth * 0.475, 0)); // 0.47 para começar entre os targets
     }
     else if (mNextScene == GameScene::Level2)
     {
@@ -448,13 +449,16 @@ void Game::ProcessInput()
                     mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
                 }
 
-                HandleKeyPressActors(event.key.keysym.sym, event.key.repeat == 0);
+                HandleKeyPressActors(event.key.keysym.sym, true);
 
                 // Check if the Return key has been pressed to pause/unpause the game
                 if (event.key.keysym.sym == SDLK_RETURN)
                 {
                     TogglePause();
                 }
+                break;
+            case SDL_KEYUP:
+                HandleKeyPressActors(event.key.keysym.sym, false);
                 break;
         }
     }
@@ -522,29 +526,28 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
         }
     }
 
-    // if(mGamePlayState == GamePlayState::Playing)
-    // {
-    //     // Get actors on camera
-    //     std::vector<Actor*> actorsOnCamera =
-    //             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
-    //
-    //     // Handle key press for actors
-    //     bool isLiraelOnCamera = false;
-    //     for (auto actor: actorsOnCamera) {
-    //         actor->HandleKeyPress(key, isPressed);
-    //
-    //         if (actor == mLirael) {
-    //             isLiraelOnCamera = true;
-    //         }
-    //     }
-    //
-    //     // If Mario is not on camera, handle key press for him
-    //     if (!isLiraelOnCamera && mLirael)
-    //     {
-    //         mLirael->HandleKeyPress(key, isPressed);
-    //     }
-    // }
+    if(mGamePlayState == GamePlayState::Playing)
+    {
+        // Get actors on camera
+        std::vector<Actor*> actorsOnCamera =
+                mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
 
+        // Handle key press for actors
+        bool isLiraelOnCamera = false;
+        for (auto actor: actorsOnCamera) {
+            actor->HandleKeyPress(key, isPressed);
+
+            if (actor == mLirael) {
+                isLiraelOnCamera = true;
+            }
+        }
+
+        // If Mario is not on camera, handle key press for him
+        if (!isLiraelOnCamera && mLirael)
+        {
+            mLirael->HandleKeyPress(key, isPressed);
+        }
+    }
 }
 
 void Game::TogglePause()
@@ -682,7 +685,7 @@ void Game::UpdateGame()
                 spawnPos.y = targetPos.y;
             }
 
-            new Asteroid(this, spawnPos, targetPos, lane);
+            // new Asteroid(this, spawnPos, targetPos, lane);
 
             // Avança para a próxima nota no chart
             currentNoteIndex++;

@@ -131,6 +131,7 @@ public:
     std::vector<class Asteroid*>& GetAsteroids() { return mAsteroids; }
 
     void HitLane(int lane);
+    const std::vector<class Target*>& GetTargets() const { return mTargets; }
 
 private:
     void ProcessInput();
