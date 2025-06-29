@@ -106,7 +106,7 @@ void UIScreen::ProcessInput(const uint8_t* keys)
 
 void UIScreen::HandleKeyPress(int key)
 {
-    if (mButtons.empty()) return; // Safe guarde para evitar bug de memoria (w e s encerrando o jogo fora do menu
+    if (mButtons.empty()) return; // Safe guard para evitar bug de memoria (w e s encerrando o jogo fora do menu
 
     if (key == SDLK_w) {
         UIButton* oldButton = mButtons[mSelectedButtonIndex];

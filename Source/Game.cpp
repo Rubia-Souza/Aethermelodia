@@ -213,10 +213,10 @@ void Game::ChangeScene()
         SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(0,0), Vector2(mWindowWidth,mWindowHeight));
         for (int i = 0; i < (mWindowWidth / Game::TILE_SIZE + 1); i++) new Ground(this, Vector2(i * Game::TILE_SIZE,  PLAYABLE_AREA_HEIGHT - 10)); // Chao em blocos por conta do mSpatialHashing
 
-        auto target0 = new Target(this, Vector2(mXPosLeft, mYPosBottom), SDL_Color{0, 255, 0, 255}, 0, 30);
-        auto target1 = new Target(this, Vector2(mXPosRight, mYPosBottom), SDL_Color{255, 0, 0, 255}, 1, 30);
-        auto target2 = new Target(this, Vector2(mXPosLeft, mYPosTop), SDL_Color{0, 0, 255, 255}, 2, 30);
-        auto target3 = new Target(this, Vector2(mXPosRight, mYPosTop), SDL_Color{255, 255, 0, 255}, 3, 30);
+        auto target0 = new Target(this, Vector2(mXPosLeft, mYPosTop), SDL_Color{0, 255, 0, 255}, 0, 30);
+        auto target1 = new Target(this, Vector2(mXPosRight, mYPosTop), SDL_Color{255, 0, 0, 255}, 1, 30);
+        auto target2 = new Target(this, Vector2(mXPosLeft, mYPosBottom), SDL_Color{0, 0, 255, 255}, 2, 30);
+        auto target3 = new Target(this, Vector2(mXPosRight, mYPosBottom), SDL_Color{255, 255, 0, 255}, 3, 30);
 
         mTargets.emplace_back(target0);
         mTargets.emplace_back(target1);
@@ -478,7 +478,7 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
             break;
 
             // Pista Superior Direita
-        case SDLK_f:
+        case SDLK_d:
         case SDLK_UP: // Seta para cima
             HitLane(1);
             break;
@@ -490,7 +490,7 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
             break;
 
             // Pista Inferior Direita
-        case SDLK_d:
+        case SDLK_f:
         case SDLK_RIGHT: // Seta para direita
             HitLane(3);
             break;
