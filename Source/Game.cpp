@@ -734,6 +734,13 @@ void Game::HitLane(int lane)
         mHUD->SetLives(mCurrentLives);
         SDL_Log("MISS! Vidas restantes: %d", mCurrentLives);
     }
+
+    if (mCurrentLives <= 0) {
+
+        SDL_Event quitEvt;
+        quitEvt.type = SDL_QUIT;
+        SDL_PushEvent(&quitEvt);
+    }
 }
 
 void Game::UpdateSceneManager(float deltaTime)

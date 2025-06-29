@@ -21,6 +21,7 @@ UIImage::UIImage(SDL_Renderer *renderer, const std::string &imagePath, const Vec
         SDL_Log("Failed to load image: %s", IMG_GetError());
     }
 
+
     mTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
     if (!mTexture) {
         SDL_Log("Failed to create texture: %s", SDL_GetError());

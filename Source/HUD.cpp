@@ -67,11 +67,12 @@ HUD::~HUD()
 void HUD::SetLives(int lives)
 {
     // apenas troca a textura de cada UIImage já existente
-    for (int i = 0; i < lives; ++i) {
-        SDL_Texture* tex = (i < lives)
-            ? mHeartFullTex
-            : mHeartEmptyTex;
-        mHeartIcons[i]->SetTexture(tex);  // <<< chama novo método
+    for (int i = 0; i < Game::GetMaxLives(); ++i) {
+        if (i>=lives) {
+            SDL_Texture* tex = mHeartEmptyTex;
+            mHeartIcons[i]->SetTexture(tex);  // <<< chama novo método
+        }
+
     }
 }
 
