@@ -10,7 +10,7 @@
 class Target : public Actor
 {
 public:
-    Target(class Game* game, const Vector2& pos, SDL_Color color, int lane, int size = 50);
+    Target(class Game* game, const Vector2& pos, SDL_Color color, int lane, int size = 30);
 
     void OnUpdate(float deltaTime) override;
 

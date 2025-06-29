@@ -28,11 +28,11 @@
 #include "Actors/Asteroid.h"
 #include "UIElements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
-#include "Components/DrawComponents/DrawSpriteComponent.h"
-#include "Components/DrawComponents/DrawPolygonComponent.h"
 #include "Components/ColliderComponents/AABBColliderComponent.h"
 #include "GameTimer.h"
 #include "FileReaderUtil.h"
+#include "Actors/Lirael.h"
+#include "Actors/Ground.h"
 
 Game::Game(int windowWidth, int windowHeight)
         :mWindow(nullptr)
@@ -42,6 +42,7 @@ Game::Game(int windowWidth, int windowHeight)
         ,mWindowWidth(windowWidth)
         ,mWindowHeight(windowHeight)
         ,mMario(nullptr)
+        ,mLirael(nullptr)
         ,mHUD(nullptr)
         ,mBackgroundColor(0, 0, 0)
         ,mModColor(255, 255, 255)
@@ -60,6 +61,10 @@ Game::Game(int windowWidth, int windowHeight)
         ,mFadeState(FadeState::None)
         ,amountCoinsCollected(0)
         ,mMusicStartOffset(2.5f)
+        ,mYPosTop(windowHeight * 0.70f)
+        ,mYPosBottom(windowHeight * 0.85f)
+        ,mXPosLeft(windowWidth * 0.42f)
+        ,mXPosRight(windowWidth * 0.58f)
 {
 
 }
@@ -178,7 +183,7 @@ void Game::ChangeScene()
     mGamePlayState = GamePlayState::Playing;
 
     // Reset scene manager state
-    mSpatialHashing = new SpatialHashing(TILE_SIZE * 4.0f, LEVEL_WIDTH * TILE_SIZE, LEVEL_HEIGHT * TILE_SIZE);
+    mSpatialHashing = new SpatialHashing(CELL_SIZE, mWindowWidth, PLAYABLE_AREA_HEIGHT);
 
     playerScore = 0;
     amountCoinsCollected = 0;
@@ -194,61 +199,32 @@ void Game::ChangeScene()
     }
     else if (mNextScene == GameScene::Level1)
     {
-        mAudio->StopAllSounds(); // Para a musica do menu
-        // --------------
-        // TODO - PARTE 3
-        // --------------
-
-        // TODO 1.: Crie um novo objeto HUD, passando o ponteiro do Game e o caminho para a fonte SMB.ttf.
+        mAudio->StopAllSounds();
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
 
-        // TODO 2.: Altere o atributo mGameTimeLimit para 400 (400 segundos) e ajuste o HUD com esse tempo inicial.
-        //  Em seguida, altere o nome do nível para "1-1" no HUD.
         mGameTimeLimit = 400;
         mHUD->SetTime(mGameTimeLimit);
         mHUD->SetLevelName("1-1");
 
-        // --------------
-        // TODO - PARTE 4
-        // --------------
-
-        // TODO 1. Toque a música de fundo "MusicMain.ogg" em loop e armaze o SoundHandle retornado em mMusicHandle.
-        // mMusicHandle = mAudio->PlaySound("MusicMain.ogg", true);
-
         mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
-
         chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/easy-notes.chart");
-        SDL_Log("[INFO] Loading chart ");
 
-        // Set background color
-        mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
+        SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(0,0), Vector2(mWindowWidth,mWindowHeight));
+        for (int i = 0; i < (mWindowWidth / Game::TILE_SIZE + 1); i++) new Ground(this, Vector2(i * Game::TILE_SIZE,  PLAYABLE_AREA_HEIGHT - 10)); // Chao em blocos por conta do mSpatialHashing
 
-        // Set background color
-        // SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(TILE_SIZE,0), Vector2(6784,448));
-
-        // Draw Flag
-        auto flag = new Actor(this);
-        flag->SetPosition(Vector2(LEVEL_WIDTH * TILE_SIZE - (16 * TILE_SIZE) - 16, 3 * TILE_SIZE));
-
-        // Add a flag sprite
-        new DrawSpriteComponent(flag, "../Assets/Sprites/Background_Flag.png", 32.0f, 32.0f, 1);
-
-        // Add a flag pole taking the entire height
-        new AABBColliderComponent(flag, 30, 0, 4, TILE_SIZE * LEVEL_HEIGHT, ColliderLayer::Pole, true);
-
-        Target* target0 = new Target(this, Vector2(mWindowWidth/3.0f, mWindowHeight/3.0f), SDL_Color{0, 255, 0, 255}, 0);
-        Target* target1 = new Target(this, Vector2(mWindowWidth/1.5f, mWindowHeight/3.0f), SDL_Color{255, 0, 0, 255}, 1);
-        Target* target2 = new Target(this, Vector2(mWindowWidth/3.0f, mWindowHeight/1.5f), SDL_Color{0, 0, 255, 255}, 2);
-        Target* target3 = new Target(this, Vector2(mWindowWidth/1.5f, mWindowHeight/1.5f), SDL_Color{255, 255, 0, 255}, 3);
+        auto target0 = new Target(this, Vector2(mXPosLeft, mYPosTop), SDL_Color{0, 255, 0, 255}, 0, 30);
+        auto target1 = new Target(this, Vector2(mXPosRight, mYPosTop), SDL_Color{255, 0, 0, 255}, 1, 30);
+        auto target2 = new Target(this, Vector2(mXPosLeft, mYPosBottom), SDL_Color{0, 0, 255, 255}, 2, 30);
+        auto target3 = new Target(this, Vector2(mXPosRight, mYPosBottom), SDL_Color{255, 255, 0, 255}, 3, 30);
 
         mTargets.emplace_back(target0);
         mTargets.emplace_back(target1);
         mTargets.emplace_back(target2);
         mTargets.emplace_back(target3);
 
-        // Initialize actors
-        // LoadLevel("../Assets/Levels/level1-1.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+        mLirael = new Lirael(this);
+        mLirael->SetPosition(Vector2(mWindowWidth * 0.47, 0)); // 0.47 para começar entre os targets
     }
     else if (mNextScene == GameScene::Level2)
     {
@@ -496,77 +472,78 @@ void Game::ProcessInputActors()
 
         const Uint8* state = SDL_GetKeyboardState(nullptr);
 
-        bool isMarioOnCamera = false;
+        bool isLiraelOnCamera = false;
         for (auto actor: actorsOnCamera)
         {
             actor->ProcessInput(state);
 
-            if (actor == mMario) {
-                isMarioOnCamera = true;
+            if (actor == mLirael) {
+                isLiraelOnCamera = true;
             }
         }
 
-        // If Mario is not on camera, process input for him
-        if (!isMarioOnCamera && mMario) {
-            mMario->ProcessInput(state);
+        // If Lirael is not on camera, process input for him
+        if (!isLiraelOnCamera && mLirael) {
+            mLirael->ProcessInput(state);
         }
     }
 }
 
 void Game::HandleKeyPressActors(const int key, const bool isPressed)
 {
+
     if(mGamePlayState == GamePlayState::Playing && isPressed)
     {
         switch(key)
         {
             // Pista Superior Esquerda
-        case SDLK_q:
+        case SDLK_a:
         case SDLK_LEFT: // Seta para esquerda
             HitLane(0);
             break;
 
             // Pista Superior Direita
-        case SDLK_e:
+        case SDLK_d:
         case SDLK_UP: // Seta para cima
             HitLane(1);
             break;
 
             // Pista Inferior Esquerda
-        case SDLK_a:
+        case SDLK_s:
         case SDLK_DOWN: // Seta para baixo
             HitLane(2);
             break;
 
             // Pista Inferior Direita
-        case SDLK_d:
+        case SDLK_f:
         case SDLK_RIGHT: // Seta para direita
             HitLane(3);
             break;
         }
     }
 
-    if(mGamePlayState == GamePlayState::Playing)
-    {
-        // Get actors on camera
-        std::vector<Actor*> actorsOnCamera =
-                mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
-
-        // Handle key press for actors
-        bool isMarioOnCamera = false;
-        for (auto actor: actorsOnCamera) {
-            actor->HandleKeyPress(key, isPressed);
-
-            if (actor == mMario) {
-                isMarioOnCamera = true;
-            }
-        }
-
-        // If Mario is not on camera, handle key press for him
-        if (!isMarioOnCamera && mMario)
-        {
-            mMario->HandleKeyPress(key, isPressed);
-        }
-    }
+    // if(mGamePlayState == GamePlayState::Playing)
+    // {
+    //     // Get actors on camera
+    //     std::vector<Actor*> actorsOnCamera =
+    //             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
+    //
+    //     // Handle key press for actors
+    //     bool isLiraelOnCamera = false;
+    //     for (auto actor: actorsOnCamera) {
+    //         actor->HandleKeyPress(key, isPressed);
+    //
+    //         if (actor == mLirael) {
+    //             isLiraelOnCamera = true;
+    //         }
+    //     }
+    //
+    //     // If Mario is not on camera, handle key press for him
+    //     if (!isLiraelOnCamera && mLirael)
+    //     {
+    //         mLirael->HandleKeyPress(key, isPressed);
+    //     }
+    // }
 
 }
 
@@ -645,7 +622,7 @@ void Game::UpdateGame()
     // ---------------------
     // Game Specific Updates
     // ---------------------
-    UpdateCamera();
+    // UpdateCamera();
 
     // --------------
     // TODO - PARTE 2
@@ -674,10 +651,10 @@ void Game::UpdateGame()
 
         // Define as posições dos 4 alvos (baseado no seu código em ChangeScene)
         std::vector<Vector2> targets;
-        targets.emplace_back(mWindowWidth/3.0f, mWindowHeight/3.0f);     // Alvo 0 (Superior Esquerdo)
-        targets.emplace_back(mWindowWidth/1.5f, mWindowHeight/3.0f);     // Alvo 1 (Superior Direito)
-        targets.emplace_back(mWindowWidth/3.0f, mWindowHeight/1.5f);     // Alvo 2 (Inferior Esquerdo)
-        targets.emplace_back(mWindowWidth/1.5f, mWindowHeight/1.5f);     // Alvo 3 (Inferior Direito)
+        targets.emplace_back(mXPosLeft, mYPosTop);     // Alvo 0 (Superior Esquerdo)
+        targets.emplace_back(mXPosRight, mYPosTop);     // Alvo 1 (Superior Direito)
+        targets.emplace_back(mXPosLeft, mYPosBottom);     // Alvo 2 (Inferior Esquerdo)
+        targets.emplace_back(mXPosRight, mYPosBottom);     // Alvo 3 (Inferior Direito)
 
         // Este loop verifica quais notas do chart devem se tornar visíveis
         while (currentNoteIndex < chart.size() && chart[currentNoteIndex].timeInSeconds <= currentTime + NOTE_VISIBILITY_WINDOW)
@@ -756,10 +733,6 @@ void Game::HitLane(int lane)
 
 void Game::UpdateSceneManager(float deltaTime)
 {
-    // --------------
-    // TODO - PARTE 2
-    // --------------
-
     if (mFadeState == FadeState::FadeOut)
     {
         mFadeTime += deltaTime;
@@ -778,9 +751,6 @@ void Game::UpdateSceneManager(float deltaTime)
         }
     }
 
-    // TODO 1.: Verifique se o estado do SceneManager é SceneManagerState::Entering. Se sim, decremente o mSceneManagerTimer
-    //  usando o deltaTime. Em seguida, verifique se o mSceneManagerTimer é menor ou igual a 0. Se for, reinicie o
-    //  mSceneManagerTimer para TRANSITION_TIME e mude o estado do SceneManager para SceneManagerState::Active.
     if (mSceneManagerState == SceneManagerState::Entering) {
         mSceneManagerTimer -= deltaTime;
         if (mSceneManagerTimer <= 0) {
@@ -790,9 +760,6 @@ void Game::UpdateSceneManager(float deltaTime)
         }
     }
 
-    // TODO 2.: Verifique se o estado do SceneManager é SceneManagerState::Active. Se sim, decremente o mSceneManagerTimer
-    //  usando o deltaTime. Em seguida, verifique se o mSceneManagerTimer é menor ou igual a 0. Se for, chame ChangeScene()
-    //  e mude o estado do SceneManager para SceneManagerState::None.
     if (mSceneManagerState == SceneManagerState::Active) {
         mSceneManagerTimer -= deltaTime;
         if (mSceneManagerTimer <= 0) {
@@ -800,20 +767,10 @@ void Game::UpdateSceneManager(float deltaTime)
             mSceneManagerState = SceneManagerState::None;
         }
     }
-
-    // TODO 3.: Remova a chamada da função ChangeScene() do método Initialize(), pois ela será chamada automaticamente
-    //  durante o UpdateSceneManager() quando o estado do SceneManager for SceneManagerState::Active.
 }
 
 void Game::UpdateLevelTime(float deltaTime)
 {
-    // --------------
-    // TODO - PARTE 3
-    // --------------
-
-    // TODO 1.: Incremente o mGameTimer com o deltaTime. Se o mGameTimer for maior ou igual a 1.0 segundos,
-    //  reinicie o mGameTimer para 0.0f e decremente o mGameTimeLimit de um e atualize o HUD com o novo tempo.
-    //  Se o mGameTimeLimit for menor ou igual a 0, mate o Mario chamando mMario->Kill().
     mGameTimer += deltaTime;
     if (mGameTimer >= 1.0) {
         mGameTimer = 0.0f;
@@ -821,16 +778,16 @@ void Game::UpdateLevelTime(float deltaTime)
         mHUD->SetTime(mGameTimeLimit);
 
         if (mGameTimeLimit <= 0) {
-            mMario->Kill();
+            mLirael->Kill();
         }
     }
 }
 
 void Game::UpdateCamera()
 {
-    if (!mMario) return;
+    if (!mLirael) return;
 
-    float horizontalCameraPos = mMario->GetPosition().x - (mWindowWidth / 2.0f);
+    float horizontalCameraPos = mLirael->GetPosition().x - (mWindowWidth / 2.0f);
 
     if (horizontalCameraPos > mCameraPos.x)
     {
@@ -858,16 +815,16 @@ void Game::UpdateActors(float deltaTime)
     for (auto actor : actorsOnCamera)
     {
         actor->Update(deltaTime);
-        if (actor == mMario)
+        if (actor == mLirael)
         {
             isMarioOnCamera = true;
         }
     }
 
     // If Mario is not on camera, reset camera position
-    if (!isMarioOnCamera && mMario)
+    if (!isMarioOnCamera && mLirael)
     {
-        mMario->Update(deltaTime);
+        mLirael->Update(deltaTime);
     }
 
     for (auto actor : actorsOnCamera)
@@ -875,8 +832,8 @@ void Game::UpdateActors(float deltaTime)
         if (actor->GetState() == ActorState::Destroy)
         {
             delete actor;
-            if (actor == mMario) {
-                mMario = nullptr;
+            if (actor == mLirael) {
+                mLirael = nullptr;
             }
         }
     }

@@ -62,8 +62,8 @@ void Asteroid::Update(float deltaTime)
     Vector2 velocity = mRigidBodyComponent->GetVelocity();
 
     // O raio do nosso alvo, que usaremos como margem.
-    // O construtor do Target usa 50 como tamanho padrão.
-    const float targetRadius = 50.0f;
+    // O construtor do Target usa 30 como tamanho padrão.
+    const float targetRadius = 30.0f;
 
     // Caso 1: O asteroide está se movendo para a DIREITA
     if (velocity.x > 0.0f)

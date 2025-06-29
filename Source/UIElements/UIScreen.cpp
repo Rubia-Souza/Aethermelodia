@@ -106,16 +106,8 @@ void UIScreen::ProcessInput(const uint8_t* keys)
 
 void UIScreen::HandleKeyPress(int key)
 {
-    // --------------
-    // TODO - PARTE 1-2
-    // --------------
+    if (mButtons.empty()) return; // Safe guard para evitar bug de memoria (w e s encerrando o jogo fora do menu
 
-    // TODO 1.: Verifique se a tecla pressionada é W (SDLK_w), S (SDLK_s) ou Enter (SDLK_RETURN). Se a tecla for W,
-    //  diminua o índice do botão selecionado (mSelectedButtonIndex) e destaque o botão anterior. Se o índice for
-    //  menor que 0, defina-o como o último botão da lista. Se a tecla for S, aumente o índice do botão selecionado
-    //  e destaque o próximo botão. Se o índice for maior ou igual ao tamanho da lista, defina-o como 0 (o primeiro botão).
-    //  Se a tecla for Enter, verifique se o índice do botão selecionado é válido (maior ou igual a 0 e menor que
-    //  o tamanho da lista). Se for, chame o método OnClick do botão selecionado.
     if (key == SDLK_w) {
         UIButton* oldButton = mButtons[mSelectedButtonIndex];
         oldButton->SetHighlighted(false);

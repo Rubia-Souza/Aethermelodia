@@ -16,7 +16,8 @@ enum class ColliderLayer
     Enemy,
     Blocks,
     Pole,
-    Collectable
+    Collectable,
+    Ground
 };
 
 class AABBColliderComponent : public Component
@@ -27,7 +28,8 @@ public:
         {ColliderLayer::Player, {}},
         {ColliderLayer::Enemy,  {}},
         {ColliderLayer::Blocks, {ColliderLayer::Blocks}},
-        {ColliderLayer::Pole, {}}
+        {ColliderLayer::Pole, {}},
+        {ColliderLayer::Ground, {}}
     };
 
     AABBColliderComponent(class Actor* owner, int dx, int dy, int w, int h,
