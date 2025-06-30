@@ -259,28 +259,54 @@ void Game::ChangeScene()
 
         // Initialize actors
         LoadLevel("../Assets/Levels/level1-2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+    } else if (mNextScene == GameScene::TO_BE_CONTINUE) {
+        mAudio->StopAllSounds();
+        mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
+        mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
+        auto toBeContinue = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+        toBeContinue->AddText("To be continue...", Vector2((GetWindowWidth() - 1200) / 2, (GetWindowHeight() - 150) / 2), Vector2(1200, 150));
+        toBeContinue->AddButton("Main Menu", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() {
+            mAudio->StopAllSounds();
+            SetGameScene(GameScene::MainMenu);
+        }, Vector2(160, 15));
     } else if (mNextScene == GameScene::HOW_TO_PLAY) {
         auto howToPlay = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
         auto menuBackground = howToPlay->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
         auto title = howToPlay->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
 
-        auto text1 = howToPlay->AddText("Q: Hit top left note", Vector2(mWindowWidth/2.0f - 250.0f, 380.0f), Vector2(500.0f, 30.0f));
-        auto text2 = howToPlay->AddText("A: Hit bottom left note", Vector2(mWindowWidth/2.0f - 250.0f, 435.0f), Vector2(500.0f, 30.0f));
-        auto text3 = howToPlay->AddText("E: Hit top right note", Vector2(mWindowWidth/2.0f - 250.0f, 490.0f), Vector2(500.0f, 30.0f));
-        auto text4 = howToPlay->AddText("D: Hit bottom right note", Vector2(mWindowWidth/2.0f - 250.0f, 545.0f), Vector2(500.0f, 30.0f));
+        auto text1 = howToPlay->AddText("A: Hit top left note", Vector2(mWindowWidth/2.0f - 250.0f, 380.0f), Vector2(500.0f, 30.0f));
+        auto text2 = howToPlay->AddText("S: Hit bottom left note", Vector2(mWindowWidth/2.0f - 250.0f, 435.0f), Vector2(500.0f, 30.0f));
+        auto text3 = howToPlay->AddText("D: Hit top right note", Vector2(mWindowWidth/2.0f - 250.0f, 490.0f), Vector2(500.0f, 30.0f));
+        auto text4 = howToPlay->AddText("F: Hit bottom right note", Vector2(mWindowWidth/2.0f - 250.0f, 545.0f), Vector2(500.0f, 30.0f));
         auto returnButton = howToPlay->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
     } else if (mNextScene == GameScene::CREDITS) {
         auto credits = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
-        auto menuBackground = credits->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
-        auto title = credits->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
+        credits->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
+        credits->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
 
-        auto text1 = credits->AddText("Aline Cristina", Vector2(mWindowWidth/2.0f - 175.0f, 380.0f), Vector2(350.0f, 20.0f));
-        auto text2 = credits->AddText("Gabriel Henrique", Vector2(mWindowWidth/2.0f - 175.0f, 435.0f), Vector2(350.0f, 20.0f));
-        auto text3 = credits->AddText("Rubia Alice", Vector2(mWindowWidth/2.0f - 140.0f, 490.0f), Vector2(280.0f, 20.0f));
-        auto text4 = credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth/2.0f - 175.0f, 545.0f), Vector2(350.0f, 20.0f));
-        auto returnButton = credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
+        credits->AddText("Arts", Vector2(175.0f, 200.0f), Vector2(200.0f, 35.0f));
+        credits->AddText("- Background Menu -", Vector2(120.0f, 270.0f), Vector2(300.0f, 20.0f));
+        credits->AddText("Steven Greenblatt", Vector2(170.0f, 320.0f), Vector2(200.0f, 20.0f));
+
+        credits->AddText("- Background Level 1 -", Vector2(120.0f, 370.0f), Vector2(300.0f, 20.0f));
+        credits->AddText("edermunizz", Vector2(210.0f, 420.0f), Vector2(100.0f, 20.0f));
+
+        credits->AddText("Music", Vector2(GetWindowWidth() / 2 - 100, 200.0f), Vector2(200.0f, 35.0f));
+        credits->AddText("- Menu -", Vector2(GetWindowWidth() / 2 - 50, 270.0f), Vector2(100.0f, 20.0f));
+        credits->AddText("The King of Fighters EX Neo Blood - Escape of Tower Ending Theme 1", Vector2(GetWindowWidth() / 2 - 150, 300.0f), Vector2(300.0f, 40.0f));
+        credits->AddText("- Level 1 -", Vector2(GetWindowWidth() / 2 - 75, 370.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Dynasty Warriors Origins - Lu Bu's Theme", Vector2(GetWindowWidth() / 2 - 150, 400.0f), Vector2(300.0f, 40.0f));
+        credits->AddText("- Ending -", Vector2(GetWindowWidth() / 2 - 50, 450.0f), Vector2(100.0f, 20.0f));
+        credits->AddText("Night in the Woods - Ending", Vector2(GetWindowWidth() / 2 - 150, 475.0f), Vector2(300.0f, 40.0f));
+
+        credits->AddText("Code", Vector2(GetWindowWidth() - 400, 200.0f), Vector2(200.0f, 35.0f));
+        credits->AddText("Aline Cristina", Vector2(mWindowWidth - 375.0f, 270.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Gabriel Henrique", Vector2(mWindowWidth - 375.0f, 320.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Rubia Alice", Vector2(mWindowWidth - 375.0f, 370.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth - 375.0f, 420.0f), Vector2(150.0f, 20.0f));
+        credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
     }
 
     // Set new scene
