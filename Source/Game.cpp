@@ -977,10 +977,10 @@ void Game::UpdateActors(float deltaTime)
     std::vector<Actor*> actorsOnCamera =
             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
 
-    // for (size_t i = 0; i < mEnemies.size(); ++i)
-    // {
-    //     actorsOnCamera.emplace_back(mEnemies[i]);
-    // }
+    for (size_t i = 0; i < mEnemies.size(); ++i)
+    {
+        mEnemies[i]->Update(deltaTime);
+    }
 
     bool isMarioOnCamera = false;
     for (auto actor : actorsOnCamera)
