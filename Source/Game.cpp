@@ -226,7 +226,9 @@ void Game::ChangeScene()
         mTargets.emplace_back(target3);
 
         mLirael = new Lirael(this);
-        mLirael->SetPosition(Vector2(mWindowWidth * 0.475, 0)); // 0.47 para começar entre os targets
+        const float liraelWidth = 64.0f;
+        const float centeredLiraelX = (mWindowWidth * 0.5f) - (liraelWidth / 2.0f);
+        mLirael->SetPosition(Vector2(centeredLiraelX, 0));
     }
     else if (mNextScene == GameScene::Level2)
     {
@@ -449,7 +451,7 @@ void Game::ProcessInput()
                 if (!mUIStack.empty()) {
                     mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
                 }
-                HandleKeyDownActors(event.key.keysym.sym, event.key.repeat == 0);
+                HandleKeyDownActors(event.key.keysym.sym, true);
 
                 // Check if the Return key has been pressed to pause/unpause the game
                 if (event.key.keysym.sym == SDLK_RETURN)
@@ -458,7 +460,7 @@ void Game::ProcessInput()
                 }
                 break;
             case SDL_KEYUP:
-                HandleKeyUpActors(event.key.keysym.sym, event.key.repeat == 0);
+                HandleKeyUpActors(event.key.keysym.sym, false);
 
                 break;
         }
@@ -584,7 +586,25 @@ void Game::HandleKeyUpActors(const int key, const bool isPressed)
         }
     }
 
+    if(mGamePlayState == GamePlayState::Playing)
+    {
+        std::vector<Actor*> actorsOnCamera =
+                mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
 
+        bool isLiraelOnCamera = false;
+        for (auto actor: actorsOnCamera) {
+            actor->HandleKeyPress(key, isPressed);
+
+            if (actor == mLirael) {
+                isLiraelOnCamera = true;
+            }
+        }
+
+        if (!isLiraelOnCamera && mLirael)
+        {
+            mLirael->HandleKeyPress(key, isPressed);
+        }
+    }
 }
 
 void Game::HandleKeyPressActors(const int key, const bool isPressed)
@@ -838,10 +858,10 @@ void Game::HitLane(int lane)
     }
 
     if (hittableNote && minDistance <= HIT_WINDOW_RADIUS) {
-        SDL_Log("HIT! Na pista %d", lane);
+        // SDL_Log("HIT! Na pista %d", lane);
         hittableNote->setHit(true);
     } else {
-        SDL_Log("MISS! Na pista %d", lane);
+        // SDL_Log("MISS! Na pista %d", lane);
     }
 }
 
@@ -953,22 +973,14 @@ void Game::UpdateCamera()
 void Game::UpdateActors(float deltaTime)
 {
 
-    // for (size_t i = 0; i < mAsteroids.size(); ++i)
-    // {
-    //     mAsteroids[i]->Update(deltaTime);
-    // }
-
-
-
-
     // Get actors on camera
     std::vector<Actor*> actorsOnCamera =
             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
 
-    for (size_t i = 0; i < mEnemies.size(); ++i)
-    {
-        actorsOnCamera.emplace_back(mEnemies[i]);
-    }
+    // for (size_t i = 0; i < mEnemies.size(); ++i)
+    // {
+    //     actorsOnCamera.emplace_back(mEnemies[i]);
+    // }
 
     bool isMarioOnCamera = false;
     for (auto actor : actorsOnCamera)

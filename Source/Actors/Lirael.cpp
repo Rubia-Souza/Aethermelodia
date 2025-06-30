@@ -19,11 +19,13 @@ Lirael::Lirael(Game* game, const float forwardSpeed, const float jumpSpeed)
         , mPoleSlideTimer(0.0f)
         , mMovementSpeed(900.0f)
 {
+    const int liraelWidth = 64.0f;
     mRigidBodyComponent = new RigidBodyComponent(this, 1.0f, 5.0f);
-    mColliderComponent = new AABBColliderComponent(this, 0, 0, Game::TILE_SIZE - 4.0f,Game::TILE_SIZE,
-                                                   ColliderLayer::Player);
+    mColliderComponent = new AABBColliderComponent(this, 0, 0, liraelWidth,Game::TILE_SIZE, ColliderLayer::Player);
 
-    mDrawComponent = new DrawSpriteComponent(this, "../Assets/Sprites/Lirael/Lirael.png", 64, 64, 10);
+    mDrawComponent = new DrawSpriteComponent(this, "../Assets/Sprites/Lirael/Lirael.png", liraelWidth, liraelWidth, 10);
+
+    mRigidBodyComponent->SetApplyFriction(false);
 
 //    mDrawComponent = new DrawAnimatedComponent(this,
 //                                              "../Assets/Sprites/Lirael/Lirael.png",
@@ -76,8 +78,6 @@ void Lirael::OnHandleKeyPress(const int key, const bool isPressed)
     }
 }
 
-// Em Lirael.cpp
-
 void Lirael::MoveToTarget(int lane)
 {
     const auto& targets = mGame->GetTargets();
@@ -93,20 +93,15 @@ void Lirael::MoveToTarget(int lane)
         mState = LiraelState::MovingToTarget;
         mCurrentTarget = target;
 
-        // Definimos a força do pulo baseada no alvo
         float jumpStrength = 0.0f;
 
         if (lane == 0 || lane == 1) { // Alvos de CIMA
-            jumpStrength = 850.0f; // Pulo alto
+            jumpStrength = 880.0f; // Pulo alto
         } else { // Alvos de BAIXO
-            jumpStrength = 400.0f; // Pulo mais curto e baixo
+            jumpStrength = 380.0f; // Pulo mais curto e baixo
         }
 
-        // AGORA A LÓGICA É A MESMA PARA TODOS:
-        // 1. Ativa a gravidade para criar o arco do pulo
         mRigidBodyComponent->SetApplyGravity(true);
-
-        // 2. Aplica o impulso vertical inicial com a força que definimos
         mRigidBodyComponent->SetVelocity(Vector2(0.0f, -jumpStrength));
     }
 }
@@ -120,8 +115,6 @@ void Lirael::ReturnToInitialPosition()
     SetPosition(mInitialPosition);
 }
 
-// Em Lirael.cpp
-
 void Lirael::OnUpdate(float deltaTime)
 {
     if (!mInitialPositionSet && mIsOnGround) {
@@ -133,53 +126,35 @@ void Lirael::OnUpdate(float deltaTime)
     {
         if (mCurrentTarget != nullptr)
         {
-            // --- A FORÇA GUIA AGORA É APLICADA PARA TODOS OS PULOS ---
             const float horizontalForce = 1500.0f;
             Vector2 targetPos = mCurrentTarget->GetPosition();
             float dirX = targetPos.x - GetPosition().x > 0 ? 1.0f : -1.0f;
 
-            // Aplica a força se não estiver horizontalmente alinhado
             if (Math::Abs(targetPos.x - GetPosition().x) > 5.0f)
             {
                 mRigidBodyComponent->ApplyForce(Vector2::UnitX * dirX * horizontalForce);
             }
-            // ---------------------------------------------------------
 
-            // Detecção de colisão e alinhamento (esta parte não muda, já funciona para todos)
             auto targetCollider = mCurrentTarget->GetComponent<AABBColliderComponent>();
             if (mColliderComponent->Intersect(*targetCollider))
             {
-                // Para o movimento imediatamente
                 mRigidBodyComponent->SetVelocity(Vector2::Zero);
+                mRigidBodyComponent->SetAcceleration(Vector2::Zero);
                 mRigidBodyComponent->SetApplyGravity(false);
 
-                // --- CÁLCULO DA POSIÇÃO FINAL ABSOLUTA ---
-
-                // 1. Pega os centros dos dois colisores
                 Vector2 targetCenter = targetCollider->GetCenter();
                 Vector2 liraelCenter = mColliderComponent->GetCenter();
 
-                // 2. Calcula o vetor de direção do centro do alvo para o Lirael
                 Vector2 dirFromTarget = liraelCenter - targetCenter;
-                dirFromTarget.Normalize(); // Agora temos apenas a direção
+                dirFromTarget.Normalize();
 
-                // 3. Calcula a distância ideal entre os centros (soma dos raios)
                 float targetRadius = targetCollider->GetWidth() / 2.0f;
                 float liraelHalfWidth = mColliderComponent->GetWidth() / 2.0f;
                 float idealDist = targetRadius + liraelHalfWidth;
 
-                // 4. Calcula a posição final ideal para o *centro* do Lirael
                 Vector2 finalLiraelCenter = targetCenter + dirFromTarget * idealDist;
-
-                // 5. Converte a posição final do centro para a posição do ator (top-left)
-                // A posição do ator é o seu canto superior esquerdo.
-                // Posição(ator) = Posição(centro) - (largura/2, altura/2)
                 Vector2 finalActorPos = finalLiraelCenter - Vector2(liraelHalfWidth, mColliderComponent->GetHeight() / 2.0f);
-
-                // 6. Define a posição do Lirael para o local exato e corrigido
                 SetPosition(finalActorPos);
-
-                // ------------------------------------------
 
                 mState = LiraelState::WaitingAtTarget;
             }
