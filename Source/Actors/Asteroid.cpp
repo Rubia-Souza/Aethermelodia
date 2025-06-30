@@ -8,6 +8,7 @@
 #include "../Game.h"
 #include "../Random.h"
 #include "../Components/ColliderComponents/CircleColliderComponent.h"
+
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/DrawComponents/DrawComponent.h"
 #include "../Components//DrawComponents//DrawPolygonComponent.h"
@@ -41,12 +42,12 @@ Asteroid::Asteroid(Game* game, Vector2 spawnPos, Vector2 targetPos, int lane)
     const float NOTE_VELOCITY = 250.0f; // Ajuste para a velocidade desejada
     mRigidBodyComponent->SetVelocity(direction * NOTE_VELOCITY);
 
-    game->AddAsteroid(this);
+    // game->AddAsteroid(this);
 }
 
 Asteroid::~Asteroid()
 {
-    GetGame()->RemoveAsteroid(this);
+    // GetGame()->RemoveAsteroid(this);
 }
 
 void Asteroid::Update(float deltaTime)

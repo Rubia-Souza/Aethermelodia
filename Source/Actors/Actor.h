@@ -69,6 +69,23 @@ public:
         return nullptr;
     }
 
+    // In your Actor class definition (e.g., Actor.h)
+    public:
+        template <typename T>
+        std::vector<T*> GetComponents() const
+        {
+            std::vector<T*> components;
+            for (auto c : mComponents)
+            {
+                T* t = dynamic_cast<T*>(c);
+                if (t != nullptr)
+                {
+                    components.emplace_back(t);
+                }
+            }
+            return components;
+        }
+
     // Game specific
     void SetOnGround() { mIsOnGround = true; };
     void SetOffGround() { mIsOnGround = false; };

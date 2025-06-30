@@ -5,7 +5,8 @@
 #include "FileReaderUtil.h"
 #include "SDL_log.h"
 
-std::vector<Note> FileReaderUtil::loadChartManually(const std::string& filePath) {
+std::vector<Note> FileReaderUtil::loadChartManually(const std::string& filePath, Difficulty difficulty) {
+    std::string difficultyString = getDifficultyString(difficulty);
     std::ifstream chartFile(filePath);
     std::string line;
 
@@ -50,7 +51,7 @@ std::vector<Note> FileReaderUtil::loadChartManually(const std::string& filePath)
                 ss >> bpm;
                 bpmEvents.push_back({tick, bpm / 1000.0});
             }
-        } else if (currentSection == "[ExpertSingle]") {
+        } else if (currentSection == difficultyString) {
             std::stringstream ss(line);
             int tick;
             std::string type;
@@ -104,3 +105,18 @@ std::vector<Note> FileReaderUtil::loadChartManually(const std::string& filePath)
 
     return finalNotes;
 };
+
+std::string FileReaderUtil::getDifficultyString(Difficulty difficulty) {
+
+    switch (difficulty) {
+        case Difficulty::EASY_SINGLE:
+            return "[EasySingle]";
+        case Difficulty::MEDIUM_SINGLE:
+            return "[MediumSingle]";
+        case Difficulty::HARD_SINGLE:
+            return "[HardSingle]";
+        case Difficulty::EXPERT_SINGLE:
+        default:
+            return "[ExpertSingle]";
+    }
+}

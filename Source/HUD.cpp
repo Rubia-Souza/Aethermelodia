@@ -68,10 +68,17 @@ void HUD::SetLives(int lives)
 {
     // apenas troca a textura de cada UIImage já existente
     for (int i = 0; i < Game::GetMaxLives(); ++i) {
-        if (i>=lives) {
-            SDL_Texture* tex = mHeartEmptyTex;
-            mHeartIcons[i]->SetTexture(tex);  // <<< chama novo método
-        }
+
+        SDL_Texture* tex =  i < lives ? mHeartFullTex : mHeartEmptyTex;
+
+        mHeartIcons[i]->SetTexture(tex);
+        // if (i>=lives) {
+        //     SDL_Texture* tex = mHeartEmptyTex;
+        //     mHeartIcons[i]->SetTexture(tex);  // <<< chama novo método
+        // } else {
+        //     SDL_Texture* tex = mHeartFullTex;
+        //     mHeartIcons[i]->SetTexture(tex);  // <<< chama novo método
+        // }
 
     }
 }
@@ -113,6 +120,7 @@ void HUD::SetScore(int playerScore) {
     for (int i = score.length(); i < 6; i++) {
         score.insert(0, "0");
     }
+
     mScoreText->SetText(score);
 }
 

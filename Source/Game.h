@@ -15,6 +15,7 @@
 #include "FileReaderUtil.h"
 #include "Math.h"
 #include "GameTimer.h"
+#include "HUD.h"
 
 class Game
 {
@@ -38,6 +39,7 @@ public:
         MainMenu,
         Level1,
         Level2,
+        TO_BE_CONTINUE,
         HOW_TO_PLAY,
         CREDITS,
     };
@@ -77,7 +79,14 @@ public:
     void AddActor(class Actor* actor);
     void RemoveActor(class Actor* actor);
     void ProcessInputActors();
+
+
+
+
     void HandleKeyPressActors(const int key, const bool isPressed);
+    void HandleKeyDownActors(const int key, const bool isPressed);
+    void HandleKeyUpActors(const int key, const bool isPressed);
+
 
     // Level functions
     void LoadMainMenu();
@@ -126,14 +135,31 @@ public:
 
     void IncrementAmountOfCoins();
 \
-    void AddAsteroid(class Asteroid* ast);
-    void RemoveAsteroid(class Asteroid* ast);
-    std::vector<class Asteroid*>& GetAsteroids() { return mAsteroids; }
+    // void AddAsteroid(class Asteroid* ast);
+    // void RemoveAsteroid(class Asteroid* ast);
+    // std::vector<class Asteroid*>& GetAsteroids() { return mAsteroids; }
+
+    void AddEnemy(class Enemy* ast);
+    void RemoveEnemy(class Enemy* ast);
+    std::vector<class Enemy*>& GetEnemies() { return mEnemies; }
 
     void HitLane(int lane);
+    void UnhitLane(int lane);
+    const std::vector<class Target*>& GetTargets() const { return mTargets; }
 
     // Getter para expor kMaxLives
     static int GetMaxLives() { return kMaxLives; }
+
+    int GetCurrentLives() { return mCurrentLives; }
+    void SetCurrentLives(int lives) {
+
+        if (lives > kMaxLives)
+            lives = kMaxLives;
+
+        mCurrentLives = lives;
+        mHUD->SetLives(mCurrentLives);
+    }
+
 
 private:
     void ProcessInput();
@@ -205,7 +231,7 @@ private:
     int amountCoinsCollected;
 
     // número máximo de corações
-    static constexpr int kMaxLives = 5;
+    static constexpr int kMaxLives = 10;
     int mCurrentLives;
 
     // Definicao de targets e direcao de inimigos
@@ -220,7 +246,8 @@ private:
     std::vector<Note> chart;
     int currentNoteIndex = 0;
 
-    std::vector<class Asteroid*> mAsteroids;
+    // std::vector<class Asteroid*> mAsteroids;
+    std::vector<class Enemy*> mEnemies;
     std::vector<class Target*> mTargets;
     float mMusicStartOffset;
 

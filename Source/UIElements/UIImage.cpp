@@ -71,9 +71,9 @@ void UIImage::Draw(SDL_Renderer* renderer, const Vector2 &screenPos)
 
 void UIImage::SetTexture(SDL_Texture* newTex)
 {
-    // destrói textura antiga (se quiser)
-    if (mTexture && mTexture != newTex) {
-        SDL_DestroyTexture(mTexture);
-    }
+    // // destrói textura antiga (se quiser)
+    // if (mTexture && mTexture != newTex) {
+    //     SDL_DestroyTexture(mTexture);
+    // }
     mTexture = newTex;
 }

@@ -31,6 +31,7 @@
 #include "Components/ColliderComponents/AABBColliderComponent.h"
 #include "GameTimer.h"
 #include "FileReaderUtil.h"
+#include "Actors/Enemy.h"
 #include "Actors/Lirael.h"
 #include "Actors/Ground.h"
 
@@ -61,7 +62,7 @@ Game::Game(int windowWidth, int windowHeight)
         ,mFadeState(FadeState::None)
         ,amountCoinsCollected(0)
         ,mCurrentLives(kMaxLives)
-        ,mMusicStartOffset(2.5f)
+        ,mMusicStartOffset(2.0f)
         ,mYPosTop(windowHeight * 0.70f)
         ,mYPosBottom(windowHeight * 0.85f)
         ,mXPosLeft(windowWidth * 0.42f)
@@ -209,15 +210,15 @@ void Game::ChangeScene()
 
         mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
-        chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/easy-notes.chart");
+        chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/medium-notes.chart", Difficulty::EASY_SINGLE);
 
         SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(0,0), Vector2(mWindowWidth,mWindowHeight));
         for (int i = 0; i < (mWindowWidth / Game::TILE_SIZE + 1); i++) new Ground(this, Vector2(i * Game::TILE_SIZE,  PLAYABLE_AREA_HEIGHT - 10)); // Chao em blocos por conta do mSpatialHashing
 
-        auto target0 = new Target(this, Vector2(mXPosLeft, mYPosTop), SDL_Color{0, 255, 0, 255}, 0, 30);
-        auto target1 = new Target(this, Vector2(mXPosRight, mYPosTop), SDL_Color{255, 0, 0, 255}, 1, 30);
-        auto target2 = new Target(this, Vector2(mXPosLeft, mYPosBottom), SDL_Color{0, 0, 255, 255}, 2, 30);
-        auto target3 = new Target(this, Vector2(mXPosRight, mYPosBottom), SDL_Color{255, 255, 0, 255}, 3, 30);
+        auto target0 = new Target(this, Vector2(mXPosLeft, mYPosTop), Target::GetLaneColor(0), 0, 30);
+        auto target1 = new Target(this, Vector2(mXPosRight, mYPosTop), Target::GetLaneColor(1), 1, 30);
+        auto target2 = new Target(this, Vector2(mXPosLeft, mYPosBottom), Target::GetLaneColor(2), 2, 30);
+        auto target3 = new Target(this, Vector2(mXPosRight, mYPosBottom), Target::GetLaneColor(3), 3, 30);
 
         mTargets.emplace_back(target0);
         mTargets.emplace_back(target1);
@@ -225,7 +226,9 @@ void Game::ChangeScene()
         mTargets.emplace_back(target3);
 
         mLirael = new Lirael(this);
-        mLirael->SetPosition(Vector2(mWindowWidth * 0.47, 0)); // 0.47 para começar entre os targets
+        const float liraelWidth = 64.0f;
+        const float centeredLiraelX = (mWindowWidth * 0.5f) - (liraelWidth / 2.0f);
+        mLirael->SetPosition(Vector2(centeredLiraelX, 0));
     }
     else if (mNextScene == GameScene::Level2)
     {
@@ -259,28 +262,54 @@ void Game::ChangeScene()
 
         // Initialize actors
         LoadLevel("../Assets/Levels/level1-2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+    } else if (mNextScene == GameScene::TO_BE_CONTINUE) {
+        mAudio->StopAllSounds();
+        mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
+        mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
+        auto toBeContinue = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+        toBeContinue->AddText("To be continue...", Vector2((GetWindowWidth() - 1200) / 2, (GetWindowHeight() - 150) / 2), Vector2(1200, 150));
+        toBeContinue->AddButton("Main Menu", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() {
+            mAudio->StopAllSounds();
+            SetGameScene(GameScene::MainMenu);
+        }, Vector2(160, 15));
     } else if (mNextScene == GameScene::HOW_TO_PLAY) {
         auto howToPlay = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
         auto menuBackground = howToPlay->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
         auto title = howToPlay->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
 
-        auto text1 = howToPlay->AddText("Q: Hit top left note", Vector2(mWindowWidth/2.0f - 250.0f, 380.0f), Vector2(500.0f, 30.0f));
-        auto text2 = howToPlay->AddText("A: Hit bottom left note", Vector2(mWindowWidth/2.0f - 250.0f, 435.0f), Vector2(500.0f, 30.0f));
-        auto text3 = howToPlay->AddText("E: Hit top right note", Vector2(mWindowWidth/2.0f - 250.0f, 490.0f), Vector2(500.0f, 30.0f));
-        auto text4 = howToPlay->AddText("D: Hit bottom right note", Vector2(mWindowWidth/2.0f - 250.0f, 545.0f), Vector2(500.0f, 30.0f));
+        auto text1 = howToPlay->AddText("A: Hit top left note", Vector2(mWindowWidth/2.0f - 250.0f, 380.0f), Vector2(500.0f, 30.0f));
+        auto text2 = howToPlay->AddText("S: Hit bottom left note", Vector2(mWindowWidth/2.0f - 250.0f, 435.0f), Vector2(500.0f, 30.0f));
+        auto text3 = howToPlay->AddText("D: Hit top right note", Vector2(mWindowWidth/2.0f - 250.0f, 490.0f), Vector2(500.0f, 30.0f));
+        auto text4 = howToPlay->AddText("F: Hit bottom right note", Vector2(mWindowWidth/2.0f - 250.0f, 545.0f), Vector2(500.0f, 30.0f));
         auto returnButton = howToPlay->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
     } else if (mNextScene == GameScene::CREDITS) {
         auto credits = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
-        auto menuBackground = credits->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
-        auto title = credits->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
+        credits->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
+        credits->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
 
-        auto text1 = credits->AddText("Aline Cristina", Vector2(mWindowWidth/2.0f - 175.0f, 380.0f), Vector2(350.0f, 20.0f));
-        auto text2 = credits->AddText("Gabriel Henrique", Vector2(mWindowWidth/2.0f - 175.0f, 435.0f), Vector2(350.0f, 20.0f));
-        auto text3 = credits->AddText("Rubia Alice", Vector2(mWindowWidth/2.0f - 140.0f, 490.0f), Vector2(280.0f, 20.0f));
-        auto text4 = credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth/2.0f - 175.0f, 545.0f), Vector2(350.0f, 20.0f));
-        auto returnButton = credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
+        credits->AddText("Arts", Vector2(175.0f, 200.0f), Vector2(200.0f, 35.0f));
+        credits->AddText("- Background Menu -", Vector2(120.0f, 270.0f), Vector2(300.0f, 20.0f));
+        credits->AddText("Steven Greenblatt", Vector2(170.0f, 320.0f), Vector2(200.0f, 20.0f));
+
+        credits->AddText("- Background Level 1 -", Vector2(120.0f, 370.0f), Vector2(300.0f, 20.0f));
+        credits->AddText("edermunizz", Vector2(210.0f, 420.0f), Vector2(100.0f, 20.0f));
+
+        credits->AddText("Music", Vector2(GetWindowWidth() / 2 - 100, 200.0f), Vector2(200.0f, 35.0f));
+        credits->AddText("- Menu -", Vector2(GetWindowWidth() / 2 - 50, 270.0f), Vector2(100.0f, 20.0f));
+        credits->AddText("The King of Fighters EX Neo Blood - Escape of Tower Ending Theme 1", Vector2(GetWindowWidth() / 2 - 150, 300.0f), Vector2(300.0f, 40.0f));
+        credits->AddText("- Level 1 -", Vector2(GetWindowWidth() / 2 - 75, 370.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Dynasty Warriors Origins - Lu Bu's Theme", Vector2(GetWindowWidth() / 2 - 150, 400.0f), Vector2(300.0f, 40.0f));
+        credits->AddText("- Ending -", Vector2(GetWindowWidth() / 2 - 50, 450.0f), Vector2(100.0f, 20.0f));
+        credits->AddText("Night in the Woods - Ending", Vector2(GetWindowWidth() / 2 - 150, 475.0f), Vector2(300.0f, 40.0f));
+
+        credits->AddText("Code", Vector2(GetWindowWidth() - 400, 200.0f), Vector2(200.0f, 35.0f));
+        credits->AddText("Aline Cristina", Vector2(mWindowWidth - 375.0f, 270.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Gabriel Henrique", Vector2(mWindowWidth - 375.0f, 320.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Rubia Alice", Vector2(mWindowWidth - 375.0f, 370.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth - 375.0f, 420.0f), Vector2(150.0f, 20.0f));
+        credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
     }
 
     // Set new scene
@@ -448,14 +477,17 @@ void Game::ProcessInput()
                 if (!mUIStack.empty()) {
                     mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
                 }
-
-                HandleKeyPressActors(event.key.keysym.sym, event.key.repeat == 0);
+                HandleKeyDownActors(event.key.keysym.sym, true);
 
                 // Check if the Return key has been pressed to pause/unpause the game
                 if (event.key.keysym.sym == SDLK_RETURN)
                 {
                     TogglePause();
                 }
+                break;
+            case SDL_KEYUP:
+                HandleKeyUpActors(event.key.keysym.sym, false);
+
                 break;
         }
     }
@@ -490,7 +522,7 @@ void Game::ProcessInputActors()
     }
 }
 
-void Game::HandleKeyPressActors(const int key, const bool isPressed)
+void Game::HandleKeyDownActors(const int key, const bool isPressed)
 {
 
     if(mGamePlayState == GamePlayState::Playing && isPressed)
@@ -522,6 +554,117 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
             break;
         }
     }
+
+    if(mGamePlayState == GamePlayState::Playing)
+    {
+        // Get actors on camera
+        std::vector<Actor*> actorsOnCamera =
+                mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
+
+        // Handle key press for actors
+        bool isLiraelOnCamera = false;
+        for (auto actor: actorsOnCamera) {
+            actor->HandleKeyPress(key, isPressed);
+
+            if (actor == mLirael) {
+                isLiraelOnCamera = true;
+            }
+        }
+
+        // If Mario is not on camera, handle key press for him
+        if (!isLiraelOnCamera && mLirael)
+        {
+            mLirael->HandleKeyPress(key, isPressed);
+        }
+    }
+}
+
+void Game::HandleKeyUpActors(const int key, const bool isPressed)
+{
+
+    if(mGamePlayState == GamePlayState::Playing )
+    {
+        switch(key)
+        {
+            // Pista Superior Esquerda
+            case SDLK_a:
+            case SDLK_LEFT: // Seta para esquerda
+                UnhitLane(0);
+                break;
+
+                // Pista Superior Direita
+            case SDLK_d:
+            case SDLK_UP: // Seta para cima
+                UnhitLane(1);
+                break;
+
+                // Pista Inferior Esquerda
+            case SDLK_s:
+            case SDLK_DOWN: // Seta para baixo
+                UnhitLane(2);
+                break;
+
+                // Pista Inferior Direita
+            case SDLK_f:
+            case SDLK_RIGHT: // Seta para direita
+                UnhitLane(3);
+                break;
+        }
+    }
+
+    if(mGamePlayState == GamePlayState::Playing)
+    {
+        std::vector<Actor*> actorsOnCamera =
+                mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
+
+        bool isLiraelOnCamera = false;
+        for (auto actor: actorsOnCamera) {
+            actor->HandleKeyPress(key, isPressed);
+
+            if (actor == mLirael) {
+                isLiraelOnCamera = true;
+            }
+        }
+
+        if (!isLiraelOnCamera && mLirael)
+        {
+            mLirael->HandleKeyPress(key, isPressed);
+        }
+    }
+}
+
+void Game::HandleKeyPressActors(const int key, const bool isPressed)
+{
+// TODO logic to keep pressing
+    // if(mGamePlayState == GamePlayState::Playing && isPressed)
+    // {
+    //     switch(key)
+    //     {
+    //         // Pista Superior Esquerda
+    //         case SDLK_a:
+    //         case SDLK_LEFT: // Seta para esquerda
+    //             HitLane(0);
+    //             break;
+    //
+    //             // Pista Superior Direita
+    //         case SDLK_d:
+    //         case SDLK_UP: // Seta para cima
+    //             HitLane(1);
+    //             break;
+    //
+    //             // Pista Inferior Esquerda
+    //         case SDLK_s:
+    //         case SDLK_DOWN: // Seta para baixo
+    //             HitLane(2);
+    //             break;
+    //
+    //             // Pista Inferior Direita
+    //         case SDLK_f:
+    //         case SDLK_RIGHT: // Seta para direita
+    //             HitLane(3);
+    //             break;
+    //     }
+    // }
 
     // if(mGamePlayState == GamePlayState::Playing)
     // {
@@ -669,8 +812,11 @@ void Game::UpdateGame()
                 continue;
             }
 
+
             Vector2 spawnPos;
             Vector2 targetPos = targets[lane];
+            // o gooomba eh fixado no topo
+            targetPos.y -= 16;
 
             // Define a posição de spawn baseada na pista (lane)
             // Pistas 0 e 2 (esquerda) vêm da borda esquerda
@@ -683,12 +829,19 @@ void Game::UpdateGame()
                 spawnPos.y = targetPos.y;
             }
 
-            new Asteroid(this, spawnPos, targetPos, lane);
+            new Enemy(this, chart[currentNoteIndex], spawnPos, targetPos);
 
             // Avança para a próxima nota no chart
             currentNoteIndex++;
 
         }
+        // QUIT GAME IF PLAYER DIES, update this
+        if (mCurrentLives <= 0) {
+            SDL_Event quitEvt;
+            quitEvt.type = SDL_QUIT;
+            SDL_PushEvent(&quitEvt);
+        }
+
     }
 
 
@@ -710,36 +863,79 @@ void Game::HitLane(int lane)
 
     hitTarget->Flash();
 
-    Asteroid* hittableNote = nullptr;
+    // Asteroid* hittableNote = nullptr;
+    // float minDistance = 10000.0f;
+    // Vector2 targetPos = hitTarget->GetPosition();
+    //
+    // for (auto ast : mAsteroids) {
+    //     if (ast->GetLane() == lane) {
+    //         float dist = (ast->GetPosition() - targetPos).Length();
+    //         if (dist < minDistance) {
+    //             minDistance = dist;
+    //             hittableNote = ast;
+    //         }
+    //     }
+    // }
+
+
+    Enemy* hittableNote = nullptr;
     float minDistance = 10000.0f;
     Vector2 targetPos = hitTarget->GetPosition();
 
-    for (auto ast : mAsteroids) {
-        if (ast->GetLane() == lane) {
-            float dist = (ast->GetPosition() - targetPos).Length();
+    for (auto enemy : mEnemies) {
+        if (enemy->GetLane() == lane) {
+            float dist = (enemy->GetPosition() - targetPos).Length();
             if (dist < minDistance) {
                 minDistance = dist;
-                hittableNote = ast;
+                hittableNote = enemy;
             }
         }
     }
 
     if (hittableNote && minDistance <= HIT_WINDOW_RADIUS) {
-        SDL_Log("HIT! Na pista %d", lane);
-        hittableNote->SetState(ActorState::Destroy);
-        //addScore(100);
-        // mAudio->PlaySound("hit.wav");
+        // SDL_Log("HIT! Na pista %d", lane);
+        hittableNote->setHit(true);
     } else {
-        mCurrentLives--;
-        mHUD->SetLives(mCurrentLives);
-        SDL_Log("MISS! Vidas restantes: %d", mCurrentLives);
+        SetCurrentLives(mCurrentLives - 1);
+        // SDL_Log("MISS! Vidas restantes: %d", mCurrentLives);
     }
 
-    if (mCurrentLives <= 0) {
+}
 
-        SDL_Event quitEvt;
-        quitEvt.type = SDL_QUIT;
-        SDL_PushEvent(&quitEvt);
+void Game::UnhitLane(int lane)
+{
+    const float HIT_WINDOW_RADIUS = 75.0f;
+    Target* hitTarget = nullptr;
+
+    for (auto target : mTargets) {
+        if (target->GetLane() == lane) {
+            hitTarget = target;
+            break;
+        }
+    }
+
+    if (!hitTarget) return;
+
+    hitTarget->Flash();
+
+
+
+    Enemy* hittableNote = nullptr;
+    float minDistance = 10000.0f;
+    Vector2 targetPos = hitTarget->GetPosition();
+
+    for (auto enemy : mEnemies) {
+        if (enemy->GetLane() == lane) {
+            float dist = (enemy->GetPosition() - targetPos).Length();
+            if (dist < minDistance) {
+                minDistance = dist;
+                hittableNote = enemy;
+            }
+        }
+    }
+
+    if (hittableNote && minDistance <= HIT_WINDOW_RADIUS && hittableNote->GetDurationInSeconds() > 0) {
+        hittableNote->setHit(false);
     }
 }
 
@@ -814,14 +1010,14 @@ void Game::UpdateCamera()
 void Game::UpdateActors(float deltaTime)
 {
 
-    for (size_t i = 0; i < mAsteroids.size(); ++i)
-    {
-        mAsteroids[i]->Update(deltaTime);
-    }
-
     // Get actors on camera
     std::vector<Actor*> actorsOnCamera =
             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
+
+    for (size_t i = 0; i < mEnemies.size(); ++i)
+    {
+        mEnemies[i]->Update(deltaTime);
+    }
 
     bool isMarioOnCamera = false;
     for (auto actor : actorsOnCamera)
@@ -865,15 +1061,28 @@ void Game::Reinsert(Actor* actor)
     mSpatialHashing->Reinsert(actor);
 }
 
-void Game::AddAsteroid(Asteroid* ast)
+// TODO remover
+// void Game::AddAsteroid(Asteroid* ast)
+// {
+//     mAsteroids.emplace_back(ast);
+// }
+//
+// void Game::RemoveAsteroid(Asteroid* ast)
+// {
+//     if (const auto iter = std::find(mAsteroids.begin(), mAsteroids.end(), ast); iter != mAsteroids.end()) {
+//         mAsteroids.erase(iter);
+//     }
+// }
+
+void Game::AddEnemy(Enemy* enemy)
 {
-    mAsteroids.emplace_back(ast);
+    mEnemies.emplace_back(enemy);
 }
 
-void Game::RemoveAsteroid(Asteroid* ast)
+void Game::RemoveEnemy(Enemy* enemy)
 {
-    if (const auto iter = std::find(mAsteroids.begin(), mAsteroids.end(), ast); iter != mAsteroids.end()) {
-        mAsteroids.erase(iter);
+    if (const auto iter = std::find(mEnemies.begin(), mEnemies.end(), enemy); iter != mEnemies.end()) {
+        mEnemies.erase(iter);
     }
 }
 
@@ -913,14 +1122,22 @@ void Game::GenerateOutput()
     // Get list of drawables in draw order
     std::vector<DrawComponent*> drawables;
 
+    // For each actor on camera...
     for (auto actor : actorsOnCamera)
     {
-        auto drawable = actor->GetComponent<DrawComponent>();
-        if (drawable && drawable->IsVisible())
+        // ...get ALL of its drawable components (DrawComponent and its children)
+        auto actorDrawables = actor->GetComponents<DrawComponent>();
+
+        // Add each visible drawable component to our main list
+        for (auto drawable : actorDrawables)
         {
-            drawables.emplace_back(drawable);
+            if (drawable && drawable->IsVisible())
+            {
+                drawables.emplace_back(drawable);
+            }
         }
     }
+
 
     // Sort drawables by draw order
     std::sort(drawables.begin(), drawables.end(),

@@ -26,9 +26,17 @@ struct RawNoteData {
     int lane;
     int durationTicks;
 };
+enum class Difficulty {
+    EASY_SINGLE = 1,
+    MEDIUM_SINGLE,
+    HARD_SINGLE ,
+    EXPERT_SINGLE,
+};
+
 
 class FileReaderUtil
 {
     public:
-        static std::vector<Note> loadChartManually(const std::string& filePath);
+        static std::string getDifficultyString(Difficulty difficulty);
+        static std::vector<Note> loadChartManually(const std::string& filePath, Difficulty difficulty = Difficulty::EXPERT_SINGLE);
 };
