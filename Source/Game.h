@@ -37,10 +37,9 @@ public:
     {
         MainMenu,
         Level1,
-        Level2,
-        TO_BE_CONTINUE,
-        HOW_TO_PLAY,
-        CREDITS,
+        ToBeContinue,
+        HowToPlay,
+        Credits,
     };
 
     enum class SceneManagerState
@@ -79,13 +78,9 @@ public:
     void RemoveActor(class Actor* actor);
     void ProcessInputActors();
 
-
-
-
     void HandleKeyPressActors(const int key, const bool isPressed);
     void HandleKeyDownActors(const int key, const bool isPressed);
     void HandleKeyUpActors(const int key, const bool isPressed);
-
 
     // Level functions
     void LoadMainMenu();
@@ -133,10 +128,6 @@ public:
     void addScore(int points);
 
     void IncrementAmountOfCoins();
-\
-    // void AddAsteroid(class Asteroid* ast);
-    // void RemoveAsteroid(class Asteroid* ast);
-    // std::vector<class Asteroid*>& GetAsteroids() { return mAsteroids; }
 
     void AddEnemy(class Enemy* ast);
     void RemoveEnemy(class Enemy* ast);
@@ -227,7 +218,6 @@ private:
     std::vector<Note> chart;
     int currentNoteIndex = 0;
 
-    // std::vector<class Asteroid*> mAsteroids;
     std::vector<class Enemy*> mEnemies;
     std::vector<class Target*> mTargets;
     float mMusicStartOffset;
