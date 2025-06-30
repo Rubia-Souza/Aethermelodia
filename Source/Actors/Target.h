@@ -23,6 +23,7 @@ public:
 
 private:
     class DrawPolygonComponent* mDrawComponent;
+    class AABBColliderComponent* mColliderComponent;
 
     SDL_Color mOriginalColor;
     int mLane;

@@ -144,6 +144,7 @@ public:
 
     void HitLane(int lane);
     void UnhitLane(int lane);
+    const std::vector<class Target*>& GetTargets() const { return mTargets; }
 
 private:
     void ProcessInput();
