@@ -258,6 +258,16 @@ void Game::ChangeScene()
 
         // Initialize actors
         LoadLevel("../Assets/Levels/level1-2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
+    } else if (mNextScene == GameScene::TO_BE_CONTINUE) {
+        mAudio->StopAllSounds();
+        mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
+        mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
+        auto toBeContinue = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+        toBeContinue->AddText("To be continue...", Vector2((GetWindowWidth() - 1200) / 2, (GetWindowHeight() - 150) / 2), Vector2(1200, 150));
+        toBeContinue->AddButton("Main Menu", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() {
+            mAudio->StopAllSounds();
+            SetGameScene(GameScene::MainMenu);
+        }, Vector2(160, 15));
     } else if (mNextScene == GameScene::HOW_TO_PLAY) {
         auto howToPlay = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
