@@ -38,6 +38,7 @@ public:
         MainMenu,
         Level1,
         Level2,
+        TO_BE_CONTINUE,
         HOW_TO_PLAY,
         CREDITS,
     };
