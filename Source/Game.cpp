@@ -146,7 +146,7 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
     //  Se a cena for inválida, registre um erro no log e retorne.
     //  Se o estado do SceneManager não for SceneManagerState::None, registre um erro no log e retorne.
     if (mSceneManagerState == SceneManagerState::None) {
-        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Credits || scene == GameScene::HowToPlay) {
+        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Credits || scene == GameScene::HowToPlay || scene == GameScene::ToBeContinue) {
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -682,7 +682,7 @@ void Game::UpdateGame()
 
     mTicksCount = SDL_GetTicks();
 
-    if(mGamePlayState != GamePlayState::Paused && mGamePlayState != GamePlayState::GameOver)
+    if(mGamePlayState == GamePlayState::Playing)
     {
         // Reinsert all actors and pending actors
         UpdateActors(deltaTime);
@@ -731,7 +731,24 @@ void Game::UpdateGame()
         UpdateLevelTime(deltaTime);
     }
 
-    if (mGameScene == GameScene::Level1 && !chart.empty())
+    if (mGameScene == GameScene::Level1 && mGamePlayState == GamePlayState::Playing) {
+        const bool allNotesSpawned = (currentNoteIndex >= chart.size());
+        const bool allEnemiesCleared = mEnemies.empty();
+
+        if (allNotesSpawned && allEnemiesCleared) {
+            // Apenas mude o estado. Não chame a transição ainda.
+            mGamePlayState = GamePlayState::LevelComplete;
+
+            // Pare a música e o timer aqui se desejar
+            mAudio->StopAllSounds();
+            gameTimer.stop();
+
+            // Chame SetGameScene aqui mesmo, uma única vez.
+            SetGameScene(GameScene::ToBeContinue);
+        }
+    }
+
+    if (mGameScene == GameScene::Level1 && !chart.empty() && mGamePlayState == GamePlayState::Playing)
     {
         double currentTime = gameTimer.getSeconds() - mMusicStartOffset;
 
@@ -935,7 +952,7 @@ void Game::UpdateActors(float deltaTime)
 
     for (size_t i = 0; i < mEnemies.size(); ++i)
     {
-        actorsOnCamera.emplace_back(mEnemies[i]);
+        mEnemies[i]->Update(deltaTime);
     }
 
     bool isMarioOnCamera = false;
@@ -1063,10 +1080,6 @@ void Game::GenerateOutput()
         ui->Draw(mRenderer);
     }
 
-    // --------------
-    // TODO - PARTE 2
-    // --------------
-
     if (mFadeState == FadeState::FadeOut)
     {
         float alphaOut = mFadeTime/TRANSITION_TIME;
@@ -1129,19 +1142,11 @@ SDL_Texture* Game::LoadTexture(const std::string& texturePath)
 
 UIFont* Game::LoadFont(const std::string& fileName)
 {
-    // --------------
-    // TODO - PARTE 1-1
-    // --------------
-
-    // TODO 1.: Verifique se o arquivo de fonte já está carregado no mapa mFonts.
-    //  Se sim, retorne o ponteiro para a fonte carregada.
     auto it = mFonts.find(fileName);
     if (it != mFonts.end()) {
         return it->second;
     }
-    //  Se não, crie um novo objeto UIFont, carregue a fonte do arquivo usando o método Load,
-    //  e se o carregamento for bem-sucedido, adicione a fonte ao mapa mFonts.
-    //  Se o carregamento falhar, descarregue a fonte com Unload e delete o objeto UIFont, retornando nullptr.
+
     UIFont* newFont = new UIFont(mRenderer);
     bool wasSuccessful = newFont->Load(fileName);
     if (!wasSuccessful) {
@@ -1159,13 +1164,24 @@ void Game::UnloadScene()
 {
     // Delete actors
     delete mSpatialHashing;
+    delete mLirael;
+
+    for (auto target : mTargets) {
+        delete target;
+    }
+    mTargets.clear();
+
+    for (auto enemy : mEnemies) {
+        delete enemy;
+    }
+    mEnemies.clear();
 
     // Delete UI screens
     for (auto ui : mUIStack) {
         delete ui;
     }
     mUIStack.clear();
-    mTargets.clear();
+
     // Delete background texture
     if (mBackgroundTexture) {
         SDL_DestroyTexture(mBackgroundTexture);
