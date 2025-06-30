@@ -60,6 +60,7 @@ Game::Game(int windowWidth, int windowHeight)
         ,playerScore(0)
         ,mFadeState(FadeState::None)
         ,amountCoinsCollected(0)
+        ,mCurrentLives(kMaxLives)
         ,mMusicStartOffset(2.0f)
         ,mYPosTop(windowHeight * 0.70f)
         ,mYPosBottom(windowHeight * 0.85f)
@@ -225,13 +226,16 @@ void Game::ChangeScene()
         mAudio->StopAllSounds();
         mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
         mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
+
         auto toBeContinue = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
         toBeContinue->AddText("To be continue...", Vector2((GetWindowWidth() - 1200) / 2, (GetWindowHeight() - 150) / 2), Vector2(1200, 150));
         toBeContinue->AddButton("Main Menu", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() {
             mAudio->StopAllSounds();
             SetGameScene(GameScene::MainMenu);
         }, Vector2(160, 15));
+
     } else if (mNextScene == GameScene::HowToPlay) {
+
         auto howToPlay = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
         auto menuBackground = howToPlay->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
@@ -714,19 +718,8 @@ void Game::UpdateGame()
     // ---------------------
     // UpdateCamera();
 
-    // --------------
-    // TODO - PARTE 2
-    // --------------
-
-    // TODO 1.: Chame UpdateSceneManager passando o deltaTime.
     UpdateSceneManager(deltaTime);
 
-    // --------------
-    // TODO - PARTE 3
-    // --------------
-
-    // TODO 1.: Verifique se a cena atual é diferente de GameScene::MainMenu e se o estado do jogo é
-    //  GamePlayState::Playing. Se sim, chame UpdateLevelTime passando o deltaTime.
     if (GameScene::MainMenu != mGameScene && GameScene::Credits != mGameScene && GameScene::HowToPlay != mGameScene && mGamePlayState == GamePlayState::Playing) {
         UpdateLevelTime(deltaTime);
     }
@@ -736,14 +729,11 @@ void Game::UpdateGame()
         const bool allEnemiesCleared = mEnemies.empty();
 
         if (allNotesSpawned && allEnemiesCleared) {
-            // Apenas mude o estado. Não chame a transição ainda.
             mGamePlayState = GamePlayState::LevelComplete;
 
-            // Pare a música e o timer aqui se desejar
             mAudio->StopAllSounds();
             gameTimer.stop();
 
-            // Chame SetGameScene aqui mesmo, uma única vez.
             SetGameScene(GameScene::ToBeContinue);
         }
     }
@@ -770,7 +760,6 @@ void Game::UpdateGame()
                 continue;
             }
 
-
             Vector2 spawnPos;
             Vector2 targetPos = targets[lane];
             // o gooomba eh fixado no topo
@@ -791,6 +780,13 @@ void Game::UpdateGame()
 
             // Avança para a próxima nota no chart
             currentNoteIndex++;
+
+        }
+        // // QUIT GAME IF PLAYER DIES, update this
+        if (mCurrentLives <= 0) {
+            SDL_Event quitEvt;
+            quitEvt.type = SDL_QUIT;
+            SDL_PushEvent(&quitEvt);
         }
     }
 
@@ -830,7 +826,8 @@ void Game::HitLane(int lane)
         // SDL_Log("HIT! Na pista %d", lane);
         hittableNote->setHit(true);
     } else {
-        // SDL_Log("MISS! Na pista %d", lane);
+        SetCurrentLives(mCurrentLives - 1);
+        // SDL_Log("MISS! Vidas restantes: %d", mCurrentLives);
     }
 }
 
