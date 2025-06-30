@@ -68,8 +68,6 @@ add_executable(${PROJECT_NAME}
         Source/GameTimer.h
         Source/Actors/Target.cpp
         Source/Actors/Target.h
-        Source/Actors/Asteroid.cpp
-        Source/Actors/Asteroid.h
         Source/Actors/Ground.cpp
         Source/Actors/Ground.h
         Source/Actors/Enemy.cpp

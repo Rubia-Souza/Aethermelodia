@@ -25,7 +25,6 @@
 #include "Actors/Collectable.h"
 #include "Actors/Spawner.h"
 #include "Actors/Target.h"
-#include "Actors/Asteroid.h"
 #include "UIElements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Components/ColliderComponents/AABBColliderComponent.h"
@@ -147,7 +146,7 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
     //  Se a cena for inválida, registre um erro no log e retorne.
     //  Se o estado do SceneManager não for SceneManagerState::None, registre um erro no log e retorne.
     if (mSceneManagerState == SceneManagerState::None) {
-        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::CREDITS || scene == GameScene::HOW_TO_PLAY) {
+        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Credits || scene == GameScene::HowToPlay) {
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -226,40 +225,7 @@ void Game::ChangeScene()
 
         mLirael = new Lirael(this);
         mLirael->SetPosition(Vector2(mWindowWidth * 0.47, 0)); // 0.47 para começar entre os targets
-    }
-    else if (mNextScene == GameScene::Level2)
-    {
-        // --------------
-        // TODO - PARTE 3
-        // --------------
-
-        // TODO 1.: Crie um novo objeto HUD, passando o ponteiro do Game e o caminho para a fonte SMB.ttf. Como
-        //  feito no nível 1-1.
-        mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
-
-        // TODO 2.: Altere o atributo mGameTimeLimit para 400 (400 segundos) e ajuste o HUD com esse tempo inicial. Como
-        //  feito no nível 1-1.
-        mGameTimeLimit = 400;
-        mHUD->SetTime(mGameTimeLimit);
-        mHUD->SetLevelName("1-2");
-
-        // --------------
-        // TODO - PARTE 4
-        // --------------
-
-        // TODO 1. Toque a música de fundo "MusicUnderground.ogg" em loop e armaze o SoundHandle retornado em mMusicHandle.
-        mMusicHandle = mAudio->PlaySound("MusicUnderground.ogg", true);
-
-
-        // Set background color
-        mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
-
-        // Set mod color
-        mModColor.Set(0.0f, 255.0f, 200.0f);
-
-        // Initialize actors
-        LoadLevel("../Assets/Levels/level1-2.csv", LEVEL_WIDTH, LEVEL_HEIGHT);
-    } else if (mNextScene == GameScene::TO_BE_CONTINUE) {
+    } else if (mNextScene == GameScene::ToBeContinue) {
         mAudio->StopAllSounds();
         mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
         mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
@@ -269,7 +235,7 @@ void Game::ChangeScene()
             mAudio->StopAllSounds();
             SetGameScene(GameScene::MainMenu);
         }, Vector2(160, 15));
-    } else if (mNextScene == GameScene::HOW_TO_PLAY) {
+    } else if (mNextScene == GameScene::HowToPlay) {
         auto howToPlay = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
         auto menuBackground = howToPlay->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
@@ -280,7 +246,7 @@ void Game::ChangeScene()
         auto text3 = howToPlay->AddText("D: Hit top right note", Vector2(mWindowWidth/2.0f - 250.0f, 490.0f), Vector2(500.0f, 30.0f));
         auto text4 = howToPlay->AddText("F: Hit bottom right note", Vector2(mWindowWidth/2.0f - 250.0f, 545.0f), Vector2(500.0f, 30.0f));
         auto returnButton = howToPlay->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
-    } else if (mNextScene == GameScene::CREDITS) {
+    } else if (mNextScene == GameScene::Credits) {
         auto credits = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
         credits->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
@@ -326,8 +292,8 @@ void Game::LoadMainMenu()
     auto title = mainMenu->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
 
     auto button1 = mainMenu->AddButton("Play Game", Vector2(mWindowWidth/2.0f - 150.0f, 400.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(180, 15));
-    auto button2 = mainMenu->AddButton("How to Play", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::HOW_TO_PLAY); }, Vector2(160, 15));
-    auto button3 = mainMenu->AddButton("Credits", Vector2(mWindowWidth/2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::CREDITS); }, Vector2(120, 15));
+    auto button2 = mainMenu->AddButton("How to Play", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::HowToPlay); }, Vector2(160, 15));
+    auto button3 = mainMenu->AddButton("Credits", Vector2(mWindowWidth/2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Credits); }, Vector2(120, 15));
 }
 
 void Game::LoadLevel(const std::string& levelName, const int levelWidth, const int levelHeight)
@@ -674,7 +640,7 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
 void Game::TogglePause()
 {
 
-    if (mGameScene != GameScene::MainMenu && mGameScene != GameScene::CREDITS && mGameScene != GameScene::HOW_TO_PLAY)
+    if (mGameScene != GameScene::MainMenu && mGameScene != GameScene::Credits && mGameScene != GameScene::HowToPlay)
     {
         if (mGamePlayState == GamePlayState::Playing)
         {
@@ -761,7 +727,7 @@ void Game::UpdateGame()
 
     // TODO 1.: Verifique se a cena atual é diferente de GameScene::MainMenu e se o estado do jogo é
     //  GamePlayState::Playing. Se sim, chame UpdateLevelTime passando o deltaTime.
-    if (GameScene::MainMenu != mGameScene && GameScene::CREDITS != mGameScene && GameScene::HOW_TO_PLAY != mGameScene && mGamePlayState == GamePlayState::Playing) {
+    if (GameScene::MainMenu != mGameScene && GameScene::Credits != mGameScene && GameScene::HowToPlay != mGameScene && mGamePlayState == GamePlayState::Playing) {
         UpdateLevelTime(deltaTime);
     }
 
@@ -836,21 +802,6 @@ void Game::HitLane(int lane)
 
     hitTarget->Flash();
 
-    // Asteroid* hittableNote = nullptr;
-    // float minDistance = 10000.0f;
-    // Vector2 targetPos = hitTarget->GetPosition();
-    //
-    // for (auto ast : mAsteroids) {
-    //     if (ast->GetLane() == lane) {
-    //         float dist = (ast->GetPosition() - targetPos).Length();
-    //         if (dist < minDistance) {
-    //             minDistance = dist;
-    //             hittableNote = ast;
-    //         }
-    //     }
-    // }
-
-
     Enemy* hittableNote = nullptr;
     float minDistance = 10000.0f;
     Vector2 targetPos = hitTarget->GetPosition();
@@ -888,8 +839,6 @@ void Game::UnhitLane(int lane)
     if (!hitTarget) return;
 
     hitTarget->Flash();
-
-
 
     Enemy* hittableNote = nullptr;
     float minDistance = 10000.0f;
@@ -980,15 +929,6 @@ void Game::UpdateCamera()
 
 void Game::UpdateActors(float deltaTime)
 {
-
-    // for (size_t i = 0; i < mAsteroids.size(); ++i)
-    // {
-    //     mAsteroids[i]->Update(deltaTime);
-    // }
-
-
-
-
     // Get actors on camera
     std::vector<Actor*> actorsOnCamera =
             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
@@ -1039,19 +979,6 @@ void Game::Reinsert(Actor* actor)
 {
     mSpatialHashing->Reinsert(actor);
 }
-
-// TODO remover
-// void Game::AddAsteroid(Asteroid* ast)
-// {
-//     mAsteroids.emplace_back(ast);
-// }
-//
-// void Game::RemoveAsteroid(Asteroid* ast)
-// {
-//     if (const auto iter = std::find(mAsteroids.begin(), mAsteroids.end(), ast); iter != mAsteroids.end()) {
-//         mAsteroids.erase(iter);
-//     }
-// }
 
 void Game::AddEnemy(Enemy* enemy)
 {
@@ -1154,19 +1081,6 @@ void Game::GenerateOutput()
         SDL_SetRenderDrawColor(mRenderer, 0, 0, 0, 255 * (1.0f - alphaIn));
         SDL_RenderFillRect(mRenderer, nullptr);
     }
-    // TODO 1.: Verifique se o SceneManager está no estado ativo. Se estiver, desenhe um retângulo preto cobrindo
-    //  toda a tela.
-    // if (mSceneManagerState == SceneManagerState::Active) {
-    //     SDL_Rect background = {
-    //         0,
-    //         0,
-    //         mWindowWidth,
-    //         mWindowHeight
-    //     };
-    //     SDL_SetRenderDrawColor(mRenderer, 0, 0, 0, 255);
-    //     SDL_RenderFillRect(mRenderer, &background);
-    // }
-
 
     // Swap front buffer and back buffer
     SDL_RenderPresent(mRenderer);
