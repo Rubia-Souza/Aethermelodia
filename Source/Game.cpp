@@ -285,24 +285,26 @@ void Game::ChangeScene()
         credits->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
         credits->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
 
-        credits->AddText("Arts", Vector2(175.0f, 250.0f), Vector2(200.0f, 35.0f));
-        credits->AddText("- Background Menu -", Vector2(120.0f, 350.0f), Vector2(300.0f, 20.0f));
-        credits->AddText("Steven Greenblatt", Vector2(170.0f, 400.0f), Vector2(200.0f, 20.0f));
+        credits->AddText("Arts", Vector2(175.0f, 200.0f), Vector2(200.0f, 35.0f));
+        credits->AddText("- Background Menu -", Vector2(120.0f, 270.0f), Vector2(300.0f, 20.0f));
+        credits->AddText("Steven Greenblatt", Vector2(170.0f, 320.0f), Vector2(200.0f, 20.0f));
 
-        credits->AddText("- Background Level 1 -", Vector2(120.0f, 450.0f), Vector2(300.0f, 20.0f));
-        credits->AddText("edermunizz", Vector2(210.0f, 500.0f), Vector2(100.0f, 20.0f));
+        credits->AddText("- Background Level 1 -", Vector2(120.0f, 370.0f), Vector2(300.0f, 20.0f));
+        credits->AddText("edermunizz", Vector2(210.0f, 420.0f), Vector2(100.0f, 20.0f));
 
-        credits->AddText("Music", Vector2(GetWindowWidth() / 2 - 100, 250.0f), Vector2(200.0f, 35.0f));
-        credits->AddText("- Menu -", Vector2(GetWindowWidth() / 2 - 50, 350.0f), Vector2(100.0f, 20.0f));
-        credits->AddText("The King of Fighters EX Neo Blood - Escape of Tower Ending Theme 1", Vector2(GetWindowWidth() / 2 - 150, 400.0f), Vector2(300.0f, 40.0f));
-        credits->AddText("- Level 1 -", Vector2(GetWindowWidth() / 2 - 75, 470.0f), Vector2(150.0f, 20.0f));
-        credits->AddText("Dynasty Warriors Origins - Lu Bu's Theme", Vector2(GetWindowWidth() / 2 - 150, 520.0f), Vector2(300.0f, 40.0f));
+        credits->AddText("Music", Vector2(GetWindowWidth() / 2 - 100, 200.0f), Vector2(200.0f, 35.0f));
+        credits->AddText("- Menu -", Vector2(GetWindowWidth() / 2 - 50, 270.0f), Vector2(100.0f, 20.0f));
+        credits->AddText("The King of Fighters EX Neo Blood - Escape of Tower Ending Theme 1", Vector2(GetWindowWidth() / 2 - 150, 300.0f), Vector2(300.0f, 40.0f));
+        credits->AddText("- Level 1 -", Vector2(GetWindowWidth() / 2 - 75, 370.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Dynasty Warriors Origins - Lu Bu's Theme", Vector2(GetWindowWidth() / 2 - 150, 400.0f), Vector2(300.0f, 40.0f));
+        credits->AddText("- Ending -", Vector2(GetWindowWidth() / 2 - 50, 450.0f), Vector2(100.0f, 20.0f));
+        credits->AddText("Night in the Woods - Ending", Vector2(GetWindowWidth() / 2 - 150, 475.0f), Vector2(300.0f, 40.0f));
 
-        credits->AddText("Code", Vector2(GetWindowWidth() - 400, 250.0f), Vector2(200.0f, 35.0f));
-        credits->AddText("Aline Cristina", Vector2(mWindowWidth - 375.0f, 380.0f), Vector2(150.0f, 20.0f));
-        credits->AddText("Gabriel Henrique", Vector2(mWindowWidth - 375.0f, 435.0f), Vector2(150.0f, 20.0f));
-        credits->AddText("Rubia Alice", Vector2(mWindowWidth - 375.0f, 490.0f), Vector2(150.0f, 20.0f));
-        credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth - 375.0f, 545.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Code", Vector2(GetWindowWidth() - 400, 200.0f), Vector2(200.0f, 35.0f));
+        credits->AddText("Aline Cristina", Vector2(mWindowWidth - 375.0f, 270.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Gabriel Henrique", Vector2(mWindowWidth - 375.0f, 320.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Rubia Alice", Vector2(mWindowWidth - 375.0f, 370.0f), Vector2(150.0f, 20.0f));
+        credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth - 375.0f, 420.0f), Vector2(150.0f, 20.0f));
         credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
     }
 
