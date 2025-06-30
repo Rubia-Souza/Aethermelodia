@@ -160,11 +160,6 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
 
 void Game::ResetGameScene(float transitionTime)
 {
-    // --------------
-    // TODO - PARTE 2
-    // --------------
-
-    // TODO 1.: Chame SetGameScene passando o mGameScene atual e o tempo de transição.
     SetGameScene(mGameScene, transitionTime);
 }
 
@@ -178,9 +173,6 @@ void Game::ChangeScene()
 
     // Reset game timer
     mGameTimer = 0.0f;
-
-    // Reset gameplau state
-    mGamePlayState = GamePlayState::Playing;
 
     // Reset scene manager state
     mSpatialHashing = new SpatialHashing(CELL_SIZE, mWindowWidth, PLAYABLE_AREA_HEIGHT);
@@ -199,6 +191,8 @@ void Game::ChangeScene()
     }
     else if (mNextScene == GameScene::Level1)
     {
+        mGamePlayState = GamePlayState::Playing;
+
         mAudio->StopAllSounds();
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
 
@@ -278,7 +272,6 @@ void Game::ChangeScene()
     // Set new scene
     mGameScene = mNextScene;
 }
-
 
 void Game::LoadMainMenu()
 {
@@ -639,18 +632,12 @@ void Game::HandleKeyPressActors(const int key, const bool isPressed)
 
 void Game::TogglePause()
 {
-
     if (mGameScene != GameScene::MainMenu && mGameScene != GameScene::Credits && mGameScene != GameScene::HowToPlay)
     {
         if (mGamePlayState == GamePlayState::Playing)
         {
             mGamePlayState = GamePlayState::Paused;
 
-            // --------------
-            // TODO - PARTE 4
-            // --------------
-
-            // TODO 1.: Pare a música de fundo atual usando PauseSound() e toque o som "Coin.wav" para indicar a pausa.
             mAudio->PauseSound(mMusicHandle);
             mAudio->PlaySound("Coin.wav", false);
         }
@@ -658,12 +645,6 @@ void Game::TogglePause()
         {
             mGamePlayState = GamePlayState::Playing;
 
-            // --------------
-            // TODO - PARTE 4
-            // --------------
-
-            // TODO 1.: Retome a música de fundo atual usando ResumeSound() e toque o som "Coin.wav" para
-            //  indicar a retomada do jogo.
             mAudio->ResumeSound(mMusicHandle);
             mAudio->PlaySound("Coin.wav", false);
         }
@@ -752,11 +733,6 @@ void Game::UpdateGame()
     {
         double currentTime = gameTimer.getSeconds() - mMusicStartOffset;
 
-        // SDL_Log("Chart timeInSeconds: %s", std::to_string(chart[currentNoteIndex].timeInSeconds).c_str());
-        // SDL_Log("Chart lane: %s", std::to_string(chart[currentNoteIndex].lane).c_str());
-        // SDL_Log("currentTime: %s ", std::to_string(currentTime).c_str());
-
-        // Define as posições dos 4 alvos (baseado no seu código em ChangeScene)
         std::vector<Vector2> targets;
         targets.emplace_back(mXPosLeft, mYPosTop);     // Alvo 0 (Superior Esquerdo)
         targets.emplace_back(mXPosRight, mYPosTop);     // Alvo 1 (Superior Direito)
@@ -1164,22 +1140,13 @@ void Game::UnloadScene()
 {
     // Delete actors
     delete mSpatialHashing;
-    delete mLirael;
+    mSpatialHashing = nullptr;
 
-    for (auto target : mTargets) {
-        delete target;
-    }
-    mTargets.clear();
-
-    for (auto enemy : mEnemies) {
-        delete enemy;
-    }
-    mEnemies.clear();
+    // Adicione a deleção do HUD
+    delete mHUD;
+    mHUD = nullptr;
 
     // Delete UI screens
-    for (auto ui : mUIStack) {
-        delete ui;
-    }
     mUIStack.clear();
 
     // Delete background texture
