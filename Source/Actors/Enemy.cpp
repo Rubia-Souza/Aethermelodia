@@ -75,7 +75,7 @@ Enemy::~Enemy()
     }
     else {
         // A NOTA MORREU SEM SER ACERTADA
-        // SDL_Log("errou");
+        SDL_Log("errou");
         mGame->addScore(-100);
     }
 

@@ -129,8 +129,7 @@ bool Game::Initialize()
     mTicksCount = SDL_GetTicks();
 
     // Init all game actors
-    // SetGameScene(GameScene::MainMenu);
-    SetGameScene(GameScene::Level1);
+    SetGameScene(GameScene::MainMenu);
 
     return true;
 }
@@ -208,7 +207,7 @@ void Game::ChangeScene()
         mHUD->SetTime(mGameTimeLimit);
         mHUD->SetLevelName("1-1");
 
-        // mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
+        mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
         chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/medium-notes.chart", Difficulty::EASY_SINGLE);
 
