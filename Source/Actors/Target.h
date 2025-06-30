@@ -15,8 +15,11 @@ public:
     void OnUpdate(float deltaTime) override;
 
     void Flash();
+    void setColor(SDL_Color color) { mOriginalColor = color; }
 
     int GetLane() const { return mLane; }
+
+    static SDL_Color GetLaneColor(int lane);
 
 private:
     class DrawPolygonComponent* mDrawComponent;

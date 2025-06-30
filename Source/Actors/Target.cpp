@@ -58,3 +58,19 @@ void Target::Flash()
         mDrawComponent->SetColor(255, 255, 255);
     }
 }
+
+SDL_Color Target::GetLaneColor(int lane) {
+
+    switch (lane) {
+        case 0:
+            return SDL_Color{0, 255, 0, 255};
+        case 1:
+            return SDL_Color{255, 0, 0, 255};
+        case 2:
+            return SDL_Color{0, 0, 255, 255};
+        case 3:
+            return SDL_Color{255, 255, 0, 255};
+    }
+
+    return SDL_Color{255, 255, 255, 255};
+}
