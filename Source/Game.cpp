@@ -218,7 +218,9 @@ void Game::ChangeScene()
         mTargets.emplace_back(target3);
 
         mLirael = new Lirael(this);
-        mLirael->SetPosition(Vector2(mWindowWidth * 0.47, 0)); // 0.47 para começar entre os targets
+        const float liraelWidth = 64.0f;
+        const float centeredLiraelX = (mWindowWidth * 0.5f) - (liraelWidth / 2.0f);
+        mLirael->SetPosition(Vector2(centeredLiraelX, 0));
     } else if (mNextScene == GameScene::ToBeContinue) {
         mAudio->StopAllSounds();
         mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
@@ -433,8 +435,7 @@ void Game::ProcessInput()
                 if (!mUIStack.empty()) {
                     mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
                 }
-
-                HandleKeyDownActors(event.key.keysym.sym, event.key.repeat == 0);
+                HandleKeyDownActors(event.key.keysym.sym, true);
 
                 // Check if the Return key has been pressed to pause/unpause the game
                 if (event.key.keysym.sym == SDLK_RETURN)
@@ -443,7 +444,8 @@ void Game::ProcessInput()
                 }
                 break;
             case SDL_KEYUP:
-                HandleKeyUpActors(event.key.keysym.sym, event.key.repeat == 0);
+                HandleKeyUpActors(event.key.keysym.sym, false);
+
                 break;
         }
     }
@@ -511,29 +513,28 @@ void Game::HandleKeyDownActors(const int key, const bool isPressed)
         }
     }
 
-    // if(mGamePlayState == GamePlayState::Playing)
-    // {
-    //     // Get actors on camera
-    //     std::vector<Actor*> actorsOnCamera =
-    //             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
-    //
-    //     // Handle key press for actors
-    //     bool isLiraelOnCamera = false;
-    //     for (auto actor: actorsOnCamera) {
-    //         actor->HandleKeyPress(key, isPressed);
-    //
-    //         if (actor == mLirael) {
-    //             isLiraelOnCamera = true;
-    //         }
-    //     }
-    //
-    //     // If Mario is not on camera, handle key press for him
-    //     if (!isLiraelOnCamera && mLirael)
-    //     {
-    //         mLirael->HandleKeyPress(key, isPressed);
-    //     }
-    // }
+    if(mGamePlayState == GamePlayState::Playing)
+    {
+        // Get actors on camera
+        std::vector<Actor*> actorsOnCamera =
+                mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
 
+        // Handle key press for actors
+        bool isLiraelOnCamera = false;
+        for (auto actor: actorsOnCamera) {
+            actor->HandleKeyPress(key, isPressed);
+
+            if (actor == mLirael) {
+                isLiraelOnCamera = true;
+            }
+        }
+
+        // If Mario is not on camera, handle key press for him
+        if (!isLiraelOnCamera && mLirael)
+        {
+            mLirael->HandleKeyPress(key, isPressed);
+        }
+    }
 }
 
 void Game::HandleKeyUpActors(const int key, const bool isPressed)
@@ -569,7 +570,25 @@ void Game::HandleKeyUpActors(const int key, const bool isPressed)
         }
     }
 
+    if(mGamePlayState == GamePlayState::Playing)
+    {
+        std::vector<Actor*> actorsOnCamera =
+                mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
 
+        bool isLiraelOnCamera = false;
+        for (auto actor: actorsOnCamera) {
+            actor->HandleKeyPress(key, isPressed);
+
+            if (actor == mLirael) {
+                isLiraelOnCamera = true;
+            }
+        }
+
+        if (!isLiraelOnCamera && mLirael)
+        {
+            mLirael->HandleKeyPress(key, isPressed);
+        }
+    }
 }
 
 void Game::HandleKeyPressActors(const int key, const bool isPressed)
@@ -768,9 +787,7 @@ void Game::UpdateGame()
                 spawnPos.y = targetPos.y;
             }
 
-            // new Asteroid(this, spawnPos, targetPos, lane);
             new Enemy(this, chart[currentNoteIndex], spawnPos, targetPos);
-
 
             // Avança para a próxima nota no chart
             currentNoteIndex++;
@@ -810,10 +827,10 @@ void Game::HitLane(int lane)
     }
 
     if (hittableNote && minDistance <= HIT_WINDOW_RADIUS) {
-        SDL_Log("HIT! Na pista %d", lane);
+        // SDL_Log("HIT! Na pista %d", lane);
         hittableNote->setHit(true);
     } else {
-        SDL_Log("MISS! Na pista %d", lane);
+        // SDL_Log("MISS! Na pista %d", lane);
     }
 }
 
