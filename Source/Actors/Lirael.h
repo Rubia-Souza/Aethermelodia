@@ -7,6 +7,13 @@
 class Lirael : public Actor
 {
 public:
+    enum class LiraelState
+    {
+        Idle,
+        MovingToTarget,
+        WaitingAtTarget
+    };
+
     explicit Lirael(Game* game, float forwardSpeed = 1500.0f, float jumpSpeed = -750.0f);
 
     void OnProcessInput(const Uint8* keyState) override;
@@ -31,8 +38,18 @@ private:
     bool mIsOnPole;
     bool mIsDying;
 
+    Vector2 mInitialPosition;
+    bool mInitialPositionSet = false;
+    float mMovementSpeed = 700.0f;
+
+    class Target* mCurrentTarget = nullptr;
+    LiraelState mState = LiraelState::Idle;
+
     class RigidBodyComponent* mRigidBodyComponent;
     // class DrawAnimatedComponent* mDrawComponent;
     class DrawSpriteComponent* mDrawComponent;
     class AABBColliderComponent* mColliderComponent;
+
+    void MoveToTarget(int lane);
+    void ReturnToInitialPosition();
 };

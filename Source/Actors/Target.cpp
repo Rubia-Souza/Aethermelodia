@@ -11,18 +11,22 @@ Target::Target(Game* game, const Vector2& pos, SDL_Color color, int lane, int si
 {
     SetPosition(pos);
 
-    const int segments = 32;
-    float radius = static_cast<float>(size);
-    const float angleStep = 2.0f * static_cast<float>(M_PI) / segments;
+    constexpr int segments = 32;
+    const auto radius = static_cast<float>(size);
+    const float diameter = radius * 2.0f;
+
+    constexpr float angleStep = 2.0f * static_cast<float>(M_PI) / segments;
     std::vector<Vector2> circleVerts;
-    for (int i = 0; i < segments; ++i)
-    {
-        float angle = i * angleStep;
+
+    for (int i = 0; i < segments; i++) {
+        const float angle = i * angleStep;
         circleVerts.emplace_back(radius * cosf(angle), radius * sinf(angle));
     }
 
     mDrawComponent = new DrawPolygonComponent(this, circleVerts);
     mDrawComponent->SetColor(mOriginalColor.r, mOriginalColor.g, mOriginalColor.b);
+
+    mColliderComponent = new AABBColliderComponent(this, -radius, -radius, diameter, diameter, ColliderLayer::Target);
 }
 
 void Target::OnUpdate(float deltaTime)

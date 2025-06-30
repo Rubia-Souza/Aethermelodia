@@ -39,6 +39,16 @@ Vector2 AABBColliderComponent::GetCenter() const
     return GetMin() + Vector2((float)mWidth / 2.0f, (float)mHeight / 2.0f);
 }
 
+int AABBColliderComponent::GetWidth() const
+{
+    return mWidth;
+}
+
+int AABBColliderComponent::GetHeight() const
+{
+    return mHeight;
+}
+
 bool AABBColliderComponent::Intersect(const AABBColliderComponent& b) const
 {
     return (GetMin().x < b.GetMax().x && GetMax().x > b.GetMin().x &&
