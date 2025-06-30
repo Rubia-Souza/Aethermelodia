@@ -26,7 +26,7 @@ class AABBColliderComponent : public Component
 public:
     // Collider ignore map
     const std::map<ColliderLayer, const std::set<ColliderLayer>> ColliderIgnoreMap = {
-        {ColliderLayer::Player, {}},
+        {ColliderLayer::Player, {ColliderLayer::Target}},
         {ColliderLayer::Enemy,  {}},
         {ColliderLayer::Blocks, {ColliderLayer::Blocks}},
         {ColliderLayer::Pole, {}},
@@ -49,6 +49,8 @@ public:
     Vector2 GetMax() const;
     Vector2 GetCenter() const;
     ColliderLayer GetLayer() const { return mLayer; }
+    int GetWidth() const;
+    int GetHeight() const;
 
 private:
     float GetMinVerticalOverlap(AABBColliderComponent* b) const;
