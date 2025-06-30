@@ -77,7 +77,14 @@ public:
     void AddActor(class Actor* actor);
     void RemoveActor(class Actor* actor);
     void ProcessInputActors();
+
+
+
+
     void HandleKeyPressActors(const int key, const bool isPressed);
+    void HandleKeyDownActors(const int key, const bool isPressed);
+    void HandleKeyUpActors(const int key, const bool isPressed);
+
 
     // Level functions
     void LoadMainMenu();
@@ -126,11 +133,16 @@ public:
 
     void IncrementAmountOfCoins();
 \
-    void AddAsteroid(class Asteroid* ast);
-    void RemoveAsteroid(class Asteroid* ast);
-    std::vector<class Asteroid*>& GetAsteroids() { return mAsteroids; }
+    // void AddAsteroid(class Asteroid* ast);
+    // void RemoveAsteroid(class Asteroid* ast);
+    // std::vector<class Asteroid*>& GetAsteroids() { return mAsteroids; }
+
+    void AddEnemy(class Enemy* ast);
+    void RemoveEnemy(class Enemy* ast);
+    std::vector<class Enemy*>& GetEnemies() { return mEnemies; }
 
     void HitLane(int lane);
+    void UnhitLane(int lane);
 
 private:
     void ProcessInput();
@@ -213,7 +225,8 @@ private:
     std::vector<Note> chart;
     int currentNoteIndex = 0;
 
-    std::vector<class Asteroid*> mAsteroids;
+    // std::vector<class Asteroid*> mAsteroids;
+    std::vector<class Enemy*> mEnemies;
     std::vector<class Target*> mTargets;
     float mMusicStartOffset;
 

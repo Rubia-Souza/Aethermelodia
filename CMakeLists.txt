@@ -72,6 +72,10 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Asteroid.h
         Source/Actors/Ground.cpp
         Source/Actors/Ground.h
+        Source/Actors/Enemy.cpp
+        Source/Actors/Enemy.h
+        Source/Components/DrawComponents/DrawRectangleComponent.cpp
+        Source/Components/DrawComponents/DrawRectangleComponent.h
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf SDL2_mixer::SDL2_mixer)
