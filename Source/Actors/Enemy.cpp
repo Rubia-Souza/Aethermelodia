@@ -62,25 +62,21 @@ Enemy::Enemy(Game* game,Note note, Vector2 spawnPos, Vector2 targetPos, float fo
     mRigidBodyComponent->SetVelocity(direction * NOTE_VELOCITY);
 
     game->AddEnemy(this);
-
 }
 
 Enemy::~Enemy()
 {
 
     if (mHit) {
-        // MORREU
-        // TODO CORRIGIR
-        SDL_Log("acertou");
+        // SDL_Log("acertou");
         // mGame->addScore(100);
         mGame->SetCurrentLives(mGame->GetCurrentLives() + 1);
     }
     else {
         // A NOTA MORREU SEM SER ACERTADA
-        SDL_Log("errou");
+        // SDL_Log("errou");
         // mGame->addScore(-100);
         mGame->SetCurrentLives(mGame->GetCurrentLives() - 1);
-
     }
 
     GetGame()->RemoveEnemy(this);
