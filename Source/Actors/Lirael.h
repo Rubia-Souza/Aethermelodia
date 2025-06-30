@@ -50,6 +50,9 @@ private:
     class DrawSpriteComponent* mDrawComponent;
     class AABBColliderComponent* mColliderComponent;
 
+    float mReturnToIdleTimer;
+    const float COMBO_WINDOW = 0.15f;
+
     void MoveToTarget(int lane);
     void ReturnToInitialPosition();
 };

@@ -18,6 +18,7 @@ Lirael::Lirael(Game* game, const float forwardSpeed, const float jumpSpeed)
         , mJumpSpeed(jumpSpeed)
         , mPoleSlideTimer(0.0f)
         , mMovementSpeed(900.0f)
+        , mReturnToIdleTimer(0.0f)
 {
     const int liraelWidth = 64.0f;
     mRigidBodyComponent = new RigidBodyComponent(this, 1.0f, 5.0f);
@@ -59,7 +60,7 @@ void Lirael::OnHandleKeyPress(const int key, const bool isPressed)
     if (mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
 
     if (isPressed) {
-        if (mState == LiraelState::Idle) {
+        if (mState == LiraelState::Idle || mState == LiraelState::MovingToTarget || mState == LiraelState::WaitingAtTarget) {
             int lane = -1;
             switch (key)
             {
@@ -73,13 +74,18 @@ void Lirael::OnHandleKeyPress(const int key, const bool isPressed)
         }
     } else {
         if (mState == LiraelState::MovingToTarget || mState == LiraelState::WaitingAtTarget) {
-            if(bool isGameKey = (key == SDLK_a || key == SDLK_s || key == SDLK_d || key == SDLK_f)) ReturnToInitialPosition();
+            if(key == SDLK_a || key == SDLK_s || key == SDLK_d || key == SDLK_f)
+            {
+                mReturnToIdleTimer = COMBO_WINDOW;
+            }
         }
     }
 }
 
 void Lirael::MoveToTarget(int lane)
 {
+    mReturnToIdleTimer = 0.0f;
+
     const auto& targets = mGame->GetTargets();
     Target* target = nullptr;
     for (auto t : targets) {
@@ -163,6 +169,19 @@ void Lirael::OnUpdate(float deltaTime)
 
     if (mRigidBodyComponent && mRigidBodyComponent->GetVelocity().y != 0 && mState == LiraelState::Idle) {
         mIsOnGround = false;
+    }
+
+    if (mReturnToIdleTimer > 0.0f)
+    {
+        mReturnToIdleTimer -= deltaTime;
+        if (mReturnToIdleTimer <= 0.0f)
+        {
+            // O tempo do combo acabou, então retorne à posição inicial
+            if(mState == LiraelState::MovingToTarget || mState == LiraelState::WaitingAtTarget)
+            {
+                ReturnToInitialPosition();
+            }
+        }
     }
 }
 
