@@ -15,6 +15,7 @@
 #include "FileReaderUtil.h"
 #include "Math.h"
 #include "GameTimer.h"
+#include "HUD.h"
 
 class Game
 {
@@ -137,6 +138,19 @@ public:
     void UnhitLane(int lane);
     const std::vector<class Target*>& GetTargets() const { return mTargets; }
 
+    // Getter para expor kMaxLives
+    static int GetMaxLives() { return kMaxLives; }
+
+    int GetCurrentLives() { return mCurrentLives; }
+    void SetCurrentLives(int lives) {
+
+        if (lives > kMaxLives)
+            lives = kMaxLives;
+
+        mCurrentLives = lives;
+        mHUD->SetLives(mCurrentLives);
+    }
+
 private:
     void ProcessInput();
     void UpdateGame();
@@ -206,6 +220,10 @@ private:
     int playerScore;
     int amountCoinsCollected;
 
+    // número máximo de corações
+    static constexpr int kMaxLives = 10;
+    int mCurrentLives;
+
     // Definicao de targets e direcao de inimigos
     float mYPosTop;
     float mYPosBottom;
@@ -223,4 +241,6 @@ private:
     float mMusicStartOffset;
 
     SoundHandle mMainMenuSoundHandle;
+
+
 };
