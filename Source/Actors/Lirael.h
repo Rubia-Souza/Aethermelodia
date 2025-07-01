@@ -46,8 +46,7 @@ private:
     LiraelState mState = LiraelState::Idle;
 
     class RigidBodyComponent* mRigidBodyComponent;
-    // class DrawAnimatedComponent* mDrawComponent;
-    class DrawSpriteComponent* mDrawComponent;
+    class DrawAnimatedComponent* mDrawComponent;
     class AABBColliderComponent* mColliderComponent;
 
     void MoveToTarget(int lane);

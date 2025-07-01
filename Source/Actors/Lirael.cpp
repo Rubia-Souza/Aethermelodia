@@ -23,22 +23,20 @@ Lirael::Lirael(Game* game, const float forwardSpeed, const float jumpSpeed)
     mRigidBodyComponent = new RigidBodyComponent(this, 1.0f, 5.0f);
     mColliderComponent = new AABBColliderComponent(this, 0, 0, liraelWidth,Game::TILE_SIZE, ColliderLayer::Player);
 
-    mDrawComponent = new DrawSpriteComponent(this, "../Assets/Sprites/Lirael/Lirael.png", liraelWidth, liraelWidth, 10);
+    mDrawComponent = new DrawAnimatedComponent(this,
+                                              "../Assets/Sprites/Lirael/Lirael.png",
+                                              "../Assets/Sprites/Lirael/Lirael.json"); // Mudar
 
     mRigidBodyComponent->SetApplyFriction(false);
 
-//    mDrawComponent = new DrawAnimatedComponent(this,
-//                                              "../Assets/Sprites/Lirael/Lirael.png",
-//                                              "../Assets/Sprites/Mario/Mario.json"); // Mudar
-
-    // mDrawComponent->AddAnimation("Dead", {0});
-    // mDrawComponent->AddAnimation("idle", {1});
+    mDrawComponent->AddAnimation("idle", {0});
+    mDrawComponent->AddAnimation("Dead", {1});
     // mDrawComponent->AddAnimation("jump", {2});
     // mDrawComponent->AddAnimation("run", {3, 4, 5});
     // mDrawComponent->AddAnimation("win", {7});
-    //
-    // mDrawComponent->SetAnimation("idle");
-    // mDrawComponent->SetAnimFPS(10.0f);
+
+    mDrawComponent->SetAnimation("idle");
+    mDrawComponent->SetAnimFPS(10.0f);
 }
 
 void Lirael::OnProcessInput(const uint8_t* state)
@@ -190,12 +188,13 @@ void Lirael::Kill()
 {
     mIsDying = true;
     mGame->SetGamePlayState(Game::GamePlayState::GameOver);
+    mDrawComponent->SetAnimation("Dead");
 
     mRigidBodyComponent->SetEnabled(false);
     mColliderComponent->SetEnabled(false);
 
     mGame->GetAudio()->StopAllSounds();
-    mGame->ResetGameScene(3.5f);
+    mGame->ResetGameScene(2.0f);
 }
 
 void Lirael::Win(AABBColliderComponent *poleCollider)

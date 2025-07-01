@@ -14,16 +14,12 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
-#include "CSV.h"
 #include "Random.h"
 #include "Game.h"
 #include "HUD.h"
 #include "SpatialHashing.h"
 #include "Actors/Actor.h"
 #include "Actors/Mario.h"
-#include "Actors/Block.h"
-#include "Actors/Collectable.h"
-#include "Actors/Spawner.h"
 #include "Actors/Target.h"
 #include "UIElements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
@@ -297,115 +293,6 @@ void Game::LoadMainMenu()
     auto button3 = mainMenu->AddButton("Credits", Vector2(mWindowWidth/2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Credits); }, Vector2(120, 15));
 }
 
-void Game::LoadLevel(const std::string& levelName, const int levelWidth, const int levelHeight)
-{
-    // Load level data
-    int **mLevelData = ReadLevelData(levelName, levelWidth, levelHeight);
-
-    if (!mLevelData) {
-        SDL_Log("Failed to load level data");
-        return;
-    }
-
-    // Instantiate level actors
-    BuildLevel(mLevelData, levelWidth, levelHeight);
-}
-
-void Game::BuildLevel(int** levelData, int width, int height)
-{
-
-    // Const map to convert tile ID to block type
-    const std::map<int, const std::string> tileMap = {
-            {0, "../Assets/Sprites/Blocks/BlockA.png"},
-            {1, "../Assets/Sprites/Blocks/BlockC.png"},
-            {2, "../Assets/Sprites/Blocks/BlockF.png"},
-            {4, "../Assets/Sprites/Blocks/BlockB.png"},
-            {6, "../Assets/Sprites/Blocks/BlockI.png"},
-            {8, "../Assets/Sprites/Blocks/BlockD.png"},
-            {9, "../Assets/Sprites/Blocks/BlockH.png"},
-            {12, "../Assets/Sprites/Blocks/BlockG.png"}
-    };
-
-    for (int y = 0; y < LEVEL_HEIGHT; ++y)
-    {
-        for (int x = 0; x < LEVEL_WIDTH; ++x)
-        {
-            int tile = levelData[y][x];
-
-            if(tile == 16) // Mario
-            {
-                mMario = new Mario(this);
-                mMario->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-            }
-            else if(tile == 10) // Spawner
-            {
-                Spawner* spawner = new Spawner(this, SPAWN_DISTANCE);
-                spawner->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-            }
-            else if(tile == 3) {
-                Collectable* collectable = new Collectable(this, "../Assets/Sprites/Collectables/Coin.png");
-                collectable->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-            }
-            else // Blocks
-            {
-                auto it = tileMap.find(tile);
-                if (it != tileMap.end())
-                {
-                    // Create a block actor
-                    Block* block = new Block(this, it->second);
-                    block->SetPosition(Vector2(x * TILE_SIZE, y * TILE_SIZE));
-                }
-            }
-        }
-    }
-}
-
-int **Game::ReadLevelData(const std::string& fileName, int width, int height)
-{
-    std::ifstream file(fileName);
-    if (!file.is_open())
-    {
-        SDL_Log("Failed to load paths: %s", fileName.c_str());
-        return nullptr;
-    }
-
-    // Create a 2D array of size width and height to store the level data
-    int** levelData = new int*[height];
-    for (int i = 0; i < height; ++i)
-    {
-        levelData[i] = new int[width];
-    }
-
-    // Read the file line by line
-    int row = 0;
-
-    std::string line;
-    while (!file.eof())
-    {
-        std::getline(file, line);
-        if(!line.empty())
-        {
-            auto tiles = CSVHelper::Split(line);
-
-            if (tiles.size() != width) {
-                SDL_Log("Invalid level data");
-                return nullptr;
-            }
-
-            for (int i = 0; i < width; ++i) {
-                levelData[row][i] = tiles[i];
-            }
-        }
-
-        ++row;
-    }
-
-    // Close the file
-    file.close();
-
-    return levelData;
-}
-
 void Game::addScore(int points) {
     playerScore += points;
     mHUD->SetScore(playerScore);
@@ -595,64 +482,6 @@ void Game::HandleKeyUpActors(const int key, const bool isPressed)
             mLirael->HandleKeyPress(key, isPressed);
         }
     }
-}
-
-void Game::HandleKeyPressActors(const int key, const bool isPressed)
-{
-// TODO logic to keep pressing
-    // if(mGamePlayState == GamePlayState::Playing && isPressed)
-    // {
-    //     switch(key)
-    //     {
-    //         // Pista Superior Esquerda
-    //         case SDLK_a:
-    //         case SDLK_LEFT: // Seta para esquerda
-    //             HitLane(0);
-    //             break;
-    //
-    //             // Pista Superior Direita
-    //         case SDLK_d:
-    //         case SDLK_UP: // Seta para cima
-    //             HitLane(1);
-    //             break;
-    //
-    //             // Pista Inferior Esquerda
-    //         case SDLK_s:
-    //         case SDLK_DOWN: // Seta para baixo
-    //             HitLane(2);
-    //             break;
-    //
-    //             // Pista Inferior Direita
-    //         case SDLK_f:
-    //         case SDLK_RIGHT: // Seta para direita
-    //             HitLane(3);
-    //             break;
-    //     }
-    // }
-
-    // if(mGamePlayState == GamePlayState::Playing)
-    // {
-    //     // Get actors on camera
-    //     std::vector<Actor*> actorsOnCamera =
-    //             mSpatialHashing->QueryOnCamera(mCameraPos,mWindowWidth,mWindowHeight);
-    //
-    //     // Handle key press for actors
-    //     bool isLiraelOnCamera = false;
-    //     for (auto actor: actorsOnCamera) {
-    //         actor->HandleKeyPress(key, isPressed);
-    //
-    //         if (actor == mLirael) {
-    //             isLiraelOnCamera = true;
-    //         }
-    //     }
-    //
-    //     // If Mario is not on camera, handle key press for him
-    //     if (!isLiraelOnCamera && mLirael)
-    //     {
-    //         mLirael->HandleKeyPress(key, isPressed);
-    //     }
-    // }
-
 }
 
 void Game::TogglePause()
