@@ -78,7 +78,7 @@ bool Game::Initialize()
         return false;
     }
 
-    mWindow = SDL_CreateWindow("TP4: Super Mario Bros", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWindowWidth, mWindowHeight, 0);
+    mWindow = SDL_CreateWindow("Aethermelodia", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWindowWidth, mWindowHeight, 0);
     if (!mWindow)
     {
         SDL_Log("Failed to create window: %s", SDL_GetError());
@@ -199,7 +199,7 @@ void Game::ChangeScene()
 
         mGameTimeLimit = 400;
         mHUD->SetTime(mGameTimeLimit);
-        mHUD->SetLevelName("1-1");
+        //mHUD->SetLevelName("1-1");
 
         mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
