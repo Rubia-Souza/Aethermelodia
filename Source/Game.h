@@ -118,9 +118,6 @@ public:
     void SetBackgroundImage(const std::string& imagePath, const Vector2 &position = Vector2::Zero, const Vector2& size = Vector2::Zero);
     void TogglePause();
 
-    // Game-specific
-    const class Mario* GetMario() { return mMario; }
-
     void SetGamePlayState(GamePlayState state) { mGamePlayState = state; }
     GamePlayState GetGamePlayState() const { return mGamePlayState; }
 
@@ -203,9 +200,9 @@ private:
     Vector2 mCameraPos;
 
     // Game-specific
-    class Mario *mMario;
     class HUD *mHUD;
     SoundHandle mMusicHandle;
+    SoundHandle mMainMenuSoundHandle;
 
     float mGameTimer;
     int mGameTimeLimit;
@@ -218,7 +215,6 @@ private:
     float mFadeTime;
 
     int playerScore;
-    int amountCoinsCollected;
 
     // número máximo de corações
     static constexpr int kMaxLives = 10;
@@ -239,8 +235,4 @@ private:
     std::vector<class Enemy*> mEnemies;
     std::vector<class Target*> mTargets;
     float mMusicStartOffset;
-
-    SoundHandle mMainMenuSoundHandle;
-
-
 };
