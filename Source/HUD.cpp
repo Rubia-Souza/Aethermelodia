@@ -19,7 +19,6 @@ HUD::HUD(class Game* game, const std::string& fontName)
     // TODO 1.: Adicione um texto com a string "Time" no canto superior direito da tela, como no jogo orginal. Note que
     //  a classe HUD tem constantes WORD_HEIGHT, WORD_OFFSET, CHAR_WIDTH, POINT_SIZE e HUD_POS_Y que podem ser usadas
     //  para posicionar e definir o tamanho do texto.
-    //this->AddText("Time", Vector2(mGame->GetWindowWidth() - 120, 15), Vector2(80, 20), POINT_SIZE);
 
     // TODO 2.: Adicione um texto com a string "400" (400 segundos) logo abaixo do texto "Time".
     //  Guarde o ponteiro do texto em um membro chamado mTimeText.
@@ -27,18 +26,14 @@ HUD::HUD(class Game* game, const std::string& fontName)
 
 
     // TODO 3.: Adicione um texto com a string "World" à esquerda do texto "Time", como no jogo original.
-    this->AddText("World", Vector2((mGame->GetWindowWidth() / 2) + 50, 15), Vector2(80, 20), POINT_SIZE);
-
 
     // TODO 4.: Adicione um texto com a string "1-1" logo abaixo do texto "World".
-    mLevelName = this->AddText("1-1", Vector2((mGame->GetWindowWidth() / 2) + 60, 40), Vector2(60, 20), POINT_SIZE);
-
 
     // TODO 5.: Adicione um texto com a string "Mario" no canto superior esquerdo da tela, como no jogo original.
-    //this->AddText("Mario", Vector2(30, 15), Vector2(100, 20), POINT_SIZE);
 
     // TODO 6.: Adicione um texto com a string "000000" logo abaixo do texto "Mario".
-    //mScoreText = this->AddText("000000", Vector2(30, 40), Vector2(120, 20), POINT_SIZE);
+    this->AddText("Score", Vector2(mGame->GetWindowWidth() - 200, 15), Vector2(100, 20), POINT_SIZE);
+    mScoreText = this->AddText("000000", Vector2(mGame->GetWindowWidth() - 200, 40), Vector2(120, 20), POINT_SIZE);
 
     //this->AddText("Coins", Vector2(250, 15), Vector2(80, 20), POINT_SIZE);
     //mCoinsCounter = this->AddText("00",  Vector2(250, 40), Vector2(60, 20), POINT_SIZE);
@@ -117,10 +112,6 @@ void HUD::SetLevelName(const std::string &levelName)
 
 void HUD::SetScore(int playerScore) {
     std::string score = std::to_string(playerScore);
-    for (int i = score.length(); i < 6; i++) {
-        score.insert(0, "0");
-    }
-
     mScoreText->SetText(score);
 }
 
