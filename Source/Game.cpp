@@ -19,7 +19,6 @@
 #include "HUD.h"
 #include "SpatialHashing.h"
 #include "Actors/Actor.h"
-#include "Actors/Mario.h"
 #include "Actors/Target.h"
 #include "UIElements/UIScreen.h"
 #include "Components/DrawComponents/DrawComponent.h"
@@ -37,7 +36,6 @@ Game::Game(int windowWidth, int windowHeight)
         ,mIsRunning(true)
         ,mWindowWidth(windowWidth)
         ,mWindowHeight(windowHeight)
-        ,mMario(nullptr)
         ,mLirael(nullptr)
         ,mHUD(nullptr)
         ,mBackgroundColor(0, 0, 0)
@@ -55,7 +53,6 @@ Game::Game(int windowWidth, int windowHeight)
         ,mBackgroundPosition(Vector2::Zero)
         ,playerScore(0)
         ,mFadeState(FadeState::None)
-        ,amountCoinsCollected(0)
         ,mCurrentLives(kMaxLives)
         ,mMusicStartOffset(2.0f)
         ,mYPosTop(windowHeight * 0.70f)
@@ -180,7 +177,6 @@ void Game::ChangeScene()
     mSpatialHashing = new SpatialHashing(CELL_SIZE, mWindowWidth, PLAYABLE_AREA_HEIGHT);
 
     playerScore = 0;
-    amountCoinsCollected = 0;
 
     // Scene Manager FSM: using if/else instead of switch
     if (mNextScene == GameScene::MainMenu)

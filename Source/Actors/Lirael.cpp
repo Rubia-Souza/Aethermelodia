@@ -3,8 +3,6 @@
 //
 
 #include "Lirael.h"
-#include "Block.h"
-#include "Collectable.h"
 #include "Target.h"
 #include "../Game.h"
 #include "../Components/DrawComponents/DrawAnimatedComponent.h"
