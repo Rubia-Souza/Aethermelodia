@@ -74,7 +74,7 @@ bool Game::Initialize()
         return false;
     }
 
-    mWindow = SDL_CreateWindow("TP4: Super Mario Bros", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWindowWidth, mWindowHeight, 0);
+    mWindow = SDL_CreateWindow("Aethermelodia", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWindowWidth, mWindowHeight, 0);
     if (!mWindow)
     {
         SDL_Log("Failed to create window: %s", SDL_GetError());
@@ -202,8 +202,6 @@ void Game::ChangeScene()
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
 
         mGameTimeLimit = 400;
-        mHUD->SetTime(mGameTimeLimit);
-        mHUD->SetLevelName("1-1");
 
         mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
@@ -233,21 +231,25 @@ void Game::ChangeScene()
 
         auto toBeContinue = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
         toBeContinue->AddText("To be continue...", Vector2((GetWindowWidth() - 1200) / 2, (GetWindowHeight() - 150) / 2), Vector2(1200, 150));
+        toBeContinue->AddText("Thanks for playing", Vector2((GetWindowWidth() - 200) / 2, (GetWindowHeight() - 20) / 2 + 100), Vector2(200, 20));
         toBeContinue->AddButton("Main Menu", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() {
             mAudio->StopAllSounds();
             SetGameScene(GameScene::MainMenu);
         }, Vector2(160, 15));
-
     } else if (mNextScene == GameScene::HowToPlay) {
         auto howToPlay = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
         auto menuBackground = howToPlay->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
-        auto title = howToPlay->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
+        auto title = howToPlay->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
 
-        auto text1 = howToPlay->AddText("A: Hit top left note", Vector2(mWindowWidth/2.0f - 250.0f, 380.0f), Vector2(500.0f, 30.0f));
-        auto text2 = howToPlay->AddText("S: Hit bottom left note", Vector2(mWindowWidth/2.0f - 250.0f, 435.0f), Vector2(500.0f, 30.0f));
-        auto text3 = howToPlay->AddText("D: Hit top right note", Vector2(mWindowWidth/2.0f - 250.0f, 490.0f), Vector2(500.0f, 30.0f));
-        auto text4 = howToPlay->AddText("F: Hit bottom right note", Vector2(mWindowWidth/2.0f - 250.0f, 545.0f), Vector2(500.0f, 30.0f));
+        howToPlay->AddText("- Lore -", Vector2(175.0f, 200.0f), Vector2(200.0f, 35.0f));
+        howToPlay->AddText("In this game you play as Lirael, a bard that is fighting for survival after losing his friends on a journey. Now he needs to use his songs to escape the dangers of the wilderness and find his friends again.", Vector2(40.0f, 250.0f), Vector2(600.0f, 300.0f));
+
+        howToPlay->AddText("- Controls -", Vector2(mWindowWidth - 400.0f, 200.0f), Vector2(200.0f, 35.0f));
+        auto text1 = howToPlay->AddText("A: Hit top left note", Vector2(mWindowWidth - 500.0f, 280.0f), Vector2(400.0f, 30.0f));
+        auto text2 = howToPlay->AddText("S: Hit bottom left note", Vector2(mWindowWidth - 500.0f, 335.0f), Vector2(400.0f, 30.0f));
+        auto text3 = howToPlay->AddText("D: Hit top right note", Vector2(mWindowWidth - 500.0f, 390.0f), Vector2(400.0f, 30.0f));
+        auto text4 = howToPlay->AddText("F: Hit bottom right note", Vector2(mWindowWidth - 500.0f, 445.0f), Vector2(400.0f, 30.0f));
         auto returnButton = howToPlay->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
     } else if (mNextScene == GameScene::Credits) {
         auto credits = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
@@ -315,11 +317,6 @@ void Game::LoadMainMenu()
 void Game::addScore(int points) {
     playerScore += points;
     mHUD->SetScore(playerScore);
-}
-
-void Game::IncrementAmountOfCoins() {
-    amountCoinsCollected++;
-    mHUD->SetAmountOfCoins(amountCoinsCollected);
 }
 
 void Game::RunLoop()
@@ -570,10 +567,6 @@ void Game::UpdateGame()
 
     UpdateSceneManager(deltaTime);
 
-    if (GameScene::MainMenu != mGameScene && GameScene::Credits != mGameScene && GameScene::HowToPlay != mGameScene && mGamePlayState == GamePlayState::Playing) {
-        UpdateLevelTime(deltaTime);
-    }
-
     if (mGameScene == GameScene::Level1 && mGamePlayState == GamePlayState::Playing) {
         const bool allNotesSpawned = (currentNoteIndex >= chart.size());
         const bool allEnemiesCleared = mEnemies.empty();
@@ -748,20 +741,6 @@ void Game::UpdateSceneManager(float deltaTime)
         if (mSceneManagerTimer <= 0) {
             ChangeScene();
             mSceneManagerState = SceneManagerState::None;
-        }
-    }
-}
-
-void Game::UpdateLevelTime(float deltaTime)
-{
-    mGameTimer += deltaTime;
-    if (mGameTimer >= 1.0) {
-        mGameTimer = 0.0f;
-        mGameTimeLimit -= 1;
-        mHUD->SetTime(mGameTimeLimit);
-
-        if (mGameTimeLimit <= 0) {
-            mLirael->Kill();
         }
     }
 }

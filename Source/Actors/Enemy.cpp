@@ -69,13 +69,13 @@ Enemy::~Enemy()
 
     if (mHit) {
         // SDL_Log("acertou");
-        // mGame->addScore(100);
+        mGame->addScore(100);
         mGame->SetCurrentLives(mGame->GetCurrentLives() + 1);
     }
     else {
         // A NOTA MORREU SEM SER ACERTADA
         // SDL_Log("errou");
-        // mGame->addScore(-100);
+        mGame->addScore(-100);
         mGame->SetCurrentLives(mGame->GetCurrentLives() - 1);
     }
 

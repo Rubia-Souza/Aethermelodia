@@ -19,6 +19,5 @@ void Collectable::Collect() {
     mColliderComponent->SetEnabled(false);
     mGame->GetAudio()->PlaySound("Coin.wav");
     mGame->addScore(10);
-    mGame->IncrementAmountOfCoins();
     mState = ActorState::Destroy;
 }

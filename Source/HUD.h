@@ -22,13 +22,8 @@ public:
     ~HUD();
 
     // Reinsert the HUD elements
-    void SetTime(int time);
-
-    void SetLevelName(const std::string& levelName);
 
     void SetScore(int playerScore);
-
-    void SetAmountOfCoins(int amountOfCoins);
 
     void SetLives(int lives);
 
