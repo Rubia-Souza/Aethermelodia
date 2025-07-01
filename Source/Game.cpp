@@ -140,7 +140,7 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
     //  Se a cena for inválida, registre um erro no log e retorne.
     //  Se o estado do SceneManager não for SceneManagerState::None, registre um erro no log e retorne.
     if (mSceneManagerState == SceneManagerState::None) {
-        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Credits || scene == GameScene::HowToPlay || scene == GameScene::ToBeContinue) {
+        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Credits || scene == GameScene::HowToPlay || scene == GameScene::ToBeContinue || scene == GameScene::GameOver) {
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -155,6 +155,11 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
 void Game::ResetGameScene(float transitionTime)
 {
     SetGameScene(mGameScene, transitionTime);
+}
+
+void Game::GameOver(float transitionTime)
+{
+    SetGameScene(GameScene::GameOver, transitionTime);
 }
 
 void Game::ChangeScene()
@@ -176,6 +181,7 @@ void Game::ChangeScene()
     // Scene Manager FSM: using if/else instead of switch
     if (mNextScene == GameScene::MainMenu)
     {
+        mAudio->StopAllSounds();
         // Set background color
         mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
 
@@ -217,7 +223,7 @@ void Game::ChangeScene()
     } else if (mNextScene == GameScene::ToBeContinue) {
         mAudio->StopAllSounds();
         mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
-        mBackgroundColor.Set(0.0f, 0.0f, 0.0f);
+        mBackgroundColor.Set(121.0f, 142.0f, 173.0f);
 
         auto toBeContinue = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
         toBeContinue->AddText("To be continue...", Vector2((GetWindowWidth() - 1200) / 2, (GetWindowHeight() - 150) / 2), Vector2(1200, 150));
@@ -268,6 +274,20 @@ void Game::ChangeScene()
         credits->AddText("Rubia Alice", Vector2(mWindowWidth - 375.0f, 370.0f), Vector2(150.0f, 20.0f));
         credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth - 375.0f, 420.0f), Vector2(150.0f, 20.0f));
         credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
+    } else if (mNextScene == GameScene::GameOver) {
+        mAudio->StopAllSounds();
+        mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
+        auto gameOver = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+        mBackgroundColor.Set(121.0f, 142.0f, 173.0f);
+
+        const Vector2 titleSize = Vector2(200.0f, 200.0f) * 2.0f;
+        const Vector2 titlePos = Vector2(mWindowWidth * 0.36, 60.0f);
+        gameOver->AddImage("../Assets/Sprites/Game_Over.png", titlePos, titleSize);
+
+        gameOver->AddText("Play again?", Vector2(mWindowWidth * 0.44, 450.0f), Vector2(200.0f, 35.0f));
+
+        gameOver->AddButton("Yes", Vector2(mWindowWidth * 0.42, 510.0f), Vector2(250.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(60, 18));
+        gameOver->AddButton("No", Vector2(mWindowWidth * 0.42, 580.0f), Vector2(250.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(50, 18));
     }
 
     // Set new scene
