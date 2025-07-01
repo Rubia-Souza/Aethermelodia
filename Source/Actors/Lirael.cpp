@@ -190,14 +190,12 @@ void Lirael::Kill()
 {
     mIsDying = true;
     mGame->SetGamePlayState(Game::GamePlayState::GameOver);
-//    mDrawComponent->SetAnimation("Dead");
 
-    // Disable collider and rigid body
     mRigidBodyComponent->SetEnabled(false);
     mColliderComponent->SetEnabled(false);
 
     mGame->GetAudio()->StopAllSounds();
-    mGame->ResetGameScene(3.5f); // Reset the game scene after 3 seconds
+    mGame->ResetGameScene(3.5f);
 }
 
 void Lirael::Win(AABBColliderComponent *poleCollider)

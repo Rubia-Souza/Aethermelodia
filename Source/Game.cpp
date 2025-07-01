@@ -192,6 +192,8 @@ void Game::ChangeScene()
     }
     else if (mNextScene == GameScene::Level1)
     {
+        mCurrentLives = kMaxLives;
+        currentNoteIndex = 0;
         mGamePlayState = GamePlayState::Playing;
 
         mAudio->StopAllSounds();
@@ -782,11 +784,9 @@ void Game::UpdateGame()
             currentNoteIndex++;
 
         }
-        // // QUIT GAME IF PLAYER DIES, update this
+
         if (mCurrentLives <= 0) {
-            SDL_Event quitEvt;
-            quitEvt.type = SDL_QUIT;
-            SDL_PushEvent(&quitEvt);
+            mLirael->Kill();
         }
     }
 
@@ -1152,24 +1152,23 @@ UIFont* Game::LoadFont(const std::string& fileName)
 
 void Game::UnloadScene()
 {
-    // Delete actors
     delete mSpatialHashing;
     mSpatialHashing = nullptr;
 
-    // Adicione a deleção do HUD
     delete mHUD;
     mHUD = nullptr;
 
-    // Delete UI screens
+    mEnemies.clear();
+    mTargets.clear();
+    if(mLirael) mLirael = nullptr;
+
     mUIStack.clear();
 
-    // Delete background texture
     if (mBackgroundTexture) {
         SDL_DestroyTexture(mBackgroundTexture);
         mBackgroundTexture = nullptr;
     }
 }
-
 void Game::Shutdown()
 {
     UnloadScene();
