@@ -41,6 +41,7 @@ public:
         ToBeContinue,
         HowToPlay,
         Credits,
+        GameOver,
     };
 
     enum class SceneManagerState
@@ -114,6 +115,8 @@ public:
     void SetGameScene(GameScene scene, float transitionTime = .0f);
     void ResetGameScene(float transitionTime = .0f);
     void UnloadScene();
+
+    void GameOver(float transitionTime = .0f);
 
     void SetBackgroundImage(const std::string& imagePath, const Vector2 &position = Vector2::Zero, const Vector2& size = Vector2::Zero);
     void TogglePause();

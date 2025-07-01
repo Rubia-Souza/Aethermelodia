@@ -24,18 +24,12 @@ public:
     void OnVerticalCollision(const float minOverlap, AABBColliderComponent* other) override;
 
     void Kill() override;
-    void Win(AABBColliderComponent *poleCollider);
 
 private:
-    static const int POLE_SLIDE_TIME = 1; // Time in seconds to slide down the pole
-
     void ManageAnimations();
 
     float mForwardSpeed;
     float mJumpSpeed;
-    float mPoleSlideTimer;
-    bool mIsRunning;
-    bool mIsOnPole;
     bool mIsDying;
 
     Vector2 mInitialPosition;
