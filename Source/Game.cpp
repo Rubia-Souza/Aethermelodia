@@ -200,8 +200,6 @@ void Game::ChangeScene()
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
 
         mGameTimeLimit = 400;
-        // mHUD->SetTime(mGameTimeLimit);
-        //mHUD->SetLevelName("1-1");
 
         mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
@@ -412,11 +410,6 @@ int **Game::ReadLevelData(const std::string& fileName, int width, int height)
 void Game::addScore(int points) {
     playerScore += points;
     mHUD->SetScore(playerScore);
-}
-
-void Game::IncrementAmountOfCoins() {
-    amountCoinsCollected++;
-    mHUD->SetAmountOfCoins(amountCoinsCollected);
 }
 
 void Game::RunLoop()
@@ -725,10 +718,6 @@ void Game::UpdateGame()
 
     UpdateSceneManager(deltaTime);
 
-    if (GameScene::MainMenu != mGameScene && GameScene::Credits != mGameScene && GameScene::HowToPlay != mGameScene && mGamePlayState == GamePlayState::Playing) {
-        //UpdateLevelTime(deltaTime);
-    }
-
     if (mGameScene == GameScene::Level1 && mGamePlayState == GamePlayState::Playing) {
         const bool allNotesSpawned = (currentNoteIndex >= chart.size());
         const bool allEnemiesCleared = mEnemies.empty();
@@ -903,20 +892,6 @@ void Game::UpdateSceneManager(float deltaTime)
         if (mSceneManagerTimer <= 0) {
             ChangeScene();
             mSceneManagerState = SceneManagerState::None;
-        }
-    }
-}
-
-void Game::UpdateLevelTime(float deltaTime)
-{
-    mGameTimer += deltaTime;
-    if (mGameTimer >= 1.0) {
-        mGameTimer = 0.0f;
-        mGameTimeLimit -= 1;
-        mHUD->SetTime(mGameTimeLimit);
-
-        if (mGameTimeLimit <= 0) {
-            mLirael->Kill();
         }
     }
 }
