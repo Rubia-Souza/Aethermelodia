@@ -22,7 +22,7 @@ HUD::HUD(class Game* game, const std::string& fontName)
 
     // TODO 2.: Adicione um texto com a string "400" (400 segundos) logo abaixo do texto "Time".
     //  Guarde o ponteiro do texto em um membro chamado mTimeText.
-    mTimeText = this->AddText("400", Vector2(mGame->GetWindowWidth() - 120, 40), Vector2(80, 20), POINT_SIZE);
+    // mTimeText = this->AddText("400", Vector2(mGame->GetWindowWidth() - 120, 40), Vector2(80, 20), POINT_SIZE);
 
 
     // TODO 3.: Adicione um texto com a string "World" à esquerda do texto "Time", como no jogo original.

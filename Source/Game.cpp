@@ -198,7 +198,7 @@ void Game::ChangeScene()
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
 
         mGameTimeLimit = 400;
-        mHUD->SetTime(mGameTimeLimit);
+        // mHUD->SetTime(mGameTimeLimit);
         //mHUD->SetLevelName("1-1");
 
         mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
@@ -721,7 +721,7 @@ void Game::UpdateGame()
     UpdateSceneManager(deltaTime);
 
     if (GameScene::MainMenu != mGameScene && GameScene::Credits != mGameScene && GameScene::HowToPlay != mGameScene && mGamePlayState == GamePlayState::Playing) {
-        UpdateLevelTime(deltaTime);
+        //UpdateLevelTime(deltaTime);
     }
 
     if (mGameScene == GameScene::Level1 && mGamePlayState == GamePlayState::Playing) {
