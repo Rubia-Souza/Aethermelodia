@@ -41,6 +41,7 @@ public:
         ToBeContinue,
         HowToPlay,
         Credits,
+        GameOver,
     };
 
     enum class SceneManagerState

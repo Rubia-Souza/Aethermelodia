@@ -11,12 +11,9 @@
 
 Lirael::Lirael(Game* game, const float forwardSpeed, const float jumpSpeed)
         : Actor(game)
-        , mIsRunning(false)
-        , mIsOnPole(false)
         , mIsDying(false)
         , mForwardSpeed(forwardSpeed)
         , mJumpSpeed(jumpSpeed)
-        , mPoleSlideTimer(0.0f)
         , mMovementSpeed(900.0f)
 {
     const int liraelWidth = 64.0f;
@@ -166,22 +163,7 @@ void Lirael::OnUpdate(float deltaTime)
 
 void Lirael::ManageAnimations()
 {
-//    if(mIsDying)
-//    {
-//        mDrawComponent->SetAnimation("Dead");
-//    }
-//    else if (mIsOnGround && mIsRunning)
-//    {
-//        mDrawComponent->SetAnimation("run");
-//    }
-//    else if (mIsOnGround && !mIsRunning)
-//    {
-//        mDrawComponent->SetAnimation("idle");
-//    }
-//    else if (!mIsOnGround)
-//    {
-//        mDrawComponent->SetAnimation("jump");
-//    }
+// TODO: add animations
 }
 
 void Lirael::Kill()
@@ -195,12 +177,6 @@ void Lirael::Kill()
 
     mGame->GetAudio()->StopAllSounds();
     mGame->ResetGameScene(2.0f);
-}
-
-void Lirael::Win(AABBColliderComponent *poleCollider)
-{
-//    mDrawComponent->SetAnimation("win");
-    mGame->SetGamePlayState(Game::GamePlayState::LevelComplete);
 }
 
 void Lirael::OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other)
