@@ -143,7 +143,7 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
     //  Se a cena for inválida, registre um erro no log e retorne.
     //  Se o estado do SceneManager não for SceneManagerState::None, registre um erro no log e retorne.
     if (mSceneManagerState == SceneManagerState::None) {
-        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Credits || scene == GameScene::HowToPlay || scene == GameScene::ToBeContinue) {
+        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Credits || scene == GameScene::HowToPlay || scene == GameScene::ToBeContinue || scene == GameScene::GameOver) {
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -158,6 +158,11 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
 void Game::ResetGameScene(float transitionTime)
 {
     SetGameScene(mGameScene, transitionTime);
+}
+
+void Game::GameOver(float transitionTime)
+{
+    SetGameScene(GameScene::GameOver, transitionTime);
 }
 
 void Game::ChangeScene()
@@ -180,6 +185,7 @@ void Game::ChangeScene()
     // Scene Manager FSM: using if/else instead of switch
     if (mNextScene == GameScene::MainMenu)
     {
+        mAudio->StopAllSounds();
         // Set background color
         mBackgroundColor.Set(107.0f, 140.0f, 255.0f);
 

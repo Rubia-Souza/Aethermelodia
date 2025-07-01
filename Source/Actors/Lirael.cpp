@@ -176,7 +176,7 @@ void Lirael::Kill()
     mColliderComponent->SetEnabled(false);
 
     mGame->GetAudio()->StopAllSounds();
-    mGame->ResetGameScene(2.0f);
+    mGame->GameOver(2.0f);
 }
 
 void Lirael::OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other)
