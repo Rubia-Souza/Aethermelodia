@@ -42,8 +42,6 @@ Game::Game(int windowWidth, int windowHeight)
         ,mModColor(255, 255, 255)
         ,mCameraPos(Vector2::Zero)
         ,mAudio(nullptr)
-        ,mGameTimer(0.0f)
-        ,mGameTimeLimit(0)
         ,mSceneManagerTimer(0.0f)
         ,mSceneManagerState(SceneManagerState::None)
         ,mGameScene(GameScene::MainMenu)
@@ -170,9 +168,6 @@ void Game::ChangeScene()
     // Reset camera position
     mCameraPos.Set(0.0f, 0.0f);
 
-    // Reset game timer
-    mGameTimer = 0.0f;
-
     // Reset scene manager state
     mSpatialHashing = new SpatialHashing(CELL_SIZE, mWindowWidth, PLAYABLE_AREA_HEIGHT);
 
@@ -197,9 +192,7 @@ void Game::ChangeScene()
         mAudio->StopAllSounds();
         mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
 
-        mGameTimeLimit = 400;
-
-        mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
+        // mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
         chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/medium-notes.chart", Difficulty::EASY_SINGLE);
 
@@ -222,7 +215,7 @@ void Game::ChangeScene()
         mLirael->SetPosition(Vector2(centeredLiraelX, 0));
     } else if (mNextScene == GameScene::ToBeContinue) {
         mAudio->StopAllSounds();
-        mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
+        // mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
         mBackgroundColor.Set(121.0f, 142.0f, 173.0f);
 
         auto toBeContinue = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
@@ -276,7 +269,7 @@ void Game::ChangeScene()
         credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
     } else if (mNextScene == GameScene::GameOver) {
         mAudio->StopAllSounds();
-        mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
+        // mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
         auto gameOver = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
         mBackgroundColor.Set(121.0f, 142.0f, 173.0f);
 
@@ -299,7 +292,7 @@ void Game::LoadMainMenu()
     auto mainMenu = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
     SoundState state = mAudio->GetSoundState(mMainMenuSoundHandle);
     if (state == SoundState::Stopped || state == SoundState::Paused) {
-        mMainMenuSoundHandle = mAudio->PlaySound("Escape-of-Tower-Ending-Theme-1.ogg", true);
+        // mMainMenuSoundHandle = mAudio->PlaySound("Escape-of-Tower-Ending-Theme-1.ogg", true);
     }
 
     auto menuBackground = mainMenu->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
@@ -615,16 +608,16 @@ void Game::UpdateGame()
                 spawnPos.y = targetPos.y;
             }
 
-            new Enemy(this, chart[currentNoteIndex], spawnPos, targetPos);
+            // new Enemy(this, chart[currentNoteIndex], spawnPos, targetPos);
 
             // Avança para a próxima nota no chart
             currentNoteIndex++;
 
         }
 
-        if (mCurrentLives <= 0) {
-            mLirael->Kill();
-        }
+        // if (mCurrentLives <= 0) {
+        //     mLirael->Kill();
+        // }
     }
 
 }
