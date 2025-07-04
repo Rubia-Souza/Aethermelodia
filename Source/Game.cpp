@@ -59,6 +59,7 @@ Game::Game(int windowWidth, int windowHeight)
         ,mYPosBottom(windowHeight * 0.85f)
         ,mXPosLeft(windowWidth * 0.42f)
         ,mXPosRight(windowWidth * 0.58f)
+        ,mGameDifficulty(Difficulty::EASY_SINGLE)
 {
 
 }
@@ -140,7 +141,7 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
     //  Se a cena for inválida, registre um erro no log e retorne.
     //  Se o estado do SceneManager não for SceneManagerState::None, registre um erro no log e retorne.
     if (mSceneManagerState == SceneManagerState::None) {
-        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Credits || scene == GameScene::HowToPlay || scene == GameScene::ToBeContinue || scene == GameScene::GameOver) {
+        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Credits || scene == GameScene::HowToPlay || scene == GameScene::ToBeContinue || scene == GameScene::GameOver || scene == GameScene::DifficultySelection) {
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -201,7 +202,7 @@ void Game::ChangeScene()
 
         mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
         gameTimer.start();
-        chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/medium-notes.chart", Difficulty::EASY_SINGLE);
+        chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/medium-notes.chart", mGameDifficulty);
 
         SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(0,0), Vector2(mWindowWidth,mWindowHeight));
         for (int i = 0; i < (mWindowWidth / Game::TILE_SIZE + 1); i++) new Ground(this, Vector2(i * Game::TILE_SIZE,  PLAYABLE_AREA_HEIGHT - 10)); // Chao em blocos por conta do mSpatialHashing
@@ -221,73 +222,15 @@ void Game::ChangeScene()
         const float centeredLiraelX = (mWindowWidth * 0.5f) - (liraelWidth / 2.0f);
         mLirael->SetPosition(Vector2(centeredLiraelX, 0));
     } else if (mNextScene == GameScene::ToBeContinue) {
-        mAudio->StopAllSounds();
-        mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
-        mBackgroundColor.Set(121.0f, 142.0f, 173.0f);
-
-        auto toBeContinue = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
-        toBeContinue->AddText("To be continue...", Vector2((GetWindowWidth() - 1200) / 2, (GetWindowHeight() - 150) / 2), Vector2(1200, 150));
-        toBeContinue->AddText("Thanks for playing", Vector2((GetWindowWidth() - 200) / 2, (GetWindowHeight() - 20) / 2 + 100), Vector2(200, 20));
-        toBeContinue->AddButton("Main Menu", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() {
-            mAudio->StopAllSounds();
-            SetGameScene(GameScene::MainMenu);
-        }, Vector2(160, 15));
+        LoadToBeContinueScreen();
     } else if (mNextScene == GameScene::HowToPlay) {
-        auto howToPlay = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
-
-        auto menuBackground = howToPlay->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
-        auto title = howToPlay->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
-
-        howToPlay->AddText("- Lore -", Vector2(175.0f, 200.0f), Vector2(200.0f, 35.0f));
-        howToPlay->AddText("In this game you play as Lirael, a bard that is fighting for survival after losing his friends on a journey. Now he needs to use his songs to escape the dangers of the wilderness and find his friends again.", Vector2(40.0f, 250.0f), Vector2(600.0f, 300.0f));
-
-        howToPlay->AddText("- Controls -", Vector2(mWindowWidth - 400.0f, 200.0f), Vector2(200.0f, 35.0f));
-        auto text1 = howToPlay->AddText("A: Hit top left note", Vector2(mWindowWidth - 500.0f, 280.0f), Vector2(400.0f, 30.0f));
-        auto text2 = howToPlay->AddText("S: Hit bottom left note", Vector2(mWindowWidth - 500.0f, 335.0f), Vector2(400.0f, 30.0f));
-        auto text3 = howToPlay->AddText("D: Hit top right note", Vector2(mWindowWidth - 500.0f, 390.0f), Vector2(400.0f, 30.0f));
-        auto text4 = howToPlay->AddText("F: Hit bottom right note", Vector2(mWindowWidth - 500.0f, 445.0f), Vector2(400.0f, 30.0f));
-        auto returnButton = howToPlay->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
+        LoadHowToPlay();
     } else if (mNextScene == GameScene::Credits) {
-        auto credits = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
-
-        credits->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
-        credits->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
-
-        credits->AddText("Arts", Vector2(175.0f, 200.0f), Vector2(200.0f, 35.0f));
-        credits->AddText("- Background Menu -", Vector2(120.0f, 270.0f), Vector2(300.0f, 20.0f));
-        credits->AddText("Steven Greenblatt", Vector2(170.0f, 320.0f), Vector2(200.0f, 20.0f));
-
-        credits->AddText("- Background Level 1 -", Vector2(120.0f, 370.0f), Vector2(300.0f, 20.0f));
-        credits->AddText("edermunizz", Vector2(210.0f, 420.0f), Vector2(100.0f, 20.0f));
-
-        credits->AddText("Music", Vector2(GetWindowWidth() / 2 - 100, 200.0f), Vector2(200.0f, 35.0f));
-        credits->AddText("- Menu -", Vector2(GetWindowWidth() / 2 - 50, 270.0f), Vector2(100.0f, 20.0f));
-        credits->AddText("The King of Fighters EX Neo Blood - Escape of Tower Ending Theme 1", Vector2(GetWindowWidth() / 2 - 150, 300.0f), Vector2(300.0f, 40.0f));
-        credits->AddText("- Level 1 -", Vector2(GetWindowWidth() / 2 - 75, 370.0f), Vector2(150.0f, 20.0f));
-        credits->AddText("Dynasty Warriors Origins - Lu Bu's Theme", Vector2(GetWindowWidth() / 2 - 150, 400.0f), Vector2(300.0f, 40.0f));
-        credits->AddText("- Ending -", Vector2(GetWindowWidth() / 2 - 50, 450.0f), Vector2(100.0f, 20.0f));
-        credits->AddText("Night in the Woods - Ending", Vector2(GetWindowWidth() / 2 - 150, 475.0f), Vector2(300.0f, 40.0f));
-
-        credits->AddText("Code", Vector2(GetWindowWidth() - 400, 200.0f), Vector2(200.0f, 35.0f));
-        credits->AddText("Aline Cristina", Vector2(mWindowWidth - 375.0f, 270.0f), Vector2(150.0f, 20.0f));
-        credits->AddText("Gabriel Henrique", Vector2(mWindowWidth - 375.0f, 320.0f), Vector2(150.0f, 20.0f));
-        credits->AddText("Rubia Alice", Vector2(mWindowWidth - 375.0f, 370.0f), Vector2(150.0f, 20.0f));
-        credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth - 375.0f, 420.0f), Vector2(150.0f, 20.0f));
-        credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(160, 15));
+        LoadCredits();
     } else if (mNextScene == GameScene::GameOver) {
-        mAudio->StopAllSounds();
-        mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
-        auto gameOver = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
-        mBackgroundColor.Set(121.0f, 142.0f, 173.0f);
-
-        const Vector2 titleSize = Vector2(200.0f, 200.0f) * 2.0f;
-        const Vector2 titlePos = Vector2(mWindowWidth * 0.36, 60.0f);
-        gameOver->AddImage("../Assets/Sprites/Game_Over.png", titlePos, titleSize);
-
-        gameOver->AddText("Play again?", Vector2(mWindowWidth * 0.44, 450.0f), Vector2(200.0f, 35.0f));
-
-        gameOver->AddButton("Yes", Vector2(mWindowWidth * 0.42, 510.0f), Vector2(250.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(60, 18));
-        gameOver->AddButton("No", Vector2(mWindowWidth * 0.42, 580.0f), Vector2(250.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(50, 18));
+        LoadGameOverScreen();
+    } else if (mNextScene == GameScene::DifficultySelection) {
+        LoadDifficultySelectionScreen();
     }
 
     // Set new scene
@@ -305,9 +248,115 @@ void Game::LoadMainMenu()
     auto menuBackground = mainMenu->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
     auto title = mainMenu->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
 
-    auto button1 = mainMenu->AddButton("Play Game", Vector2(mWindowWidth/2.0f - 150.0f, 400.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(180, 15));
-    auto button2 = mainMenu->AddButton("How to Play", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::HowToPlay); }, Vector2(160, 15));
-    auto button3 = mainMenu->AddButton("Credits", Vector2(mWindowWidth/2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Credits); }, Vector2(120, 15));
+    mainMenu->AddButton("Play Game", Vector2(mWindowWidth/2.0f - 150.0f, 400.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(180, 15));
+    mainMenu->AddButton("How to Play", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::HowToPlay); }, Vector2(160, 15));
+    mainMenu->AddButton("Difficulty", Vector2(mWindowWidth / 2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::DifficultySelection); }, Vector2(160, 15));
+    mainMenu->AddButton("Credits", Vector2(mWindowWidth/2.0f - 150.0f, 595.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Credits); }, Vector2(120, 15));
+}
+
+void Game::LoadCredits() {
+    auto credits = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+
+    credits->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
+    credits->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
+
+    credits->AddText("Arts", Vector2(175.0f, 200.0f), Vector2(200.0f, 35.0f));
+    credits->AddText("- Background Menu -", Vector2(120.0f, 270.0f), Vector2(300.0f, 20.0f));
+    credits->AddText("Steven Greenblatt", Vector2(170.0f, 320.0f), Vector2(200.0f, 20.0f));
+
+    credits->AddText("- Background Level 1 -", Vector2(120.0f, 370.0f), Vector2(300.0f, 20.0f));
+    credits->AddText("edermunizz", Vector2(210.0f, 420.0f), Vector2(100.0f, 20.0f));
+
+    credits->AddText("Music", Vector2(GetWindowWidth() / 2 - 100, 200.0f), Vector2(200.0f, 35.0f));
+    credits->AddText("- Menu -", Vector2(GetWindowWidth() / 2 - 50, 270.0f), Vector2(100.0f, 20.0f));
+    credits->AddText("The King of Fighters EX Neo Blood - Escape of Tower Ending Theme 1", Vector2(GetWindowWidth() / 2 - 150, 300.0f), Vector2(300.0f, 40.0f));
+    credits->AddText("- Level 1 -", Vector2(GetWindowWidth() / 2 - 75, 370.0f), Vector2(150.0f, 20.0f));
+    credits->AddText("Dynasty Warriors Origins - Lu Bu's Theme", Vector2(GetWindowWidth() / 2 - 150, 400.0f), Vector2(300.0f, 40.0f));
+    credits->AddText("- Ending -", Vector2(GetWindowWidth() / 2 - 50, 450.0f), Vector2(100.0f, 20.0f));
+    credits->AddText("Night in the Woods - Ending", Vector2(GetWindowWidth() / 2 - 150, 475.0f), Vector2(300.0f, 40.0f));
+
+    credits->AddText("Code", Vector2(GetWindowWidth() - 400, 200.0f), Vector2(200.0f, 35.0f));
+    credits->AddText("Aline Cristina", Vector2(mWindowWidth - 375.0f, 270.0f), Vector2(150.0f, 20.0f));
+    credits->AddText("Gabriel Henrique", Vector2(mWindowWidth - 375.0f, 320.0f), Vector2(150.0f, 20.0f));
+    credits->AddText("Rubia Alice", Vector2(mWindowWidth - 375.0f, 370.0f), Vector2(150.0f, 20.0f));
+    credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth - 375.0f, 420.0f), Vector2(150.0f, 20.0f));
+    credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(100, 30));
+}
+
+void Game::LoadToBeContinueScreen() {
+    mAudio->StopAllSounds();
+    mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
+    mBackgroundColor.Set(121.0f, 142.0f, 173.0f);
+
+    auto toBeContinue = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+    toBeContinue->AddText("To be continue...", Vector2((GetWindowWidth() - 1200) / 2, (GetWindowHeight() - 150) / 2), Vector2(1200, 150));
+    toBeContinue->AddText("Thanks for playing", Vector2((GetWindowWidth() - 200) / 2, (GetWindowHeight() - 20) / 2 + 100), Vector2(200, 20));
+    toBeContinue->AddButton("Main Menu", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() {
+        mAudio->StopAllSounds();
+        SetGameScene(GameScene::MainMenu);
+    }, Vector2(100, 30));
+}
+
+void Game::LoadHowToPlay()
+{
+    auto howToPlay = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+
+    auto menuBackground = howToPlay->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
+    auto title = howToPlay->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
+
+    howToPlay->AddText("- Lore -", Vector2(175.0f, 200.0f), Vector2(200.0f, 35.0f));
+    howToPlay->AddText("In this game you play as Lirael, a bard that is fighting for survival after losing his friends on a journey. Now he needs to use his songs to escape the dangers of the wilderness and find his friends again.", Vector2(40.0f, 250.0f), Vector2(600.0f, 300.0f));
+
+    howToPlay->AddText("- Controls -", Vector2(mWindowWidth - 400.0f, 200.0f), Vector2(200.0f, 35.0f));
+    auto text1 = howToPlay->AddText("A: Hit top left note", Vector2(mWindowWidth - 500.0f, 280.0f), Vector2(400.0f, 30.0f));
+    auto text2 = howToPlay->AddText("S: Hit bottom left note", Vector2(mWindowWidth - 500.0f, 335.0f), Vector2(400.0f, 30.0f));
+    auto text3 = howToPlay->AddText("D: Hit top right note", Vector2(mWindowWidth - 500.0f, 390.0f), Vector2(400.0f, 30.0f));
+    auto text4 = howToPlay->AddText("F: Hit bottom right note", Vector2(mWindowWidth - 500.0f, 445.0f), Vector2(400.0f, 30.0f));
+    auto returnButton = howToPlay->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(100, 30));
+}
+
+void Game::LoadGameOverScreen() {
+    mAudio->StopAllSounds();
+    mMusicHandle = mAudio->PlaySound("Night in the Woods - Ending.mp3", false);
+    auto gameOver = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+    mBackgroundColor.Set(121.0f, 142.0f, 173.0f);
+
+    const Vector2 titleSize = Vector2(200.0f, 200.0f) * 2.0f;
+    const Vector2 titlePos = Vector2(mWindowWidth * 0.36, 60.0f);
+    gameOver->AddImage("../Assets/Sprites/Game_Over.png", titlePos, titleSize);
+
+    gameOver->AddText("Play again?", Vector2(mWindowWidth * 0.44, 450.0f), Vector2(200.0f, 35.0f));
+
+    gameOver->AddButton("Yes", Vector2(mWindowWidth * 0.42, 510.0f), Vector2(250.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(60, 18));
+    gameOver->AddButton("No", Vector2(mWindowWidth * 0.42, 580.0f), Vector2(250.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(50, 18));
+}
+
+void Game::LoadDifficultySelectionScreen()
+{
+    auto difficultySelection = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
+
+    difficultySelection->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
+    difficultySelection->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
+
+    difficultySelection->AddText("Actual difficulty: ", Vector2(GetWindowWidth() / 2 - 100 - 100, 350.0f), Vector2(250.0f, 30.0f));
+    auto actualDifficultyText = difficultySelection->AddText(FileReaderUtil::getDifficultyName(mGameDifficulty), Vector2(GetWindowWidth() / 2 - 100 + 150, 350.0f), Vector2(100.0f, 30.0f));
+
+    difficultySelection->AddButton("Easy", Vector2(mWindowWidth/2.0f - 150.0f, 400.0f), Vector2(300.0f, 50.0f), [this, actualDifficultyText]() {
+        mGameDifficulty = Difficulty::EASY_SINGLE;
+        actualDifficultyText->SetText(FileReaderUtil::getDifficultyName(mGameDifficulty));
+    }, Vector2(100, 30));
+
+    difficultySelection->AddButton("Medium", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this, actualDifficultyText]() {
+        mGameDifficulty = Difficulty::MEDIUM_SINGLE;
+        actualDifficultyText->SetText(FileReaderUtil::getDifficultyName(mGameDifficulty));
+    }, Vector2(100, 30));
+
+    difficultySelection->AddButton("Hard", Vector2(mWindowWidth/2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this, actualDifficultyText]() {
+        mGameDifficulty = Difficulty::HARD_SINGLE;
+        actualDifficultyText->SetText(FileReaderUtil::getDifficultyName(mGameDifficulty));
+    }, Vector2(100, 30));
+
+    difficultySelection->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(100, 30));
 }
 
 void Game::addScore(int points) {
@@ -498,7 +547,7 @@ void Game::HandleKeyUpActors(const int key, const bool isPressed)
 
 void Game::TogglePause()
 {
-    if (mGameScene != GameScene::MainMenu && mGameScene != GameScene::Credits && mGameScene != GameScene::HowToPlay)
+    if (mGameScene != GameScene::MainMenu && mGameScene != GameScene::Credits && mGameScene != GameScene::HowToPlay && mGameScene != GameScene::DifficultySelection)
     {
         if (mGamePlayState == GamePlayState::Playing)
         {
