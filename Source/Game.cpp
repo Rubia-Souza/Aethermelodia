@@ -200,9 +200,9 @@ void Game::ChangeScene()
 
         mGameTimeLimit = 400;
 
-        mMusicHandle = mAudio->PlaySound("medium-song.ogg", true);
+        mMusicHandle = mAudio->PlaySound("level-1.ogg", true);
         gameTimer.start();
-        chart = FileReaderUtil::loadChartManually("../Assets/SoundsChart/medium-notes.chart", mGameDifficulty);
+        chart = FileReaderUtil::loadChartManually("../Assets/Levels/Level-1/level-1.chart", Difficulty::EASY_SINGLE);
 
         SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(0,0), Vector2(mWindowWidth,mWindowHeight));
         for (int i = 0; i < (mWindowWidth / Game::TILE_SIZE + 1); i++) new Ground(this, Vector2(i * Game::TILE_SIZE,  PLAYABLE_AREA_HEIGHT - 10)); // Chao em blocos por conta do mSpatialHashing
