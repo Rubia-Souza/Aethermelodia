@@ -52,21 +52,30 @@ void Lirael::OnHandleKeyPress(const int key, const bool isPressed)
     if (mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
 
     if (isPressed) {
-        if (mState == LiraelState::Idle) {
-            int lane = -1;
-            switch (key)
-            {
-            case SDLK_a: lane = 0; break;
-            case SDLK_d: lane = 1; break;
-            case SDLK_s: lane = 2; break;
-            case SDLK_f: lane = 3; break;
+        int lane = -1;
+        switch (key)
+        {
+        case SDLK_a: lane = 0; break;
+        case SDLK_d: lane = 1; break;
+        case SDLK_s: lane = 2; break;
+        case SDLK_f: lane = 3; break;
+        }
+
+        if (lane != -1) {
+            if (mCurrentTarget && mCurrentTarget->GetLane() == lane) {
+                return; // Ignora o comando repetido
             }
 
-            if (lane != -1) MoveToTarget(lane);
+            MoveToTarget(lane);
         }
     } else {
-        if (mState == LiraelState::MovingToTarget || mState == LiraelState::WaitingAtTarget) {
-            if(bool isGameKey = (key == SDLK_a || key == SDLK_s || key == SDLK_d || key == SDLK_f)) ReturnToInitialPosition();
+        if (key == SDLK_a || key == SDLK_s || key == SDLK_d || key == SDLK_f) {
+            const Uint8* state = SDL_GetKeyboardState(NULL);
+            if (!state[SDL_SCANCODE_A] && !state[SDL_SCANCODE_S] &&
+                !state[SDL_SCANCODE_D] && !state[SDL_SCANCODE_F])
+            {
+                ReturnToInitialPosition();
+            }
         }
     }
 }
@@ -89,13 +98,15 @@ void Lirael::MoveToTarget(int lane)
         float jumpStrength = 0.0f;
 
         if (lane == 0 || lane == 1) { // Alvos de CIMA
-            jumpStrength = 880.0f; // Pulo alto
+            jumpStrength = 900.0f; // Pulo alto
         } else { // Alvos de BAIXO
-            jumpStrength = 380.0f; // Pulo mais curto e baixo
+            jumpStrength = 350.0f; // Pulo mais curto e baixo
         }
 
-        mRigidBodyComponent->SetApplyGravity(true);
-        mRigidBodyComponent->SetVelocity(Vector2(0.0f, -jumpStrength));
+        float currentHorizontalVelocity = mRigidBodyComponent->GetVelocity().x;
+
+        Vector2 newVelocity = Vector2(currentHorizontalVelocity, -jumpStrength);
+        mRigidBodyComponent->SetVelocity(newVelocity);
     }
 }
 
@@ -105,6 +116,7 @@ void Lirael::ReturnToInitialPosition()
     mCurrentTarget = nullptr;
     mRigidBodyComponent->SetApplyGravity(true);
     mRigidBodyComponent->SetVelocity(Vector2::Zero);
+    mRigidBodyComponent->SetAcceleration(Vector2::Zero);
     SetPosition(mInitialPosition);
 }
 
@@ -191,6 +203,10 @@ void Lirael::OnVerticalCollision(const float minOverlap, AABBColliderComponent* 
             pos.y -= minOverlap;
             SetPosition(pos);
             mRigidBodyComponent->SetVelocity(Vector2(mRigidBodyComponent->GetVelocity().x, 0.0f));
+
+            if (mState == LiraelState::MovingToTarget) {
+                ReturnToInitialPosition();
+            }
         }
     }
 }
