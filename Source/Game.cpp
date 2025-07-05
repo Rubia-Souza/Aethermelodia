@@ -389,7 +389,7 @@ void Game::ProcessInput()
                 if (!mUIStack.empty()) {
                     mUIStack.back()->HandleKeyPress(event.key.keysym.sym);
                 }
-                HandleKeyDownActors(event.key.keysym.sym, true);
+                HandleKeyDownActors(event.key.keysym.sym,  true); // event.key.repeat == 0
 
                 // Check if the Return key has been pressed to pause/unpause the game
                 if (event.key.keysym.sym == SDLK_RETURN)
@@ -651,7 +651,7 @@ void Game::UpdateGame()
             Vector2 spawnPos;
             Vector2 targetPos = targets[lane];
             // o gooomba eh fixado no topo
-            targetPos.y -= 16;
+            targetPos.y -= 48;
 
             // Define a posição de spawn baseada na pista (lane)
             // Pistas 0 e 2 (esquerda) vêm da borda esquerda
@@ -712,7 +712,9 @@ void Game::HitLane(int lane)
         // SDL_Log("HIT! Na pista %d", lane);
         hittableNote->setHit(true);
     } else {
-        SetCurrentLives(mCurrentLives - 1);
+        SetCurrentLives(mCurrentLives - 1); // TODO opcional: se for deixar menos punitivo, comentar essa linha, mas deixar o feedback sonoro
+        
+        mMusicHandle = mAudio->PlaySound("Wood walk 2.ogg", false);
         // SDL_Log("MISS! Vidas restantes: %d", mCurrentLives);
     }
 }
@@ -749,6 +751,9 @@ void Game::UnhitLane(int lane)
 
     if (hittableNote && minDistance <= HIT_WINDOW_RADIUS && hittableNote->GetDurationInSeconds() > 0) {
         hittableNote->setHit(false);
+        // if (hittableNote->GetDurationInSeconds() <= 0) {
+            mMusicHandle = mAudio->PlaySound("Wood walk 2.ogg", false);
+        // }
     }
 }
 

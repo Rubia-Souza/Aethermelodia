@@ -6,6 +6,7 @@
 
 #include "Actor.h"
 #include "../Game.h"
+#include "../Components/DrawComponents/DrawAnimatedComponent.h"
 
 class Enemy : public Actor
 {
@@ -28,7 +29,7 @@ public:
 
     int GetLane() const { return mNote.lane; }
 
-    void setHit(bool hit)  { this->mHit = hit; }
+    void setHit(bool hit)  { this->mHit = hit; mDrawExplosionComponent->SetIsVisible(mHit); }
     bool getHit() const { return mHit; }
 
     int GetDurationInSeconds() const { return mNote.durationInSeconds; }
@@ -49,4 +50,5 @@ private:
     class DrawAnimatedComponent* mDrawComponent;
     class AABBColliderComponent* mColliderComponent;
     class DrawRectangleComponent* mDrawTailComponent;
+    class DrawAnimatedComponent* mDrawExplosionComponent;
 };

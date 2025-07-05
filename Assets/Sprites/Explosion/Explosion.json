@@ -1,0 +1,93 @@
+{
+  "frames": [
+    {
+      "filename": "Explosion1.png",
+      "frame": { "x": 0, "y": 0, "w": 192, "h": 192 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+      "sourceSize": { "w": 192, "h": 192 },
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    {
+      "filename": "Explosion2.png",
+      "frame": { "x": 192, "y": 0, "w": 192, "h": 192 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+      "sourceSize": { "w": 192, "h": 192 },
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    {
+      "filename": "Explosion3.png",
+      "frame": { "x": 384, "y": 0, "w": 192, "h": 192 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+      "sourceSize": { "w": 192, "h": 192 },
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    {
+      "filename": "Explosion4.png",
+      "frame": { "x": 576, "y": 0, "w": 192, "h": 192 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+      "sourceSize": { "w": 192, "h": 192 },
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    {
+      "filename": "Explosion5.png",
+      "frame": { "x": 768, "y": 0, "w": 192, "h": 192 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+      "sourceSize": { "w": 192, "h": 192 },
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    {
+      "filename": "Explosion6.png",
+      "frame": { "x": 960, "y": 0, "w": 192, "h": 192 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+      "sourceSize": { "w": 192, "h": 192 },
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    {
+      "filename": "Explosion7.png",
+      "frame": { "x": 1152, "y": 0, "w": 192, "h": 192 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+      "sourceSize": { "w": 192, "h": 192 },
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    {
+      "filename": "Explosion8.png",
+      "frame": { "x": 1344, "y": 0, "w": 192, "h": 192 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+      "sourceSize": { "w": 192, "h": 192 },
+      "pivot": { "x": 0.5, "y": 0.5 }
+    },
+    {
+      "filename": "Explosion9.png",
+      "frame": { "x": 256, "y": 0, "w": 192, "h": 192 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+      "sourceSize": { "w": 192, "h": 192 },
+      "pivot": { "x": 0.5, "y": 0.5 }
+    }
+  ],
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "texture.png",
+    "format": "RGBA8888",
+    "size": { "w": 1728, "h": 192 },
+    "scale": 1
+  }
+}

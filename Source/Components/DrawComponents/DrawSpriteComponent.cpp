@@ -6,10 +6,11 @@
 #include "../../Actors/Actor.h"
 #include "../../Game.h"
 
-DrawSpriteComponent::DrawSpriteComponent(class Actor* owner, const std::string &texturePath, const int width, const int height, const int drawOrder)
+DrawSpriteComponent::DrawSpriteComponent(class Actor* owner, const std::string &texturePath, const int width, const int height, const int drawOrder, float scale)
         :DrawComponent(owner, drawOrder)
         ,mWidth(width)
         ,mHeight(height)
+        ,mScale(scale)
 {
     mSpriteSheetSurface = mOwner->GetGame()->LoadTexture(texturePath);
 }
@@ -29,8 +30,8 @@ void DrawSpriteComponent::Draw(SDL_Renderer *renderer, const Vector3 &modColor)
     SDL_Rect dstRect = {
         static_cast<int>(mOwner->GetPosition().x - mOwner->GetGame()->GetCameraPos().x),
         static_cast<int>(mOwner->GetPosition().y - mOwner->GetGame()->GetCameraPos().y),
-        mWidth,
-        mHeight
+        static_cast<int>(mWidth *  mScale),
+        static_cast<int>(mHeight * mScale)
     };
 
     SDL_RendererFlip flip = SDL_FLIP_NONE;

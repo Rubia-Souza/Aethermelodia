@@ -10,7 +10,7 @@
 class DrawAnimatedComponent : public DrawSpriteComponent {
 public:
     // (Lower draw order corresponds with further back)
-    DrawAnimatedComponent(class Actor* owner, const std::string &spriteSheetPath, const std::string &spriteSheetData, int drawOrder = 100);
+    DrawAnimatedComponent(class Actor* owner, const std::string &spriteSheetPath, const std::string &spriteSheetData, int drawOrder = 100, float scale = 1.0f, float animTimeout = 0);
     ~DrawAnimatedComponent() override;
 
     void Draw(SDL_Renderer* renderer, const Vector3 &modColor = Color::White) override;
@@ -27,6 +27,8 @@ public:
 
     // Add an animation of the corresponding name to the animation map
     void AddAnimation(const std::string& name, const std::vector<int>& images);
+
+    void SetScale(float scale) { this->mScale = scale; }
 
 private:
     void LoadSpriteSheet(const std::string& texturePath, const std::string& dataPath);
@@ -48,4 +50,9 @@ private:
 
     // Whether or not the animation is paused (defaults to false)
     bool mIsPaused = false;
+
+    float mScale = 1.0f;
+
+    float mAnimTimeout;
+    float mAnimTimeoutTimer = 0.0f;
 };
