@@ -38,6 +38,8 @@ public:
     {
         MainMenu,
         Level1,
+        Level2,
+        Level3,
         ToBeContinue,
         HowToPlay,
         Credits,
@@ -172,6 +174,9 @@ private:
     // Scene Manager
     void UpdateSceneManager(float deltaTime);
     void ChangeScene();
+
+    void LoadGameLevel(std::string levelSong, std::string levelChart);
+
     SceneManagerState mSceneManagerState;
     float mSceneManagerTimer;
 
@@ -205,6 +210,7 @@ private:
     // Track level state
     GameScene mGameScene;
     GameScene mNextScene;
+    GameScene mPreviousScene;
 
     // Background and camera
     Vector3 mBackgroundColor;
