@@ -17,7 +17,7 @@ HUD::HUD(class Game* game, const std::string& fontName)
     mScoreText = this->AddText("000000", Vector2(mGame->GetWindowWidth() - 200, 40), Vector2(120, 20), POINT_SIZE);
 
     // --- HUD de corações (5 vidas) ---
-    this->AddText("Vidas", Vector2(30, 15), Vector2(100, 20), POINT_SIZE);
+    this->AddText("Lives", Vector2(30, 15), Vector2(100, 20), POINT_SIZE);
     for (int i = 0; i < game->GetMaxLives(); ++i) {
         UIImage* h = this->AddImage(
             "../Assets/Sprites/UI/heart_full.png",
