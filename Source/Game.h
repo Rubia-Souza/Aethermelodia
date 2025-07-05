@@ -42,6 +42,7 @@ public:
         HowToPlay,
         Credits,
         GameOver,
+        DifficultySelection
     };
 
     enum class SceneManagerState
@@ -86,6 +87,17 @@ public:
 
     // Level functions
     void LoadMainMenu();
+
+    void LoadCredits();
+
+    void LoadToBeContinueScreen();
+
+    void LoadHowToPlay();
+
+    void LoadGameOverScreen();
+
+    void LoadDifficultySelectionScreen();
+
     void LoadLevel(const std::string& levelName, const int levelWidth, const int levelHeight);
 
     std::vector<Actor *> GetNearbyActors(const Vector2& position, const int range = 1);
@@ -235,4 +247,6 @@ private:
     std::vector<class Enemy*> mEnemies;
     std::vector<class Target*> mTargets;
     float mMusicStartOffset;
+
+    Difficulty mGameDifficulty;
 };

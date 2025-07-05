@@ -120,3 +120,19 @@ std::string FileReaderUtil::getDifficultyString(Difficulty difficulty) {
             return "[ExpertSingle]";
     }
 }
+
+std::string FileReaderUtil::getDifficultyName(Difficulty difficulty)
+{
+    switch (difficulty) {
+        case Difficulty::EASY_SINGLE:
+            return "Easy";
+        case Difficulty::MEDIUM_SINGLE:
+            return "Medium";
+        case Difficulty::HARD_SINGLE:
+            return "Hard";
+        case Difficulty::EXPERT_SINGLE:
+            return "Expert";
+        default:
+            return "Expert";
+    }
+}

@@ -38,5 +38,8 @@ class FileReaderUtil
 {
     public:
         static std::string getDifficultyString(Difficulty difficulty);
+
+        static std::string getDifficultyName(Difficulty difficulty);
+
         static std::vector<Note> loadChartManually(const std::string& filePath, Difficulty difficulty = Difficulty::EXPERT_SINGLE);
 };
