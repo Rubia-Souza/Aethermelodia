@@ -1,0 +1,291 @@
+{
+    "frames": [
+      {
+        "filename": "Goblin1-1.png",
+        "frame": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin1-2.png",
+        "frame": { "x": 192, "y": 0, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin1-3.png",
+        "frame": { "x": 384, "y": 0, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin1-4.png",
+        "frame": { "x": 576, "y": 0, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin1-5.png",
+        "frame": { "x": 768, "y": 0, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin1-6.png",
+        "frame": { "x": 960, "y": 0, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin1-7.png",
+        "frame": { "x": 1152, "y": 0, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin2-1.png",
+        "frame": { "x": 0, "y": 192, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin2-2.png",
+        "frame": { "x": 192, "y": 192, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin2-3.png",
+        "frame": { "x": 384, "y": 192, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin2-4.png",
+        "frame": { "x": 576, "y": 192, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin2-5.png",
+        "frame": { "x": 768, "y": 192, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin2-6.png",
+        "frame": { "x": 960, "y": 192, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin3-1.png",
+        "frame": { "x": 0, "y": 384, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin3-2.png",
+        "frame": { "x": 192, "y": 384, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin3-3.png",
+        "frame": { "x": 384, "y": 384, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin3-4.png",
+        "frame": { "x": 576, "y": 384, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin3-5.png",
+        "frame": { "x": 768, "y": 384, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin3-6.png",
+        "frame": { "x": 960, "y": 384, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin4-1.png",
+        "frame": { "x": 0, "y": 576, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin4-2.png",
+        "frame": { "x": 192, "y": 576, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin4-3.png",
+        "frame": { "x": 384, "y": 576, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin4-4.png",
+        "frame": { "x": 576, "y": 576, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin4-5.png",
+        "frame": { "x": 768, "y": 576, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin4-6.png",
+        "frame": { "x": 960, "y": 576, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin5-1.png",
+        "frame": { "x": 0, "y": 768, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin5-2.png",
+        "frame": { "x": 192, "y": 768, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin5-3.png",
+        "frame": { "x": 384, "y": 768, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin5-4.png",
+        "frame": { "x": 576, "y": 768, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin5-5.png",
+        "frame": { "x": 768, "y": 768, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      },
+      {
+        "filename": "Goblin5-6.png",
+        "frame": { "x": 960, "y": 768, "w": 192, "h": 192 },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": { "x": 0, "y": 0, "w": 192, "h": 192 },
+        "sourceSize": { "w": 192, "h": 192 },
+        "pivot": { "x": 0.5, "y": 0.5 }
+      }
+    ],
+    "meta": {
+      "app": "http://free-tex-packer.com",
+      "version": "0.6.7",
+      "image": "texture.png",
+      "format": "RGBA8888",
+      "size": { "w": 1344, "h": 960 },
+      "scale": 1
+    }
+  }
