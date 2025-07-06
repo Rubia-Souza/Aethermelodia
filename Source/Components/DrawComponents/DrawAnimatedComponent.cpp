@@ -8,8 +8,10 @@
 #include "../../Json.h"
 #include <fstream>
 
-DrawAnimatedComponent::DrawAnimatedComponent(class Actor* owner, const std::string &spriteSheetPath, const std::string &spriteSheetData, int drawOrder)
-        :DrawSpriteComponent(owner, spriteSheetPath, 0, 0, drawOrder)
+DrawAnimatedComponent::DrawAnimatedComponent(class Actor* owner, const std::string &spriteSheetPath, const std::string &spriteSheetData, int drawOrder, float scale, float animTimeout)
+        :DrawSpriteComponent(owner, spriteSheetPath, 0, 0, drawOrder,scale)
+        ,mScale(scale)
+        ,mAnimTimeout(animTimeout)
 {
     LoadSpriteSheet(spriteSheetPath, spriteSheetData);
 }
@@ -55,8 +57,8 @@ void DrawAnimatedComponent::Draw(SDL_Renderer* renderer, const Vector3 &modColor
     SDL_Rect dstRect = {
             static_cast<int>(mOwner->GetPosition().x - mOwner->GetGame()->GetCameraPos().x),
             static_cast<int>(mOwner->GetPosition().y - mOwner->GetGame()->GetCameraPos().y),
-            srcRect->w,
-            srcRect->h
+            static_cast<int>(srcRect->w * mScale),
+            static_cast<int>(srcRect->h * mScale)
     };
 
     SDL_RendererFlip flip = SDL_FLIP_NONE;
@@ -83,6 +85,15 @@ void DrawAnimatedComponent::Update(float deltaTime)
     if (mAnimTimer >= mAnimations[mAnimName].size()) {
         while (mAnimTimer >= mAnimations[mAnimName].size()) {
             mAnimTimer -= mAnimations[mAnimName].size();
+        }
+    }
+
+    mAnimTimeoutTimer = mIsVisible ? mAnimTimeoutTimer + deltaTime : 0;
+
+    if (mAnimTimeout) {
+        if ( mAnimTimeoutTimer / 1000 >= mAnimTimeout) {
+            mIsVisible = false;
+            Update(0.0f);
         }
     }
 }

@@ -26,22 +26,32 @@ Enemy::Enemy(Game* game,Note note, Vector2 spawnPos, Vector2 targetPos, float fo
     mColliderComponent->SetEnabled(false);
 
     mDrawComponent = new DrawAnimatedComponent(this,
-                                                  "../Assets/Sprites/Goomba/Goomba.png",
-                                                  "../Assets/Sprites/Goomba/Goomba.json");
+                                                  "../Assets/Sprites/Goblin/Goblin.png",
+                                                  "../Assets/Sprites/Goblin/Goblin.json", 100, .5);
 
-    mDrawComponent->AddAnimation("Dead", {0});
-    mDrawComponent->AddAnimation("Idle", {1});
-    mDrawComponent->AddAnimation("walk", {1, 2});
+    mDrawComponent->AddAnimation("Dead", {13,14,15});
+    mDrawComponent->AddAnimation("Idle", {0,1,2,3,4,5,6});
+    mDrawComponent->AddAnimation("walk", {7,8,9,10,11,12});
     mDrawComponent->SetAnimation("walk");
     mDrawComponent->SetAnimFPS(5.0f);
 
+    mDrawExplosionComponent = new DrawAnimatedComponent(this,
+                                              "../Assets/Sprites/Explosion/Explosion.png",
+                                              "../Assets/Sprites/Explosion/Explosion.json", 100, .5,0.5);
+    mDrawExplosionComponent->AddAnimation("Explode", {0,1,2,3,4,5,6,7,8});
+    mDrawExplosionComponent->SetAnimation("Explode");
+    mDrawExplosionComponent->SetAnimFPS(5.0f);
+    mDrawExplosionComponent->SetIsVisible(false);
+
 
     mIsMirrored = targetPos.x > spawnPos.x;
+
+    mRotation = mIsMirrored ? 0.0f : Math::Pi;
     mDrawTailComponent = new class DrawRectangleComponent(
         this,
         NOTE_VELOCITY * mNote.durationInSeconds ,
-        15,
-        Vector2(mIsMirrored ? 0: 32, 8),
+        10,
+        Vector2(42, 42),
         mIsMirrored,
         99);
 
@@ -143,7 +153,7 @@ void Enemy::OnUpdate(float deltaTime)
     {
 
         // destrói se a posição X passar do centro do alvo + seu raio (a borda direita)
-        if (currentPos.x >= (mTargetPos.x - targetRadius/2))
+        if (currentPos.x >= (mTargetPos.x - 24 - targetRadius/2))
         {
             mRigidBodyComponent->SetVelocity(Vector2(0.0f, 0.0f));
 
@@ -160,7 +170,7 @@ void Enemy::OnUpdate(float deltaTime)
     else if (!mIsMirrored)
     {
         // destrói se passar do centro do alvo - seu raio (a borda esquerda)
-        if (currentPos.x <= (mTargetPos.x - targetRadius/2))
+        if (currentPos.x <= (mTargetPos.x - 24 - targetRadius/2))
         {
             mRigidBodyComponent->SetVelocity(Vector2(0.0f, 0.0f));
 
