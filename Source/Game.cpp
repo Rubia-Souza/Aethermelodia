@@ -42,8 +42,6 @@ Game::Game(int windowWidth, int windowHeight)
         ,mModColor(255, 255, 255)
         ,mCameraPos(Vector2::Zero)
         ,mAudio(nullptr)
-        ,mGameTimer(0.0f)
-        ,mGameTimeLimit(0)
         ,mSceneManagerTimer(0.0f)
         ,mSceneManagerState(SceneManagerState::None)
         ,mGameScene(GameScene::MainMenu)
@@ -109,11 +107,6 @@ bool Game::Initialize()
     // Start random number generator
     Random::Init();
 
-    // --------------
-    // TODO - PARTE 4
-    // --------------
-
-    // TODO 1. Instancie um AudioSystem.
     mAudio = new AudioSystem();
 
 
@@ -130,16 +123,6 @@ bool Game::Initialize()
 
 void Game::SetGameScene(Game::GameScene scene, float transitionTime)
 {
-    // --------------
-    // TODO - PARTE 2
-    // --------------
-
-    // TODO 1.: Verifique se o estado do SceneManager mSceneManagerState é SceneManagerState::None.
-    //  Se sim, verifique se a cena passada scene passada como parâmetro é uma das cenas válidas (MainMenu, Level1, Level2).
-    //  Se a cena for válida, defina mNextScene como essa nova cena, mSceneManagerState como SceneManagerState::Entering e
-    //  mSceneManagerTimer como o tempo de transição passado como parâmetro.
-    //  Se a cena for inválida, registre um erro no log e retorne.
-    //  Se o estado do SceneManager não for SceneManagerState::None, registre um erro no log e retorne.
     if (mSceneManagerState == SceneManagerState::None) {
         if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Level2 || scene == GameScene::Level3 || scene == GameScene::Credits || scene == GameScene::HowToPlay || scene == GameScene::ToBeContinue || scene == GameScene::GameOver || scene == GameScene::DifficultySelection) {
             mPreviousScene = mGameScene;
@@ -171,9 +154,6 @@ void Game::ChangeScene()
 
     // Reset camera position
     mCameraPos.Set(0.0f, 0.0f);
-
-    // Reset game timer
-    mGameTimer = 0.0f;
 
     // Reset scene manager state
     mSpatialHashing = new SpatialHashing(CELL_SIZE, mWindowWidth, PLAYABLE_AREA_HEIGHT);
@@ -218,8 +198,6 @@ void Game::LoadGameLevel(std::string levelSong, std::string levelChart) {
 
     mAudio->StopAllSounds();
     mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
-
-    mGameTimeLimit = 400;
 
     mMusicHandle = mAudio->PlaySound(levelSong, true);
     gameTimer.start();
@@ -666,7 +644,6 @@ void Game::UpdateGame()
 
             Vector2 spawnPos;
             Vector2 targetPos = targets[lane];
-            // o gooomba eh fixado no topo
             targetPos.y -= 48;
 
             // Define a posição de spawn baseada na pista (lane)
@@ -682,9 +659,7 @@ void Game::UpdateGame()
 
             new Enemy(this, chart[currentNoteIndex], spawnPos, targetPos);
 
-            // Avança para a próxima nota no chart
             currentNoteIndex++;
-
         }
 
         if (mCurrentLives <= 0) {
@@ -728,7 +703,7 @@ void Game::HitLane(int lane)
         // SDL_Log("HIT! Na pista %d", lane);
         hittableNote->setHit(true);
     } else {
-        SetCurrentLives(mCurrentLives - 1); // TODO opcional: se for deixar menos punitivo, comentar essa linha, mas deixar o feedback sonoro
+        // SetCurrentLives(mCurrentLives - 1); // TODO opcional: se for deixar menos punitivo, comentar essa linha, mas deixar o feedback sonoro
         
         mMusicHandle = mAudio->PlaySound("Wood walk 2.ogg", false);
         // SDL_Log("MISS! Vidas restantes: %d", mCurrentLives);

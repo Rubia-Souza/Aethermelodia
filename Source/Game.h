@@ -222,9 +222,6 @@ private:
     SoundHandle mMusicHandle;
     SoundHandle mMainMenuSoundHandle;
 
-    float mGameTimer;
-    int mGameTimeLimit;
-
     SDL_Texture *mBackgroundTexture;
     Vector2 mBackgroundSize;
     Vector2 mBackgroundPosition;

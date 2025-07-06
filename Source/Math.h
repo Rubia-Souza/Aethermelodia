@@ -228,6 +228,13 @@ public:
 	{
 		return Vector2(a + f * (b - a));
 	}
+
+	// Calculate distance between two vectors
+	static float Distance(const Vector2& a, const Vector2& b)
+	{
+		Vector2 diff = a - b;
+		return diff.Length();
+	}
 	
 	// Reflect V about (normalized) N
 	static Vector2 Reflect(const Vector2& v, const Vector2& n)
