@@ -47,4 +47,5 @@ private:
 
     void MoveToTarget(int lane);
     void ReturnToInitialPosition();
+    void CenterOnScreen(float rotation);
 };

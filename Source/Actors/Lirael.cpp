@@ -2,7 +2,6 @@
 // Created by Aline on 27/06/2025.
 //
 
-#include "SDL.h"
 #include "Lirael.h"
 #include "Target.h"
 #include "../Game.h"
@@ -23,9 +22,11 @@ Lirael::Lirael(Game* game)
 
     mRigidBodyComponent->SetApplyFriction(false);
 
-    mDrawComponent->AddAnimation("idle", {0});
-    mDrawComponent->AddAnimation("Dead", {1});
-    mDrawComponent->SetAnimation("idle");
+    mDrawComponent->AddAnimation("Idle", {5});
+    mDrawComponent->AddAnimation("Dead", {4});
+    mDrawComponent->AddAnimation("Attack", {0, 1, 2, 3});
+
+    mDrawComponent->SetAnimation("Idle");
     mDrawComponent->SetAnimFPS(10.0f);
 }
 
@@ -41,6 +42,34 @@ void Lirael::OnProcessInput(const uint8_t* state)
         mRotation = Math::Pi;
     }
 }
+
+// void Lirael::OnProcessInput(const uint8_t* state)
+// {
+//     if(mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
+//
+//     const bool aDown = state[SDL_SCANCODE_A];
+//     const bool sDown = state[SDL_SCANCODE_S];
+//     const bool dDown = state[SDL_SCANCODE_D];
+//     const bool fDown = state[SDL_SCANCODE_F];
+//
+//     if (const int keysPressed = aDown + sDown + dDown + fDown; keysPressed > 1) {
+//         if (aDown && sDown) {
+//             CenterOnScreen(Math::Pi);
+//         } else if (dDown && fDown) {
+//             CenterOnScreen(0.0f);
+//         } else {
+//             CenterOnScreen(GetRotation());
+//         }
+//         return;
+//     }
+//
+//     if (dDown || fDown) {
+//         mRotation = 0.0f;
+//     }
+//     else if (sDown || aDown) {
+//         mRotation = Math::Pi;
+//     }
+// }
 
 void Lirael::OnHandleKeyPress(const int key, const bool isPressed)
 {
@@ -154,11 +183,19 @@ void Lirael::OnUpdate(float deltaTime)
             SetPosition(newPos);
         }
     }
+
+    ManageAnimations();
 }
 
 void Lirael::ManageAnimations()
 {
-    // TODO: add animations
+    if(mIsDying) {
+        mDrawComponent->SetAnimation("Dead");
+    } else if (mState == LiraelState::MovingToTarget || mState == LiraelState::WaitingAtTarget) {
+        mDrawComponent->SetAnimation("Attack");
+    } else if (mIsOnGround) {
+        mDrawComponent->SetAnimation("Idle");
+    }
 }
 
 void Lirael::Kill()
@@ -189,4 +226,20 @@ void Lirael::OnVerticalCollision(const float minOverlap, AABBColliderComponent* 
             mRigidBodyComponent->SetVelocity(Vector2(mRigidBodyComponent->GetVelocity().x, 0.0f));
         }
     }
+}
+
+void Lirael::CenterOnScreen(float rotation)
+{
+    if (mState == LiraelState::MovingToTarget || mState == LiraelState::WaitingAtTarget) {
+        ReturnToInitialPosition();
+    }
+
+    float screenWidth = mGame->GetWindowWidth();
+    float screenHeight = mGame->GetWindowHeight();
+
+    float finalX = (screenWidth / 2.0f) - (mColliderComponent->GetWidth() / 2.0f);
+    float finalY = screenHeight * 0.74f;
+
+    SetPosition(Vector2(finalX, finalY));
+    SetRotation(rotation);
 }
