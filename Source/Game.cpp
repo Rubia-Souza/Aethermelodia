@@ -246,40 +246,43 @@ void Game::LoadMainMenu()
     }
 
     auto menuBackground = mainMenu->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
-    auto title = mainMenu->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(352, 176));
+    auto title = mainMenu->AddText("Aethermelodia", Vector2((GetWindowWidth() - 700) / 2, (GetWindowHeight() - 176) / 2 - 100), Vector2(700, 176));
 
-    mainMenu->AddButton("Play Game", Vector2(mWindowWidth/2.0f - 150.0f, 400.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(180, 15));
-    mainMenu->AddButton("How to Play", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::HowToPlay); }, Vector2(160, 15));
-    mainMenu->AddButton("Difficulty", Vector2(mWindowWidth / 2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::DifficultySelection); }, Vector2(160, 15));
-    mainMenu->AddButton("Credits", Vector2(mWindowWidth/2.0f - 150.0f, 595.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Credits); }, Vector2(120, 15));
+    mainMenu->AddButton("Play Game", Vector2(mWindowWidth/2.0f - 150.0f, 400.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(140, 30));
+    mainMenu->AddButton("How to Play", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::HowToPlay); }, Vector2(140, 30));
+    mainMenu->AddButton("Difficulty", Vector2(mWindowWidth / 2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::DifficultySelection); }, Vector2(140, 30));
+    mainMenu->AddButton("Credits", Vector2(mWindowWidth/2.0f - 150.0f, 605.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::Credits); }, Vector2(130, 30));
 }
 
 void Game::LoadCredits() {
     auto credits = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
     credits->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
-    credits->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
+    credits->AddText("Aethermelodia", Vector2((GetWindowWidth() - 700) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(700, 176));
 
-    credits->AddText("Arts", Vector2(175.0f, 200.0f), Vector2(200.0f, 35.0f));
-    credits->AddText("- Background Menu -", Vector2(120.0f, 270.0f), Vector2(300.0f, 20.0f));
-    credits->AddText("Steven Greenblatt", Vector2(170.0f, 320.0f), Vector2(200.0f, 20.0f));
+    credits->AddText("Arts", Vector2(100.0f, 200.0f), Vector2(200.0f, 35.0f));
+    credits->AddText("- Background Menu -", Vector2(25.0f, 270.0f), Vector2(350.0f, 20.0f));
+    credits->AddText("Steven Greenblatt", Vector2(95.0f, 320.0f), Vector2(200.0f, 20.0f));
 
-    credits->AddText("- Background Level 1 -", Vector2(120.0f, 370.0f), Vector2(300.0f, 20.0f));
-    credits->AddText("edermunizz", Vector2(210.0f, 420.0f), Vector2(100.0f, 20.0f));
+    credits->AddText("- Background Level 1 -", Vector2(25.0f, 370.0f), Vector2(350.0f, 20.0f));
+    credits->AddText("edermunizz", Vector2(95.0f, 420.0f), Vector2(200.0f, 20.0f));
+
+    credits->AddText("- Assets -", Vector2(95.0f, 480.0f), Vector2(200.0f, 20.0f));
+    credits->AddText("Itch.io", Vector2(95.0f, 520.0f), Vector2(200.0f, 20.0f));
 
     credits->AddText("Music", Vector2(GetWindowWidth() / 2 - 100, 200.0f), Vector2(200.0f, 35.0f));
-    credits->AddText("- Menu -", Vector2(GetWindowWidth() / 2 - 50, 270.0f), Vector2(100.0f, 20.0f));
-    credits->AddText("The King of Fighters EX Neo Blood - Escape of Tower Ending Theme 1", Vector2(GetWindowWidth() / 2 - 150, 300.0f), Vector2(300.0f, 40.0f));
-    credits->AddText("- Level 1 -", Vector2(GetWindowWidth() / 2 - 75, 370.0f), Vector2(150.0f, 20.0f));
-    credits->AddText("Dynasty Warriors Origins - Lu Bu's Theme", Vector2(GetWindowWidth() / 2 - 150, 400.0f), Vector2(300.0f, 40.0f));
-    credits->AddText("- Ending -", Vector2(GetWindowWidth() / 2 - 50, 450.0f), Vector2(100.0f, 20.0f));
-    credits->AddText("Night in the Woods - Ending", Vector2(GetWindowWidth() / 2 - 150, 475.0f), Vector2(300.0f, 40.0f));
+    credits->AddText("- Menu -", Vector2(GetWindowWidth() / 2 - 60, 270.0f), Vector2(120.0f, 20.0f));
+    credits->AddText("The King of Fighters EX Neo Blood - Escape of Tower Ending Theme 1", Vector2(GetWindowWidth() / 2 - 225, 300.0f), Vector2(450.0f, 70.0f));
+    credits->AddText("- Levels -", Vector2(GetWindowWidth() / 2 - 75, 400.0f), Vector2(150.0f, 20.0f));
+    credits->AddText("Ichika Nito", Vector2(GetWindowWidth() / 2 - 100, 430.0f), Vector2(200.0f, 20.0f));
+    credits->AddText("- Ending -", Vector2(GetWindowWidth() / 2 - 75, 500.0f), Vector2(150.0f, 20.0f));
+    credits->AddText("Night in the Woods - Ending", Vector2(GetWindowWidth() / 2 - 200, 530.0f), Vector2(400.0f, 40.0f));
 
-    credits->AddText("Code", Vector2(GetWindowWidth() - 400, 200.0f), Vector2(200.0f, 35.0f));
-    credits->AddText("Aline Cristina", Vector2(mWindowWidth - 375.0f, 270.0f), Vector2(150.0f, 20.0f));
-    credits->AddText("Gabriel Henrique", Vector2(mWindowWidth - 375.0f, 320.0f), Vector2(150.0f, 20.0f));
-    credits->AddText("Rubia Alice", Vector2(mWindowWidth - 375.0f, 370.0f), Vector2(150.0f, 20.0f));
-    credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth - 375.0f, 420.0f), Vector2(150.0f, 20.0f));
+    credits->AddText("Code", Vector2(GetWindowWidth() - 300, 200.0f), Vector2(200.0f, 35.0f));
+    credits->AddText("Aline Cristina", Vector2(mWindowWidth - 300.0f, 270.0f), Vector2(200.0f, 20.0f));
+    credits->AddText("Gabriel Henrique", Vector2(mWindowWidth - 300.0f, 320.0f), Vector2(200.0f, 20.0f));
+    credits->AddText("Rubia Alice", Vector2(mWindowWidth - 300.0f, 370.0f), Vector2(150.0f, 20.0f));
+    credits->AddText("Vinicius Gabriel", Vector2(mWindowWidth - 300.0f, 420.0f), Vector2(200.0f, 20.0f));
     credits->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(100, 30));
 }
 
@@ -302,7 +305,7 @@ void Game::LoadHowToPlay()
     auto howToPlay = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
     auto menuBackground = howToPlay->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
-    auto title = howToPlay->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
+    auto title = howToPlay->AddText("Aethermelodia", Vector2((GetWindowWidth() - 700) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(700, 176));
 
     howToPlay->AddText("- Lore -", Vector2(175.0f, 200.0f), Vector2(200.0f, 35.0f));
     howToPlay->AddText("In this game you play as Lirael, a bard that is fighting for survival after losing his friends on a journey. Now he needs to use his songs to escape the dangers of the wilderness and find his friends again.", Vector2(40.0f, 250.0f), Vector2(600.0f, 300.0f));
@@ -336,22 +339,22 @@ void Game::LoadDifficultySelectionScreen()
     auto difficultySelection = new UIScreen(this, "../Assets/Fonts/SMB.ttf");
 
     difficultySelection->AddImage("../Assets/Sprites/Menu_Background.jpg", Vector2::Zero, Vector2(mWindowWidth, mWindowHeight));
-    difficultySelection->AddText("Aethermelodia", Vector2((GetWindowWidth() - 352) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(352, 176));
+    difficultySelection->AddText("Aethermelodia", Vector2((GetWindowWidth() - 700) / 2, (GetWindowHeight() - 176) / 2 - 250), Vector2(700, 176));
 
-    difficultySelection->AddText("Actual difficulty: ", Vector2(GetWindowWidth() / 2 - 100 - 100, 350.0f), Vector2(250.0f, 30.0f));
-    auto actualDifficultyText = difficultySelection->AddText(FileReaderUtil::getDifficultyName(mGameDifficulty), Vector2(GetWindowWidth() / 2 - 100 + 150, 350.0f), Vector2(100.0f, 30.0f));
+    difficultySelection->AddText("Actual difficulty: ", Vector2(GetWindowWidth() / 2 - 100 - 100, 300.0f), Vector2(250.0f, 30.0f));
+    auto actualDifficultyText = difficultySelection->AddText(FileReaderUtil::getDifficultyName(mGameDifficulty), Vector2(GetWindowWidth() / 2 - 100 + 150, 300.0f), Vector2(100.0f, 30.0f));
 
-    difficultySelection->AddButton("Easy", Vector2(mWindowWidth/2.0f - 150.0f, 400.0f), Vector2(300.0f, 50.0f), [this, actualDifficultyText]() {
+    difficultySelection->AddButton("Easy", Vector2(mWindowWidth/2.0f - 150.0f, 350.0f), Vector2(300.0f, 50.0f), [this, actualDifficultyText]() {
         mGameDifficulty = Difficulty::EASY_SINGLE;
         actualDifficultyText->SetText(FileReaderUtil::getDifficultyName(mGameDifficulty));
     }, Vector2(100, 30));
 
-    difficultySelection->AddButton("Medium", Vector2(mWindowWidth/2.0f - 150.0f, 465.0f), Vector2(300.0f, 50.0f), [this, actualDifficultyText]() {
+    difficultySelection->AddButton("Medium", Vector2(mWindowWidth/2.0f - 150.0f, 415.0f), Vector2(300.0f, 50.0f), [this, actualDifficultyText]() {
         mGameDifficulty = Difficulty::MEDIUM_SINGLE;
         actualDifficultyText->SetText(FileReaderUtil::getDifficultyName(mGameDifficulty));
     }, Vector2(100, 30));
 
-    difficultySelection->AddButton("Hard", Vector2(mWindowWidth/2.0f - 150.0f, 535.0f), Vector2(300.0f, 50.0f), [this, actualDifficultyText]() {
+    difficultySelection->AddButton("Hard", Vector2(mWindowWidth/2.0f - 150.0f, 485.0f), Vector2(300.0f, 50.0f), [this, actualDifficultyText]() {
         mGameDifficulty = Difficulty::HARD_SINGLE;
         actualDifficultyText->SetText(FileReaderUtil::getDifficultyName(mGameDifficulty));
     }, Vector2(100, 30));
