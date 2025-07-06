@@ -6,6 +6,7 @@
 #include "Target.h"
 #include "../Game.h"
 #include "../Components/DrawComponents/DrawAnimatedComponent.h"
+#include "../Components/ColliderComponents//AABBColliderComponent.h" // Inclua o colisor para pegar o componente do alvo
 
 Lirael::Lirael(Game* game, const float forwardSpeed, const float jumpSpeed)
         : Actor(game)
@@ -20,7 +21,7 @@ Lirael::Lirael(Game* game, const float forwardSpeed, const float jumpSpeed)
 
     mDrawComponent = new DrawAnimatedComponent(this,
                                               "../Assets/Sprites/Lirael/Lirael.png",
-                                              "../Assets/Sprites/Lirael/Lirael.json"); // Mudar
+                                              "../Assets/Sprites/Lirael/Lirael.json");
 
     mRigidBodyComponent->SetApplyFriction(false);
 
@@ -63,12 +64,13 @@ void Lirael::OnHandleKeyPress(const int key, const bool isPressed)
 
         if (lane != -1) {
             if (mCurrentTarget && mCurrentTarget->GetLane() == lane) {
-                return; // Ignora o comando repetido
+                return;
             }
-
             MoveToTarget(lane);
         }
     } else {
+        // Se uma tecla for solta, verifica se alguma outra de jogo ainda está pressionada.
+        // Se não, retorna ao chão.
         if (key == SDLK_a || key == SDLK_s || key == SDLK_d || key == SDLK_f) {
             const Uint8* state = SDL_GetKeyboardState(NULL);
             if (!state[SDL_SCANCODE_A] && !state[SDL_SCANCODE_S] &&
@@ -93,28 +95,39 @@ void Lirael::MoveToTarget(int lane)
 
     if (target) {
         mState = LiraelState::MovingToTarget;
+        mRigidBodyComponent->SetEnabled(false);
         mCurrentTarget = target;
 
-        float jumpStrength = 0.0f;
+        mJumpStartPos = GetPosition();
 
-        if (lane == 0 || lane == 1) { // Alvos de CIMA
-            jumpStrength = 900.0f; // Pulo alto
-        } else { // Alvos de BAIXO
-            jumpStrength = 350.0f; // Pulo mais curto e baixo
+        Vector2 targetCenter = target->GetPosition();
+        float finalX = targetCenter.x - (mColliderComponent->GetWidth() / 2.0f);
+        float finalY = targetCenter.y - mColliderComponent->GetHeight();
+
+        mJumpEndPos = Vector2(finalX, finalY);
+        mJumpTime = 0.0f;
+
+        float distance = Vector2::Distance(mJumpStartPos, mJumpEndPos);
+
+        const float heightMultiplier = 0.3f;
+        const float durationMultiplier = 0.0012f;
+        const float minDuration = 0.35f;
+
+        mJumpHeight = distance * heightMultiplier;
+        mJumpDuration = distance * durationMultiplier;
+
+        if (mJumpDuration < minDuration) {
+            mJumpDuration = minDuration;
         }
-
-        float currentHorizontalVelocity = mRigidBodyComponent->GetVelocity().x;
-
-        Vector2 newVelocity = Vector2(currentHorizontalVelocity, -jumpStrength);
-        mRigidBodyComponent->SetVelocity(newVelocity);
     }
 }
 
 void Lirael::ReturnToInitialPosition()
 {
+    mRigidBodyComponent->SetEnabled(true);
+
     mState = LiraelState::Idle;
     mCurrentTarget = nullptr;
-    mRigidBodyComponent->SetApplyGravity(true);
     mRigidBodyComponent->SetVelocity(Vector2::Zero);
     mRigidBodyComponent->SetAcceleration(Vector2::Zero);
     SetPosition(mInitialPosition);
@@ -127,53 +140,25 @@ void Lirael::OnUpdate(float deltaTime)
         mInitialPositionSet = true;
     }
 
-    if (mState == LiraelState::MovingToTarget)
-    {
-        if (mCurrentTarget != nullptr)
-        {
-            const float horizontalForce = 1500.0f;
-            Vector2 targetPos = mCurrentTarget->GetPosition();
-            float dirX = targetPos.x - GetPosition().x > 0 ? 1.0f : -1.0f;
+    if (mState == LiraelState::MovingToTarget) {
+        mJumpTime += deltaTime;
+        float t = mJumpTime / mJumpDuration;
 
-            if (Math::Abs(targetPos.x - GetPosition().x) > 5.0f)
-            {
-                mRigidBodyComponent->ApplyForce(Vector2::UnitX * dirX * horizontalForce);
-            }
-
-            auto targetCollider = mCurrentTarget->GetComponent<AABBColliderComponent>();
-            if (mColliderComponent->Intersect(*targetCollider))
-            {
-                mRigidBodyComponent->SetVelocity(Vector2::Zero);
-                mRigidBodyComponent->SetAcceleration(Vector2::Zero);
-                mRigidBodyComponent->SetApplyGravity(false);
-
-                Vector2 targetCenter = targetCollider->GetCenter();
-                Vector2 liraelCenter = mColliderComponent->GetCenter();
-
-                Vector2 dirFromTarget = liraelCenter - targetCenter;
-                dirFromTarget.Normalize();
-
-                float targetRadius = targetCollider->GetWidth() / 2.0f;
-                float liraelHalfWidth = mColliderComponent->GetWidth() / 2.0f;
-                float idealDist = targetRadius + liraelHalfWidth;
-
-                Vector2 finalLiraelCenter = targetCenter + dirFromTarget * idealDist;
-                Vector2 finalActorPos = finalLiraelCenter - Vector2(liraelHalfWidth, mColliderComponent->GetHeight() / 2.0f);
-                SetPosition(finalActorPos);
-
-                mState = LiraelState::WaitingAtTarget;
-            }
+        if (t >= 1.0f) {
+            SetPosition(mJumpEndPos);
+            mState = LiraelState::WaitingAtTarget;
+        } else {
+            Vector2 newPos = Vector2::Lerp(mJumpStartPos, mJumpEndPos, t);
+            float arc = mJumpHeight * sin(Math::Pi * t);
+            newPos.y -= arc;
+            SetPosition(newPos);
         }
-    }
-
-    if (mRigidBodyComponent && mRigidBodyComponent->GetVelocity().y != 0 && mState == LiraelState::Idle) {
-        mIsOnGround = false;
     }
 }
 
 void Lirael::ManageAnimations()
 {
-// TODO: add animations
+    // TODO: add animations
 }
 
 void Lirael::Kill()
@@ -191,22 +176,17 @@ void Lirael::Kill()
 
 void Lirael::OnHorizontalCollision(const float minOverlap, AABBColliderComponent* other)
 {
-
 }
 
 void Lirael::OnVerticalCollision(const float minOverlap, AABBColliderComponent* other)
 {
-    if (other->GetLayer() == ColliderLayer::Ground) {
+    if (mRigidBodyComponent->IsEnabled() && other->GetLayer() == ColliderLayer::Ground) {
         if (mRigidBodyComponent->GetVelocity().y > 0.0f) {
             mIsOnGround = true;
             Vector2 pos = GetPosition();
             pos.y -= minOverlap;
             SetPosition(pos);
             mRigidBodyComponent->SetVelocity(Vector2(mRigidBodyComponent->GetVelocity().x, 0.0f));
-
-            if (mState == LiraelState::MovingToTarget) {
-                ReturnToInitialPosition();
-            }
         }
     }
 }

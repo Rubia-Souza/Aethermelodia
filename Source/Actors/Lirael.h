@@ -43,6 +43,12 @@ private:
     class DrawAnimatedComponent* mDrawComponent;
     class AABBColliderComponent* mColliderComponent;
 
+    Vector2 mJumpStartPos;      // Posição inicial do pulo
+    Vector2 mJumpEndPos;        // Posição final do pulo (o alvo)
+    float mJumpTime;            // Tempo decorrido no pulo atual
+    float mJumpDuration;        // Duração total que o pulo deve levar
+    float mJumpHeight;          // Altura do arco do pulo
+
     void MoveToTarget(int lane);
     void ReturnToInitialPosition();
 };
