@@ -141,7 +141,8 @@ void Game::SetGameScene(Game::GameScene scene, float transitionTime)
     //  Se a cena for inválida, registre um erro no log e retorne.
     //  Se o estado do SceneManager não for SceneManagerState::None, registre um erro no log e retorne.
     if (mSceneManagerState == SceneManagerState::None) {
-        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Credits || scene == GameScene::HowToPlay || scene == GameScene::ToBeContinue || scene == GameScene::GameOver || scene == GameScene::DifficultySelection) {
+        if (scene == GameScene::MainMenu || scene == GameScene::Level1 || scene == GameScene::Level2 || scene == GameScene::Level3 || scene == GameScene::Credits || scene == GameScene::HowToPlay || scene == GameScene::ToBeContinue || scene == GameScene::GameOver || scene == GameScene::DifficultySelection) {
+            mPreviousScene = mGameScene;
             mNextScene = scene;
             mSceneManagerState = SceneManagerState::Entering;
             mSceneManagerTimer = transitionTime;
@@ -188,39 +189,12 @@ void Game::ChangeScene()
 
         // Initialize main menu actors
         LoadMainMenu();
-    }
-    else if (mNextScene == GameScene::Level1)
-    {
-        mCurrentLives = kMaxLives;
-        currentNoteIndex = 0;
-        mGamePlayState = GamePlayState::Playing;
-
-        mAudio->StopAllSounds();
-        mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
-
-        mGameTimeLimit = 400;
-
-        mMusicHandle = mAudio->PlaySound("level-1.ogg", true);
-        gameTimer.start();
-        chart = FileReaderUtil::loadChartManually("../Assets/Levels/Level-1/level-1.chart", Difficulty::EASY_SINGLE);
-
-        SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(0,0), Vector2(mWindowWidth,mWindowHeight));
-        for (int i = 0; i < (mWindowWidth / Game::TILE_SIZE + 1); i++) new Ground(this, Vector2(i * Game::TILE_SIZE,  PLAYABLE_AREA_HEIGHT - 10)); // Chao em blocos por conta do mSpatialHashing
-
-        auto target0 = new Target(this, Vector2(mXPosLeft, mYPosTop), Target::GetLaneColor(0), 0, 30);
-        auto target1 = new Target(this, Vector2(mXPosRight, mYPosTop), Target::GetLaneColor(1), 1, 30);
-        auto target2 = new Target(this, Vector2(mXPosLeft, mYPosBottom), Target::GetLaneColor(2), 2, 30);
-        auto target3 = new Target(this, Vector2(mXPosRight, mYPosBottom), Target::GetLaneColor(3), 3, 30);
-
-        mTargets.emplace_back(target0);
-        mTargets.emplace_back(target1);
-        mTargets.emplace_back(target2);
-        mTargets.emplace_back(target3);
-
-        mLirael = new Lirael(this);
-        const float liraelWidth = 64.0f;
-        const float centeredLiraelX = (mWindowWidth * 0.5f) - (liraelWidth / 2.0f);
-        mLirael->SetPosition(Vector2(centeredLiraelX, 0));
+    } else if (mNextScene == GameScene::Level1) {
+        LoadGameLevel("level-1.ogg", "../Assets/Levels/Level-1/level-1.chart");
+    } else if (mNextScene == GameScene::Level2) {
+        LoadGameLevel("level-2.ogg", "../Assets/Levels/Level-2/level-2.chart");
+    } else if (mNextScene == GameScene::Level3) {
+        LoadGameLevel("level-3.ogg", "../Assets/Levels/Level-3/level-3.chart");
     } else if (mNextScene == GameScene::ToBeContinue) {
         LoadToBeContinueScreen();
     } else if (mNextScene == GameScene::HowToPlay) {
@@ -235,6 +209,39 @@ void Game::ChangeScene()
 
     // Set new scene
     mGameScene = mNextScene;
+}
+
+void Game::LoadGameLevel(std::string levelSong, std::string levelChart) {
+    mCurrentLives = kMaxLives;
+    currentNoteIndex = 0;
+    mGamePlayState = GamePlayState::Playing;
+
+    mAudio->StopAllSounds();
+    mHUD = new HUD(this, "../Assets/Fonts/SMB.ttf");
+
+    mGameTimeLimit = 400;
+
+    mMusicHandle = mAudio->PlaySound(levelSong, true);
+    gameTimer.start();
+    chart = FileReaderUtil::loadChartManually(levelChart, mGameDifficulty);
+
+    SetBackgroundImage("../Assets/Sprites/Background.png", Vector2(0,0), Vector2(mWindowWidth,mWindowHeight));
+    for (int i = 0; i < (mWindowWidth / Game::TILE_SIZE + 1); i++) new Ground(this, Vector2(i * Game::TILE_SIZE,  PLAYABLE_AREA_HEIGHT - 10)); // Chao em blocos por conta do mSpatialHashing
+
+    auto target0 = new Target(this, Vector2(mXPosLeft, mYPosTop), Target::GetLaneColor(0), 0, 30);
+    auto target1 = new Target(this, Vector2(mXPosRight, mYPosTop), Target::GetLaneColor(1), 1, 30);
+    auto target2 = new Target(this, Vector2(mXPosLeft, mYPosBottom), Target::GetLaneColor(2), 2, 30);
+    auto target3 = new Target(this, Vector2(mXPosRight, mYPosBottom), Target::GetLaneColor(3), 3, 30);
+
+    mTargets.emplace_back(target0);
+    mTargets.emplace_back(target1);
+    mTargets.emplace_back(target2);
+    mTargets.emplace_back(target3);
+
+    mLirael = new Lirael(this);
+    const float liraelWidth = 64.0f;
+    const float centeredLiraelX = (mWindowWidth * 0.5f) - (liraelWidth / 2.0f);
+    mLirael->SetPosition(Vector2(centeredLiraelX, 0));
 }
 
 void Game::LoadMainMenu()
@@ -330,7 +337,7 @@ void Game::LoadGameOverScreen() {
 
     gameOver->AddText("Play again?", Vector2(mWindowWidth * 0.44, 450.0f), Vector2(200.0f, 35.0f));
 
-    gameOver->AddButton("Yes", Vector2(mWindowWidth * 0.42, 510.0f), Vector2(250.0f, 50.0f), [this]() { SetGameScene(GameScene::Level1); }, Vector2(60, 18));
+    gameOver->AddButton("Yes", Vector2(mWindowWidth * 0.42, 510.0f), Vector2(250.0f, 50.0f), [this]() { SetGameScene(mPreviousScene); }, Vector2(60, 18));
     gameOver->AddButton("No", Vector2(mWindowWidth * 0.42, 580.0f), Vector2(250.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(50, 18));
 }
 
@@ -615,7 +622,7 @@ void Game::UpdateGame()
 
     UpdateSceneManager(deltaTime);
 
-    if (mGameScene == GameScene::Level1 && mGamePlayState == GamePlayState::Playing) {
+    if ((mGameScene == GameScene::Level1 || mGameScene == GameScene::Level2 || mGameScene == GameScene::Level3) && mGamePlayState == GamePlayState::Playing) {
         const bool allNotesSpawned = (currentNoteIndex >= chart.size());
         const bool allEnemiesCleared = mEnemies.empty();
 
@@ -625,11 +632,17 @@ void Game::UpdateGame()
             mAudio->StopAllSounds();
             gameTimer.stop();
 
-            SetGameScene(GameScene::ToBeContinue);
+            if (mGameScene == GameScene::Level1) {
+                SetGameScene(GameScene::Level2);
+            } else if (mGameScene == GameScene::Level2) {
+                SetGameScene(GameScene::Level3);
+            } else {
+                SetGameScene(GameScene::ToBeContinue);
+            }
         }
     }
 
-    if (mGameScene == GameScene::Level1 && !chart.empty() && mGamePlayState == GamePlayState::Playing)
+    if ((mGameScene == GameScene::Level1 || mGameScene == GameScene::Level2 || mGameScene == GameScene::Level3) && !chart.empty() && mGamePlayState == GamePlayState::Playing)
     {
         double currentTime = gameTimer.getSeconds() - mMusicStartOffset;
 
