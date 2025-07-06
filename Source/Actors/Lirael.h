@@ -14,7 +14,7 @@ public:
         WaitingAtTarget
     };
 
-    explicit Lirael(Game* game, float forwardSpeed = 1500.0f, float jumpSpeed = -750.0f);
+    explicit Lirael(Game* game);
 
     void OnProcessInput(const Uint8* keyState) override;
     void OnUpdate(float deltaTime) override;
@@ -28,13 +28,9 @@ public:
 private:
     void ManageAnimations();
 
-    float mForwardSpeed;
-    float mJumpSpeed;
     bool mIsDying;
-
     Vector2 mInitialPosition;
     bool mInitialPositionSet = false;
-    float mMovementSpeed = 700.0f;
 
     class Target* mCurrentTarget = nullptr;
     LiraelState mState = LiraelState::Idle;
@@ -43,11 +39,11 @@ private:
     class DrawAnimatedComponent* mDrawComponent;
     class AABBColliderComponent* mColliderComponent;
 
-    Vector2 mJumpStartPos;      // Posição inicial do pulo
-    Vector2 mJumpEndPos;        // Posição final do pulo (o alvo)
-    float mJumpTime;            // Tempo decorrido no pulo atual
-    float mJumpDuration;        // Duração total que o pulo deve levar
-    float mJumpHeight;          // Altura do arco do pulo
+    Vector2 mJumpStartPos;
+    Vector2 mJumpEndPos;
+    float mJumpTime;
+    float mJumpDuration;
+    float mJumpHeight;
 
     void MoveToTarget(int lane);
     void ReturnToInitialPosition();

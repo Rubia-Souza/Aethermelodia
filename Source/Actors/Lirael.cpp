@@ -2,18 +2,16 @@
 // Created by Aline on 27/06/2025.
 //
 
+#include "SDL.h"
 #include "Lirael.h"
 #include "Target.h"
 #include "../Game.h"
 #include "../Components/DrawComponents/DrawAnimatedComponent.h"
-#include "../Components/ColliderComponents//AABBColliderComponent.h" // Inclua o colisor para pegar o componente do alvo
+#include "../Components/ColliderComponents/AABBColliderComponent.h"
 
-Lirael::Lirael(Game* game, const float forwardSpeed, const float jumpSpeed)
+Lirael::Lirael(Game* game)
         : Actor(game)
         , mIsDying(false)
-        , mForwardSpeed(forwardSpeed)
-        , mJumpSpeed(jumpSpeed)
-        , mMovementSpeed(900.0f)
 {
     const int liraelWidth = 64.0f;
     mRigidBodyComponent = new RigidBodyComponent(this, 1.0f, 5.0f);
@@ -27,10 +25,6 @@ Lirael::Lirael(Game* game, const float forwardSpeed, const float jumpSpeed)
 
     mDrawComponent->AddAnimation("idle", {0});
     mDrawComponent->AddAnimation("Dead", {1});
-    // mDrawComponent->AddAnimation("jump", {2});
-    // mDrawComponent->AddAnimation("run", {3, 4, 5});
-    // mDrawComponent->AddAnimation("win", {7});
-
     mDrawComponent->SetAnimation("idle");
     mDrawComponent->SetAnimFPS(10.0f);
 }
@@ -69,8 +63,6 @@ void Lirael::OnHandleKeyPress(const int key, const bool isPressed)
             MoveToTarget(lane);
         }
     } else {
-        // Se uma tecla for solta, verifica se alguma outra de jogo ainda está pressionada.
-        // Se não, retorna ao chão.
         if (key == SDLK_a || key == SDLK_s || key == SDLK_d || key == SDLK_f) {
             const Uint8* state = SDL_GetKeyboardState(NULL);
             if (!state[SDL_SCANCODE_A] && !state[SDL_SCANCODE_S] &&
@@ -97,22 +89,31 @@ void Lirael::MoveToTarget(int lane)
         mState = LiraelState::MovingToTarget;
         mRigidBodyComponent->SetEnabled(false);
         mCurrentTarget = target;
-
         mJumpStartPos = GetPosition();
 
-        Vector2 targetCenter = target->GetPosition();
-        float finalX = targetCenter.x - (mColliderComponent->GetWidth() / 2.0f);
-        float finalY = targetCenter.y - mColliderComponent->GetHeight();
+        const auto targetCollider = target->GetComponent<AABBColliderComponent>();
+        const Vector2 targetWorldCenter = target->GetPosition();
+
+        const float targetRadius = targetCollider->GetWidth() / 2.0f;
+        float liraelWidth = mColliderComponent->GetWidth();
+        const float visualOverlap = 45.0f;
+
+        float finalX;
+        if (lane == 1 || lane == 3) {
+            finalX = (targetWorldCenter.x - targetRadius) - visualOverlap;
+        } else {
+            finalX = (targetWorldCenter.x + targetRadius - liraelWidth) + visualOverlap;
+        }
+        float finalY = targetWorldCenter.y - mColliderComponent->GetHeight();
 
         mJumpEndPos = Vector2(finalX, finalY);
-        mJumpTime = 0.0f;
 
         float distance = Vector2::Distance(mJumpStartPos, mJumpEndPos);
-
         const float heightMultiplier = 0.3f;
         const float durationMultiplier = 0.0012f;
         const float minDuration = 0.35f;
 
+        mJumpTime = 0.0f;
         mJumpHeight = distance * heightMultiplier;
         mJumpDuration = distance * durationMultiplier;
 
@@ -125,7 +126,6 @@ void Lirael::MoveToTarget(int lane)
 void Lirael::ReturnToInitialPosition()
 {
     mRigidBodyComponent->SetEnabled(true);
-
     mState = LiraelState::Idle;
     mCurrentTarget = nullptr;
     mRigidBodyComponent->SetVelocity(Vector2::Zero);
