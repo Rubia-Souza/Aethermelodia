@@ -296,10 +296,10 @@ void Game::LoadHowToPlay()
     howToPlay->AddText("In this game you play as Lirael, a bard that is fighting for survival after losing his friends on a journey. Now he needs to use his songs to escape the dangers of the wilderness and find his friends again.", Vector2(40.0f, 250.0f), Vector2(600.0f, 300.0f));
 
     howToPlay->AddText("- Controls -", Vector2(mWindowWidth - 400.0f, 200.0f), Vector2(200.0f, 35.0f));
-    auto text1 = howToPlay->AddText("A: Hit top left note", Vector2(mWindowWidth - 500.0f, 280.0f), Vector2(400.0f, 30.0f));
-    auto text2 = howToPlay->AddText("S: Hit bottom left note", Vector2(mWindowWidth - 500.0f, 335.0f), Vector2(400.0f, 30.0f));
-    auto text3 = howToPlay->AddText("D: Hit top right note", Vector2(mWindowWidth - 500.0f, 390.0f), Vector2(400.0f, 30.0f));
-    auto text4 = howToPlay->AddText("F: Hit bottom right note", Vector2(mWindowWidth - 500.0f, 445.0f), Vector2(400.0f, 30.0f));
+    auto text1 = howToPlay->AddText("W or E: Hit green note", Vector2(mWindowWidth - 500.0f, 280.0f), Vector2(400.0f, 30.0f));
+    auto text2 = howToPlay->AddText("S or D: Hit blue note", Vector2(mWindowWidth - 500.0f, 335.0f), Vector2(400.0f, 30.0f));
+    auto text3 = howToPlay->AddText("I or O: Hit red note", Vector2(mWindowWidth - 500.0f, 390.0f), Vector2(400.0f, 30.0f));
+    auto text4 = howToPlay->AddText("J or K: Hit yellow note", Vector2(mWindowWidth - 500.0f, 445.0f), Vector2(400.0f, 30.0f));
     auto returnButton = howToPlay->AddButton("Back", Vector2(mWindowWidth/2.0f - 150.0f, 600.0f), Vector2(300.0f, 50.0f), [this]() { SetGameScene(GameScene::MainMenu); }, Vector2(100, 30));
 }
 
@@ -432,28 +432,24 @@ void Game::HandleKeyDownActors(const int key, const bool isPressed)
             // Pista Superior Esquerda - verde
             case SDLK_w:
             case SDLK_e:
-            case SDLK_LEFT: // Seta para esquerda
                 HitLane(0);
                 break;
 
             // Pista Superior Direita - vermelho
             case SDLK_i:
             case SDLK_o:
-            case SDLK_UP: // Seta para cima
                 HitLane(1);
                 break;
 
             // Pista Inferior Esquerda - azul
             case SDLK_s:
             case SDLK_d:
-            case SDLK_DOWN: // Seta para baixo
                 HitLane(2);
                 break;
 
             // Pista Inferior Direita - amarelo
             case SDLK_j:
             case SDLK_k:
-            case SDLK_RIGHT: // Seta para direita
                 HitLane(3);
                 break;
         }
@@ -493,28 +489,24 @@ void Game::HandleKeyUpActors(const int key, const bool isPressed)
             // Pista Superior Esquerda - verde
             case SDLK_w:
             case SDLK_e:
-            case SDLK_LEFT: // Seta para esquerda
                 UnhitLane(0);
                 break;
 
             // Pista Superior Direita - vermelho
             case SDLK_i:
             case SDLK_o:
-            case SDLK_UP: // Seta para cima
                 UnhitLane(1);
                 break;
 
             // Pista Inferior Esquerda - azul
             case SDLK_s:
             case SDLK_d:
-            case SDLK_DOWN: // Seta para baixo
                 UnhitLane(2);
                 break;
 
             // Pista Inferior Direita - amarelo
             case SDLK_j:
             case SDLK_k:
-            case SDLK_RIGHT: // Seta para direita
                 UnhitLane(3);
                 break;
         }
