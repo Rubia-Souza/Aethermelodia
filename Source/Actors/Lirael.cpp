@@ -34,11 +34,11 @@ void Lirael::OnProcessInput(const uint8_t* state)
 {
     if(mGame->GetGamePlayState() != Game::GamePlayState::Playing) return;
 
-    if (state[SDL_SCANCODE_D] || state[SDL_SCANCODE_F]) {
+    if (state[SDL_SCANCODE_I] || state[SDL_SCANCODE_O] || state[SDL_SCANCODE_J] || state[SDL_SCANCODE_K]) {
         mRotation = 0.0f;
     }
 
-    if (state[SDL_SCANCODE_S] || state[SDL_SCANCODE_A]) {
+    if (state[SDL_SCANCODE_W] || state[SDL_SCANCODE_E] || state[SDL_SCANCODE_S] || state[SDL_SCANCODE_D]) {
         mRotation = Math::Pi;
     }
 }
@@ -79,10 +79,26 @@ void Lirael::OnHandleKeyPress(const int key, const bool isPressed)
         int lane = -1;
         switch (key)
         {
-        case SDLK_a: lane = 0; break;
-        case SDLK_d: lane = 1; break;
-        case SDLK_s: lane = 2; break;
-        case SDLK_f: lane = 3; break;
+            // Pista Superior Esquerda - verde
+            case SDLK_w:
+            case SDLK_e:
+                lane = 0; 
+                break;
+            // Pista Superior Direita - vermelho
+            case SDLK_i:
+            case SDLK_o:
+                lane = 1; 
+                break;
+            // Pista Inferior Esquerda - azul
+            case SDLK_s:
+            case SDLK_d:
+                lane = 2; 
+                break;
+            // Pista Inferior Direita - amarelo
+            case SDLK_j:
+            case SDLK_k:
+                lane = 3; 
+                break;
         }
 
         if (lane != -1) {
@@ -92,10 +108,12 @@ void Lirael::OnHandleKeyPress(const int key, const bool isPressed)
             MoveToTarget(lane);
         }
     } else {
-        if (key == SDLK_a || key == SDLK_s || key == SDLK_d || key == SDLK_f) {
+        if (key == SDLK_w || key == SDLK_e || key == SDLK_i || key == SDLK_o || key == SDLK_s || key == SDLK_d || key == SDLK_j || key == SDLK_k) {
             const Uint8* state = SDL_GetKeyboardState(NULL);
-            if (!state[SDL_SCANCODE_A] && !state[SDL_SCANCODE_S] &&
-                !state[SDL_SCANCODE_D] && !state[SDL_SCANCODE_F])
+            if (!state[SDL_SCANCODE_W] && !state[SDL_SCANCODE_E] &&
+                !state[SDL_SCANCODE_I] && !state[SDL_SCANCODE_O] &&
+                !state[SDL_SCANCODE_S] && !state[SDL_SCANCODE_D] &&
+                !state[SDL_SCANCODE_J] && !state[SDL_SCANCODE_K])
             {
                 ReturnToInitialPosition();
             }
