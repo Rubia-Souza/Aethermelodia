@@ -8,15 +8,21 @@
 
 <img src="Screenshots/screenshot_6.png" width="500px" />
 
+<img src="Screenshots/screenshot_9.png" width="500px" />
+
 <img src="Screenshots/screenshot_5.png" width="500px" />
 
 <img src="Screenshots/screenshot_3.png" width="500px" />
 
+<img src="Screenshots/screenshot_10.png" width="500px" />
+
+<img src="Screenshots/screenshot_11.png" width="500px" />
+
 <img src="Screenshots/screenshot_4.png" width="500px" />
 
-<img src="Screenshots/screenshot_2.png" width="500px" />
-
 <img src="Screenshots/screenshot_1.png" width="500px" />
+
+<img src="Screenshots/screenshot_2.png" width="500px" />
 
 
 ## Título
@@ -42,18 +48,21 @@ Essas são as principais funcionalidades apresentadas:
 * Inimigos devem se manter levemente dentro dos alvos para uma janela maior de acerto para o jogador.
 * Dificuldade: A demo está setada por padrão no modo Easy, sendo assim os inimigos devem aparecer apenas nos alvos verde, azul e vermelho.
 * Ao apertar as teclas, seus respectivos alvos devem piscar e uma tentativa de hit ocorrerá no alvo.
-    * A -> alvo verde (superior esquerdo).
-    * S -> alvo azul (inferior esquerdo).
-    * D -> alvo vermelho (superior direito).
-    * F -> alvo amarelo (inferior direito).
+    * W ou E -> alvo verde (superior esquerdo).
+    * S ou D -> alvo azul (inferior esquerdo).
+    * I ou O -> alvo vermelho (superior direito).
+    * J ou K -> alvo amarelo (inferior direito).
 * Acerto de um inimigo simples (key_in e key_out devem ser imediatos, o inimigo deve morrer com a animação de morte, a pontuação deve ser incrementada, se o jogador não estiver com vida máxima, uma vida deve ser recarregada).
 * Acerto de um inimigo composto (key_in, a tecla deve ser segurada, key_out, enquanto o comprimento do inimigo durar, sua barra deve ficar da cor do alvo, ao segurar a tecla até o fim da barra, os efeitos de acerto de inimigo devem acontecer).
 * Erro de um inimigo simples (se a janela de acerto do inimigo acabar e ele nao morrer, uma vida deve ser perdida, a pontuação deve ser decrementada).
 * Erro de um inimigo composto (se a tecla não for segurada por todo o comprimento do inimigo, uma vida deve ser perdida, a pontuação deve ser decrementada).
-* Erro de timing (ao acertar um alvo que não possui nenhum inimigo uma vida deve ser perdida, a pontuação deve ser decrementada).
+* Erro de timing (ao acertar um alvo que não possui nenhum inimigo) 
+    * Easy e Medium: apenas o feedbaack sonoro de erro deve ocorrer.
+    * Hard: o feedback de erro deve ocorrer e uma vida deve ser perdida, a pontuação deve ser decrementada.
 * HUD pontuação deve ser atualizada de acordo com os eventos do jogo.
 * HUD das vidas deve ser atualizada de acordo com os eventos do jogo.
 * Caso o jogador chegue a 0 vidas, ele deve perder o jogo e uma animação de morte deve ser exibida, bem como uma tela de game over.
+* O jogo deve possuir uma progressão de 3 níveis, chegando ao fim do ato com um TO BE CONTINUED...
 
 ## Créditos
 * Aline Cristina Pinto
