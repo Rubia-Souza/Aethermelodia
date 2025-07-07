@@ -429,29 +429,33 @@ void Game::HandleKeyDownActors(const int key, const bool isPressed)
     {
         switch(key)
         {
-            // Pista Superior Esquerda
-        case SDLK_a:
-        case SDLK_LEFT: // Seta para esquerda
-            HitLane(0);
-            break;
+            // Pista Superior Esquerda - verde
+            case SDLK_w:
+            case SDLK_e:
+            case SDLK_LEFT: // Seta para esquerda
+                HitLane(0);
+                break;
 
-            // Pista Superior Direita
-        case SDLK_d:
-        case SDLK_UP: // Seta para cima
-            HitLane(1);
-            break;
+            // Pista Superior Direita - vermelho
+            case SDLK_i:
+            case SDLK_o:
+            case SDLK_UP: // Seta para cima
+                HitLane(1);
+                break;
 
-            // Pista Inferior Esquerda
-        case SDLK_s:
-        case SDLK_DOWN: // Seta para baixo
-            HitLane(2);
-            break;
+            // Pista Inferior Esquerda - azul
+            case SDLK_s:
+            case SDLK_d:
+            case SDLK_DOWN: // Seta para baixo
+                HitLane(2);
+                break;
 
-            // Pista Inferior Direita
-        case SDLK_f:
-        case SDLK_RIGHT: // Seta para direita
-            HitLane(3);
-            break;
+            // Pista Inferior Direita - amarelo
+            case SDLK_j:
+            case SDLK_k:
+            case SDLK_RIGHT: // Seta para direita
+                HitLane(3);
+                break;
         }
     }
 
@@ -486,26 +490,30 @@ void Game::HandleKeyUpActors(const int key, const bool isPressed)
     {
         switch(key)
         {
-            // Pista Superior Esquerda
-            case SDLK_a:
+            // Pista Superior Esquerda - verde
+            case SDLK_w:
+            case SDLK_e:
             case SDLK_LEFT: // Seta para esquerda
                 UnhitLane(0);
                 break;
 
-                // Pista Superior Direita
-            case SDLK_d:
+            // Pista Superior Direita - vermelho
+            case SDLK_i:
+            case SDLK_o:
             case SDLK_UP: // Seta para cima
                 UnhitLane(1);
                 break;
 
-                // Pista Inferior Esquerda
+            // Pista Inferior Esquerda - azul
             case SDLK_s:
+            case SDLK_d:
             case SDLK_DOWN: // Seta para baixo
                 UnhitLane(2);
                 break;
 
-                // Pista Inferior Direita
-            case SDLK_f:
+            // Pista Inferior Direita - amarelo
+            case SDLK_j:
+            case SDLK_k:
             case SDLK_RIGHT: // Seta para direita
                 UnhitLane(3);
                 break;
@@ -703,7 +711,9 @@ void Game::HitLane(int lane)
         // SDL_Log("HIT! Na pista %d", lane);
         hittableNote->setHit(true);
     } else {
-        // SetCurrentLives(mCurrentLives - 1); // TODO opcional: se for deixar menos punitivo, comentar essa linha, mas deixar o feedback sonoro
+
+        if (mGameDifficulty == Difficulty::HARD_SINGLE)
+            SetCurrentLives(mCurrentLives - 1); // TODO opcional: se for deixar menos punitivo, comentar essa linha, mas deixar o feedback sonoro
         
         mMusicHandle = mAudio->PlaySound("Wood walk 2.ogg", false);
         // SDL_Log("MISS! Vidas restantes: %d", mCurrentLives);
